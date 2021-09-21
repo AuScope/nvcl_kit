@@ -16,3 +16,4 @@ copy text, paste into first cell
 4) Hit arrow to execute 
 5) Once "[*]" has become a "[1]", you can open an nvcl_kit notebook, change to the kernel to "NVCL KIT" and run it
 
+*NB:* The script in Step 3 is for Python 3.8, if you use a different version of Python please modify accordingly 
