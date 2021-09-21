@@ -7,7 +7,7 @@ import sys
 !{sys.executable} -m pip install nvcl_kit
 ```
 
-If you get a permissions error, then try installing a new kernel
+In JupyterLab, if you get a permissions error, then try installing a new kernel
 
 1) File -> New -> Notebook
 2) Select "Python 3" kernel, click "Select"
