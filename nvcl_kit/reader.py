@@ -269,7 +269,7 @@ class NVCLReader:
 
         :param log_id: borehole log identifier, string e.g. 'ce2df1aa-d3e7-4c37-97d5-5115fc3c33d' This is the first id from the list of triplets [log id, log type, log name] fetched from 'get_imagelog_data()'
         :param height_resol: height resolution, float
-        :param class_name: name of mineral class
+        :param class_name: name of scalar class, returned in output for informational purposes
         :param top_n: optional number
         :returns: dict: key - depth, float; value - if top_n=1 then  SimpleNamespace( 'colour'= RGBA float tuple, 'className'= class name, 'classText'= mineral name ) & if top_n>1 then [ SimpleNamespace(..) .. ]
         '''
@@ -300,11 +300,12 @@ class NVCLReader:
                 sorted_meas_list = sorted(meas_list, key=lambda x: x['roundedDepth'])
                 for depth, group in itertools.groupby(sorted_meas_list, lambda x: x['roundedDepth']):
                     # Filter out invalid values
-                    filtered_group = itertools.filterfalse(lambda x: x['classText'].upper() in ['INVALID', 'NOTAROK'],
+                    clean_group = itertools.filterfalse(lambda x: x['classText'].upper() in ['INVALID', 'NOTAROK'],
                                                            group)
+
                     # Make a dict keyed on depth, value is element with largest count
                     try:
-                        sorted_elem = sorted(filtered_group, key=lambda x: x['classCount'], reverse=True)
+                        sorted_elem = sorted(clean_group, key=lambda x: x['classCount'], reverse=True)
                     except ValueError:
                         # Sometimes 'filtered_group' is empty
                         LOGGER.warning("No valid values at depth %s", str(depth))
