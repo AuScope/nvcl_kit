@@ -5,10 +5,18 @@ class Scalar(str, Enum):
     """
     Enum class of NVCL Scalars, used as input into functions
 
-    Source: "National Virtual Core Scalars":
+    The names of scalar classes have 3 parts; first part is class grouping type, 
+    second is the TSA mineral matching technique, third part is wavelength:
+     1. Min1,2,3 = 1st, 2nd, 3rd most common mineral type
+        OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
+     2. uTSA - user, dTSA - domaining, sTSA = system
+     3. V = visible light, S = shortwave IR, T = thermal IR
+
+    Source of names: "National Virtual Core Scalars":
         http://vocabs.ardc.edu.au/repository/api/lda/csiro/national-virtual-core-library-scalars/v0-3/concept.html
 
     """
+    ANY = "*";
     TSA_S_Water = "TSA_S Water";
     Bound_Water_sTSAS = "Bound_Water sTSAS";
     Bound_Water_uTSAS = "Bound_Water uTSAS";
