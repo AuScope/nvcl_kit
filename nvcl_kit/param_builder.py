@@ -1,4 +1,29 @@
+import sys
+import logging
 from types import SimpleNamespace
+
+LOG_LVL = logging.INFO
+''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
+'''
+
+# Set up debugging
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(LOG_LVL)
+
+if not LOGGER.hasHandlers():
+
+    # Create logging console handler
+    HANDLER = logging.StreamHandler(sys.stdout)
+
+    # Create logging formatter
+    FORMATTER = logging.Formatter('%(name)s -- %(levelname)s - %(message)s')
+
+    # Add formatter to ch
+    HANDLER.setFormatter(FORMATTER)
+
+    # Add handler to LOGGER and set level
+    LOGGER.addHandler(HANDLER)
+
 
 def param_builder(provider, **options):
     """
@@ -15,9 +40,19 @@ def param_builder(provider, **options):
                    max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
                                   default 0
     """
+    OPTION_LIST = ['bbox', 'polygon', 'borehole_crs', 'wfs_version', 'depths', 'wfs_url', 'nvcl_url',
+                   'max_boreholes', 'use_local_filtering']
+
+    # Check if options are valid
+    for opt in options:
+        if opt not in OPTION_LIST:
+            LOGGER.warning(f"{opt} is not a valid param_builder option")
+            return None
+        
+    if not isinstance(provider, str):
+        LOGGER.warning("Provider parameter must be a string e.g. 'nsw', 'qld', 'vic'")
+        return None
     param_obj = SimpleNamespace()
-    if not type(provider) != 'str':
-        return False, "provider parameter must be a string e.g. 'nsw', 'qld', 'vic'"
 
     # Tasmania
     if provider.lower() in ['tas', 'tasmania']:
@@ -69,26 +104,17 @@ def param_builder(provider, **options):
         param_obj.WFS_VERSION = "2.0.0"
 
     else:
-        return False, "Cannot recognise provider parameter e.g. 'vic' 'sa' etc."    
+        LOGGER.warning("Cannot recognise provider parameter e.g. 'vic' 'sa' etc.")
+        return None
 
-    # Optional parameters
+    # Set up optional parameters 
+    # Either 'bbox' or 'polygon', but not both
     if 'bbox' in options:
         param_obj.BBOX = options['bbox']
     elif 'polygon' in options:
         param_obj.POLYGON = options['polygon']
-    if 'borehole_crs' in options:
-        param_obj.BOREHOLE_CRS = options['borehole_crs']
-    if 'wfs_version' in options:
-        param_obj.WFS_VERSION = options['wfs_version']
-    if 'depths' in options:
-        param_obj.DEPTHS = options['depth']
-    if 'wfs_url' in options:
-        param_obj.WFS_URL = options['wfs_url']
-    if 'nvcl_url' in options:
-        param_obj.NVCL_URL = options['nvcl_url']
-    if 'max_boreholes' in options:
-        param_obj.MAX_BOREHOLES = options['max_boreholes']
-    if 'use_local_filtering' in options:
-        param_obj.USE_LOCAL_FILTERING = options['use_local_filtering']
+    for p in OPTION_LIST[2:]:
+        if p in options:
+            setattr(param_obj, p.upper(), options[p])
 
-    return True, param_obj
+    return param_obj
