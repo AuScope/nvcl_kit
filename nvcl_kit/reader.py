@@ -341,7 +341,7 @@ class NVCLReader:
     def get_datasetid_list(self, nvcl_id):
         ''' Retrieves a list of dataset ids
 
-        :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each dict item retrieved from 'get_boreholes_list()' or 'get_nvcl_id_list()'
+        :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
         :returns: a list of dataset ids
         '''
         response_str = self.svc.get_dataset_collection(nvcl_id)
@@ -358,7 +358,7 @@ class NVCLReader:
     def get_dataset_list(self, nvcl_id):
         ''' Retrieves a list of dataset objects
 
-        :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each dict item retrieved from 'get_boreholes_list()' or 'get_nvcl_id_list()'
+        :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
         :returns: a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id
         '''
         response_str = self.svc.get_dataset_collection(nvcl_id)
@@ -629,7 +629,7 @@ class NVCLReader:
         ''' Retrieves a set of image log data for a particular borehole
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
-                        the 'nvcl_id' from each dict item retrieved from 'get_boreholes_list()' or 'get_nvcl_id_list()'
+                        the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_type, log_name
         '''
@@ -653,7 +653,7 @@ class NVCLReader:
         ''' Retrieves a set of spectral log data for a particular borehole
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
-                        the 'nvcl_id' from each dict item retrieved from 'get_boreholes_list()' or 'get_nvcl_id_list()'
+                        the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, wavelength_units, sample_count, script,
                   wavelengths
@@ -708,7 +708,7 @@ class NVCLReader:
         ''' Retrieves a set of profilometer logs for a particular borehole
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
-                        the 'nvcl_id' from each dict item retrieved from 'get_boreholes_list()' or 'get_nvcl_id_list()'
+                        the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, sample_count, floats_per_sample,
                   min_val, max_val
@@ -754,6 +754,21 @@ class NVCLReader:
             :returns: a list of dictionaries whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
         '''
         return self.borehole_list
+
+    def get_feature_list(self):
+        ''' Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:
+
+            'nvcl_id', 'identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'href', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'x', 'y, 'z', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer'
+
+            NB:
+                (1) Depending on the WFS, not all fields will have values
+                (2) 'href' corresponds to 'gsmlp:identifier'
+                (3) 'x', 'y', 'z' are x-coordinate, y-coordinate and elevation
+                (4) 'nvcl_id' is the GML 'id', used as an id in the NVCL services
+
+            :returns: a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
+        '''
+        return [ SimpleNamespace(**bh) for bh in self.borehole_list]
 
     def get_nvcl_id_list(self):
         '''
@@ -838,10 +853,34 @@ class NVCLReader:
             LOGGER.error("Cannot have USE_LOCAL_FILTERING and WFS_VERSION < 2.0.0")
             return []
 
-    def _fetch_borehole_list(self):
+    def filter_feat_list(self, nvcl_ids_only=False, **kwargs):
+        ''' Returns a list of borehole features given a filter parameter
+            Filter parameters can be one of those returned by 'get_feature_list' e.g.
+
+            new_list = filter_feat_list(name='ML006')
+
+        :param kwargs: keyword arguments key is name searched for, val is a list of possible values or a single value
+        :param nvcl_ids_only: if True will return a list of nvcl_id
+        :return: a list of borehole features or empty list if unsuccessful
+        '''
+        for key, val in kwargs.items():
+            val_list = val
+            if not isinstance(val,list):
+                val_list = [val]
+            bh_list = [ bh for bh in self.borehole_list if key in bh and bh[key] in val]
+                
+            if not nvcl_ids_only:
+                return [ SimpleNamespace(**bh) for bh in bh_list ]
+            else:
+                return [ bh['nvcl_id'] for bh in bh_list ]
+
+        return []
+
+
+    def _fetch_borehole_list(self, names=[], ids=[]):
         ''' Returns a list of WFS borehole data within bounding box, but only NVCL boreholes
             [ { 'nvcl_id': XXX, 'x': XXX, 'y': XXX, 'href': XXX, ... }, { ... } ]
-            See description of 'get_borehole_list()' for more info
+            See description of 'get_boreholes_list()' for more info
 
         :return: True if operation succeeded
         '''
