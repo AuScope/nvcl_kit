@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Scalar(str, Enum):
+class Scalar(str, Enum): # pragma: no cover
     """
     Enum class of NVCL Scalars, used as input into functions
 
