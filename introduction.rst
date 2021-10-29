@@ -1,46 +1,53 @@
+Introduction: How to Extract Australian NVCL Borehole Data
+----------------------------------------------------------
 
-Introduction: how to extract NVCL borehole data
------------------------------------------------
-
-**1. Create a 'SimpleNamespace' object, fill it with parameters, instantiate class**
+**1. Call the 'param_builder' function, fill it with parameters**
 
 .. code:: python
 
-    from nvcl_kit.reader import NVCLReader 
-    from types import SimpleNamespace
-    param = SimpleNamespace()
+    from nvcl_kit.reader import NVCLReader
+    from nvcl_kit.param_builder import param_builder
+    from nvcl_kit.constants import Scalar
+    from nvcl_kit.generators import gen_scalar_by_depth
+ 
+    # Assemble parameters
+    #     First parameter is state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
+    #     Other parameters are optional:
+    #               bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved
+    #                     default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
+    #               polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
+    #               borehole_crs: CRS string, default "EPSG:4326"
+    #               wfs_version: WFS version string, default "1.1.0"
+    #               depths: Tuple of range of depths (min,max) [metres]
+    #               wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
+    #               nvcl_url: URL of NVCL service
+    #               max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
+    #                              default 0
+    param = param_builder('nsw', max_boreholes=20)
+    if not param:
+        print(f"Cannot build parameters: {param}")
 
-    # URL of the GeoSciML v4.1 BoreHoleView Web Feature Service
-    param.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
 
-    # URL of NVCL service
-    param.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
 
-    # Optional bounding box to search for boreholes using WFS, default units are EPSG:4326 degrees
-    param.BBOX = {"west": 132.76, "south": -28.44, "east": 134.39, "north": -26.87 }
-
-    # Optional maximum number of boreholes to fetch, default is no limit
-    param.MAX_BOREHOLES = 20
-
-    # Instantiate class and search for boreholes
-    reader = NVCLReader(param)
-
-**2. Check if 'wfs' is not 'None' to see if this instance initialised
+**2. Create 'NVCLReader' class, check if 'wfs' is not 'None' to see if this instance initialised correctly
 properly**
 
 .. code:: python
 
+    # Instantiate class and search for boreholes
+    reader = NVCLReader(param)
     if not reader.wfs:
         print("ERROR!")
 
-**3. Call get\_boreholes\_list() to get list of WFS borehole data for
+**3. Call get\_feature\_list() to get list of WFS borehole data for
 NVCL boreholes**
 
 .. code:: python
 
-    # Returns a list of python dictionaries
-    # Each dict has fields from GeoSciML v4.1 BoreholeView
-    bh_list = reader.get_boreholes_list()
+    # Returns a list of python 'SimpleNamespace' objects (from 'types' module)
+    # Each object has fields from GeoSciML v4.1 BoreholeView
+    # accessed using '.' notation e.g. 'bh_list[0].name'
+    bh_list = reader.get_feature_list()
 
 **4. Call get\_nvcl\_id\_list() to get a list of NVCL borehole ids**
 
@@ -67,33 +74,29 @@ get\_imagelog\_data() to get the NVCL log ids**
               ild.log_type,
               ild.algorithmout_id)
 
-**6. Using image log data, call get\_borehole\_data() to get borehole
-data**
+**6. Using image log data, call gen\_scalar\_by\_depth() to get borehole scalar data**
 
 .. code:: python
 
-    # Analysis class has 2 parts:
-    # 1. Min1,2,3 = 1st, 2nd, 3rd most common mineral
-    #    OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
-    # 2. uTSAV = visible light, uTSAS = shortwave IR, uTSAT = thermal IR
+    # The names of NVCL scalar classes have 3 parts; first part is class grouping type,
+    # second is the TSA mineral matching technique, third part is wavelength:
+    #  1. Min1,2,3 = 1st, 2nd, 3rd most common mineral type
+    #     OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
+    #  2. uTSA = user, dTSA = domaining, sTSA = system
+    #  3. V = visible light, S = shortwave IR, T = thermal IR
     #
     # These combine to give us a class name such as 'Grp1 uTSAS'
     #
-    # Here we extract data for log type '1' and 'Grp1 uTSAS'
-    HEIGHT_RESOLUTION = 20.0
-    ANALYSIS_CLASS = 'Grp1 uTSAS'
-    LOG_TYPE = '1'
-    for ild in imagelog_data_list:
-        if ild.log_type == LOG_TYPE and ild.log_name == ANALYSIS_CLASS:
-            # Get top 5 minerals at each depth
-            bh_data = reader.get_borehole_data(ild.log_id, HEIGHT_RESOLUTION, ANALYSIS_CLASS, top_n=5)
-            for depth in bh_data:
-                for meas in bh_data[depth]:
-                    print("At {} metres: class={}, abundance={}, mineral={}, colour={}".format(depth, meas.className,
-                      meas.classCount, meas.classText, meas.colour))
-                print()
+    # Here we extract data for 'Grp1 uTSAS' using 'Scalar' class
+    #
+    # GEN_SCALAR_BY_DEPTH
+    for nvcl_id, log_id, sca_list in gen_scalar_by_depth(reader, scalar_class=Scalar.Grp1_uTSAS, log_type='1', top_n=4):
+        for depth in sca_list:
+            for meas in sca_list[depth]:
+                print(f"{nvcl_id} {log_id} @ {depth} metres: class={meas.className}, abundance={meas.classCount}, mineral={meas.classText}, colour={meas.colour}")
+            print()
 
-**7. Using the NVCL ids from Step 5, you can also call
+**7. Using the NVCL id from Step 5, you can also call
 get\_spectrallog\_data() and get\_profilometer\_data()**
 
 .. code:: python
