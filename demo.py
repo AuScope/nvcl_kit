@@ -67,12 +67,10 @@ def do_demo(wfs, nvcl, bbox, borehole_crs, local_filt, version, max):
         print(yaml.dump(bh))
         print("-"*80)
         a_rec = get_asud_record(bh['x'], bh['y'])
-        print("\nAUSTRALIAN STRATIGRAPHIC UNITS DATABASE RECORD:")
         if a_rec is not None:
+            print("\nAUSTRALIAN STRATIGRAPHIC UNITS DATABASE RECORD:")
             print(yaml.dump(a_rec))
-        else:
-            print("Not found")
-        print("="*80)
+            print("="*80)
 
     # Get list of NVCL ids
     nvcl_id_list = reader.get_nvcl_id_list()
