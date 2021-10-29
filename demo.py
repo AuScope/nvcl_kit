@@ -58,6 +58,11 @@ def do_demo(state):
     # Get WFS borehole feature list
     bh_list = reader.get_feature_list()
 
+    # Filter features by name or other attributes
+    if state == 'tas':
+        brd005_list = reader.filter_feat_list(name='BRD005')
+        print(f"Details of BRD005: {brd005_list}")
+
     # Print first 5 WFS borehole features
     for bh in bh_list[:5]:
         print("\nBOREHOLE:")
