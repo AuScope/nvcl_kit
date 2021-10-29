@@ -83,7 +83,7 @@ def do_demo(state):
     # second is the TSA mineral matching technique, third part is wavelength:
     #  1. Min1,2,3 = 1st, 2nd, 3rd most common mineral type
     #     OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
-    #  2. uTSA - user, dTSA - domaining, sTSA = system
+    #  2. uTSA = user, dTSA = domaining, sTSA = system
     #  3. V = visible light, S = shortwave IR, T = thermal IR
     #
     # These combine to give us a class name such as 'Grp1 uTSAS'
