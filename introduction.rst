@@ -40,7 +40,7 @@ properly**
         print("ERROR!")
 
 **3. Call get\_feature\_list() to get list of WFS borehole data for
-NVCL boreholes**
+NVCL boreholes or use 'filter_feat_list() to narrow down the list**
 
 .. code:: python
 
@@ -48,6 +48,10 @@ NVCL boreholes**
     # Each object has fields from GeoSciML v4.1 BoreholeView
     # accessed using '.' notation e.g. 'bh_list[0].name'
     bh_list = reader.get_feature_list()
+
+    # Feature lists can be filtered by name and other attributes
+    feat_list = reader.filter_feat_list(name='BRD005')
+    print(feat_list)
 
 **4. Call get\_nvcl\_id\_list() to get a list of NVCL borehole ids**
 
