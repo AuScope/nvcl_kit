@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 import sys
 from types import SimpleNamespace
-import yaml
-
 from nvcl_kit.reader import NVCLReader
 from nvcl_kit.asud import get_asud_record
-from nvcl_kit.param_builder import param_builder
-from nvcl_kit.constants import Scalar
-from nvcl_kit.generators import gen_scalar_by_depth
-
+import yaml
 
 #
 # A very rough script to demonstrate 'nvcl_kit' 
@@ -22,50 +17,56 @@ from nvcl_kit.generators import gen_scalar_by_depth
 # . ./venv/bin/activate
 # pip install -U pip
 # pip install -r requirements.txt
-# ./demo_new.py
+# ./demo.py
 #
 #
 
-state_list = ['tas', 'vic', 'nsw', 'qld', 'nt', 'sa', 'wa']
+# Provider list. Format is (WFS service URL, NVCL service URL, bounding box coords, borehole crs, local filtering, WFS version, max boreholes))
+prov_list = [ ("https://www.mrt.tas.gov.au/web-services/ows", "https://www.mrt.tas.gov.au/NVCLDataServices/", { "west": 143.75, "south": -43.75, "east": 148.75, "north": -39.75 }, None, False, "1.1.0", 20),
+              ("https://geology.data.vic.gov.au/nvcl/ows", "https://geology.data.vic.gov.au/NVCLDataServices/", { "south": 100100, "north": 315000, "west": 5720750, "east": 6093000 }, "EPSG:28355", False, "1.1.0", 20),
+             ("https://gs.geoscience.nsw.gov.au/geoserver/ows", "https://nvcl.geoscience.nsw.gov.au/NVCLDataServices/", None, None, False, "1.1.0", 20),
+             ("https://geology.information.qld.gov.au/geoserver/ows", "https://geology.information.qld.gov.au/NVCLDataServices/", None, None, False, "1.1.0", 20),
+             ("http://geology.data.nt.gov.au/geoserver/ows", "http://geology.data.nt.gov.au/NVCLDataServices/", None, None, True, "2.0.0", 20),
+             ("https://sarigdata.pir.sa.gov.au/geoserver/ows", "https://sarigdata.pir.sa.gov.au/nvcl/NVCLDataServices/",None, None, False, "1.1.0", 20),
+             # NB: Western Australia's DMIRS only supports WFS v2.0.0
+             ("https://geossdi.dmp.wa.gov.au/services/ows",  "https://geossdi.dmp.wa.gov.au/NVCLDataServices/", None, None, False, "2.0.0", 20)
+]
 
-def do_demo(state):
-    print(f"\n\n*** {state} ***\n")
+
+def do_demo(wfs, nvcl, bbox, borehole_crs, local_filt, version, max):
+    print("\n\n***", wfs, "***\n")
 
     # Assemble parameters
-    #     First parameter is state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
-    #     Other parameters are optional:
-    #               bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved
-    #                     default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
-    #               polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
-    #               borehole_crs: CRS string, default "EPSG:4326"
-    #               wfs_version: WFS version string, default "1.1.0"
-    #               depths: Tuple of range of depths (min,max) [metres]
-    #               wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
-    #               nvcl_url: URL of NVCL service
-    #               max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
-    #                              default 0
-    param = param_builder(state, max_boreholes=20)
-    if not param:
-        print(f"Cannot build parameters: {param}")
-        return
+    param = SimpleNamespace()
+    # NB: If you set USE_LOCAL_FILTERING to true then WFS_VERSION must be 2.0.0
+    param.USE_LOCAL_FILTERING = local_filt
+    param.WFS_URL = wfs
+    param.WFS_VERSION = version
+    param.NVCL_URL = nvcl
+    if bbox is not None:
+        param.BBOX= bbox
+    if borehole_crs is not None:
+        param.BOREHOLE_CRS = borehole_crs
+
+    param.MAX_BOREHOLES = max
 
     # Initialise reader
     reader = NVCLReader(param)
+
+    # Check for failure
     if not reader.wfs:
-        print(f"ERROR! Cannot contact WFS service for {state}")
-        return
+        print("ERROR!", wfs, nvcl)
 
-    # Get WFS borehole feature list
-    bh_list = reader.get_feature_list()
+    # Get boreholes list
+    bh_list = reader.get_boreholes_list()
+    print("len(bh_list) = ", len(bh_list))
 
-    # Print first 5 WFS borehole features
+    # Print borehole details and relevant records from Australian Stratigraphic Units Database (https://asud.ga.gov.au/)
     for bh in bh_list[:5]:
         print("\nBOREHOLE:")
-        print(bh)
+        print(yaml.dump(bh))
         print("-"*80)
-        # If found, print borehole details and relevant records from Australian Stratigraphic Units Database
-        # (https://asud.ga.gov.au/)
-        a_rec = get_asud_record(bh.x, bh.y)
+        a_rec = get_asud_record(bh['x'], bh['y'])
         if a_rec is not None:
             print("\nAUSTRALIAN STRATIGRAPHIC UNITS DATABASE RECORD:")
             print(yaml.dump(a_rec))
@@ -73,31 +74,66 @@ def do_demo(state):
 
     # Get list of NVCL ids
     nvcl_id_list = reader.get_nvcl_id_list()
+    print("len(nvcl_id_list) = ", len(nvcl_id_list))
+    print("nvcl_id_list[:5] = ", nvcl_id_list[:5])
 
     # Exit if no nvcl ids found
     if not nvcl_id_list:
-        print(f"ERROR! No NVCL ids for {state}")
+        print("!!!! No NVCL ids for", nvcl)
         return
 
-    # The names of NVCL scalar classes have 3 parts; first part is class grouping type, 
-    # second is the TSA mineral matching technique, third part is wavelength:
-    #  1. Min1,2,3 = 1st, 2nd, 3rd most common mineral type
-    #     OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
-    #  2. uTSA - user, dTSA - domaining, sTSA = system
-    #  3. V = visible light, S = shortwave IR, T = thermal IR
+    # Some nvcl ids do not have any data - find the first which has data
+    imagelog_data_list = []
+    nvcl_id = ""
+    for n_id in nvcl_id_list:
+        imagelog_data_list = reader.get_imagelog_data(n_id)
+        if imagelog_data_list:
+            nvcl_id = n_id
+            break
+
+    # Exit if couldn't find valid data
+    if not imagelog_data_list:
+        print("!!!! No NVCL data for", nvcl)
+        return
+
+    for ild in imagelog_data_list[:10]:
+        print(ild.log_id,
+              ild.log_name,
+              ild.log_type,
+              ild.algorithmout_id)
+
+    # Analysis class has 2 parts:
+    # 1. Min1,2,3 = 1st, 2nd, 3rd most common mineral
+    #    OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
+    # 2. uTSAV = visible light, uTSAS = shortwave IR, uTSAT = thermal IR
     #
     # These combine to give us a class name such as 'Grp1 uTSAS'
     #
-    # Here we extract data for 'Grp1 uTSAS' using 'Scalar' class
-    #
-    # GEN_SCALAR_BY_DEPTH
-    for nvcl_id, log_id, sca_list in gen_scalar_by_depth(reader, scalar_class=Scalar.Grp1_uTSAS, log_type='1', top_n=4):
-        for depth in sca_list:
-            for meas in sca_list[depth]:
-                print(f"{nvcl_id} {log_id} @ {depth} metres: class={meas.className}, abundance={meas.classCount}, mineral={meas.classText}, colour={meas.colour}")
-            print()
+    # Here we extract data for log type '1' and 'Grp1 uTSAS'
+    HEIGHT_RESOLUTION = 20.0
+    ANALYSIS_CLASS = 'Grp1 uTSAS'
+    LOG_TYPE = '1'
+    for ild in imagelog_data_list[:10]:
+        if ild.log_type == LOG_TYPE and ild.log_name == ANALYSIS_CLASS:
+            print('get_borehole_data()')
+            # Get top 5 minerals at each depth
+            bh_data = reader.get_borehole_data(ild.log_id, HEIGHT_RESOLUTION, ANALYSIS_CLASS, top_n=5)
+            for depth in bh_data:
+                for meas in bh_data[depth]:
+                    print("At {} metres: class={}, abundance={}, mineral={}, colour={}".format(depth, meas.className,
+                      meas.classCount, meas.classText, meas.colour))
+                print()
 
-    # GET_DATASET_LIST
+    print('get_profilometer_data()')
+    profilometer_data_list = reader.get_profilometer_data(nvcl_id)
+    for pdl in profilometer_data_list[:10]:
+        print(pdl.log_id,
+              pdl.log_name,
+              pdl.max_val,
+              pdl.min_val,
+              pdl.floats_per_sample,
+              pdl.sample_count)
+
     print('get_dataset_list()')
     dataset_list = reader.get_dataset_list(nvcl_id)
     for dataset in dataset_list[:10]:
@@ -108,15 +144,14 @@ def do_demo(state):
               dataset.section_id,
               dataset.domain_id)
 
-    # GET_DATASETID_LIST
     print('get_datasetid_list()')
     datasetid_list = reader.get_datasetid_list(nvcl_id)
     for dataset_id in datasetid_list[:5]:
-        print(f"dataset_id: {dataset_id}")
+        print('dataset_id:', dataset_id)
 
         # GET_MOSAIC_IMGLOGS, GET_MOSAIC_IMAGE
         img_log_list = reader.get_mosaic_imglogs(dataset_id)
-        print(f"get_mosaic_imglogs() {img_log_list}")
+        print('get_mosaic_imglogs() ', img_log_list)
         for img_log in img_log_list[:10]:
             print(img_log.log_id,
                   img_log.log_name,
@@ -204,18 +239,7 @@ def do_demo(state):
                                                      interval=100)
             print('get_sampled_scalar_data()', sampled_data[:400])
 
-    # GET_PROFILOMETER_DATA
-    print('get_profilometer_data()')
-    profilometer_data_list = reader.get_profilometer_data(nvcl_id)
-    for pdl in profilometer_data_list[:10]:
-        print(pdl.log_id,
-              pdl.log_name,
-              pdl.max_val,
-              pdl.min_val,
-              pdl.floats_per_sample,
-              pdl.sample_count)
-
-    # GET_SPECTRALLOG_DATA
+    # GET_SPECTRAL_DATA
     print('get_spectrallog_data()')
     spectrallog_data_list = reader.get_spectrallog_data(nvcl_id)
     for sld in spectrallog_data_list[:2]:
@@ -227,11 +251,11 @@ def do_demo(state):
               sld.script_raw,
               sld.wavelengths)
 
-    # GET_SPECTRALLOG_DATASETS
+    # GET_SPECTRAL_DATASETS
     log_id_list = [sld.log_id for sld in spectrallog_data_list][:10]
     for sl_log in log_id_list:
              sl_bin = reader.get_spectrallog_datasets(sl_log, start_sample_no="0", end_sample_no="2")
-             print('get_spectrallog_datasets()', repr(sl_bin)[:50])
+             print('get_spectral_datasets()', repr(sl_bin)[:50])
 
 
 
@@ -241,6 +265,6 @@ def do_demo(state):
 if __name__ == "__main__":
 
     # Loop over all the providers
-    for state in state_list:
-        do_demo(state)
+    for prov_info in prov_list:
+        do_demo(*prov_info)
 
