@@ -1,3 +1,7 @@
+"""
+This module contains functions used to build a set of NVCL service connection parameters
+"""
+
 import sys
 import logging
 from types import SimpleNamespace

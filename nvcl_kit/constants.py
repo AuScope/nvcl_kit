@@ -1,3 +1,6 @@
+"""
+This module contains a class of scalar constants
+"""
 from enum import Enum
 
 

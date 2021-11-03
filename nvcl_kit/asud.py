@@ -1,4 +1,12 @@
-#!/usr/bin/env python3
+"""
+Retrieves stratigraphy data from the "Australian Stratigraphic Units Database"
+
+Ref:
+"Geoscience Australia and Australian Stratigraphy Commission. (2017). Australian Stratigraphic Units Database."
+
+https://www.ga.gov.au/data-pubs/datastandards/stratigraphic-units
+"""
+
 import sys
 import geojson
 import logging
@@ -9,14 +17,6 @@ from owslib.wms import WebMapService
 from owslib.util import ServiceException
 from http.client import HTTPException
 
-"""
-Retrieves stratigraphy data from the "Australian Stratigraphic Units Database"
-
-Ref:
-"Geoscience Australia and Australian Stratigraphy Commission. (2017). Australian Stratigraphic Units Database."
-
-https://www.ga.gov.au/data-pubs/datastandards/stratigraphic-units
-"""
 
 GA_SURF_GEO_WMS = "http://services.ga.gov.au/gis/services/GA_Surface_Geology/MapServer/WmsServer"
 """ Geoscience Australia Surface Geology WMS Service
@@ -63,6 +63,7 @@ def _get_asud_strat_no(lon, lat):
 
     :param lon: longitude, float
     :param lat: latitude, float
+
     :returns: stratigraphy number (string) from ASUD as a string or None upon error or not found
     '''
     # Convert lat/lon EPSG:4326 to EPSG:3857
@@ -123,6 +124,7 @@ def get_asud_record(lon, lat):
 
     :param lon: longitude (float or string)
     :param lat: latitude (float or string)
+
     :returns: stratigraphy record as a dict or None upon error or not found
     '''
     # Check input parameters
@@ -161,5 +163,5 @@ def get_asud_record(lon, lat):
     return None
 
 
-if __name__ == "__main__":
-    print(get_asud_record(140.625, -31.353637))
+#if __name__ == "__main__":
+#    print(get_asud_record(140.625, -31.353637))

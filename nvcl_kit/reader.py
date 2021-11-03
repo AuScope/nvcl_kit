@@ -462,6 +462,7 @@ class NVCLReader:
                  width: number of column the images are to be displayed, default value=3 (set width to 1 for full size images)
                  startsampleno: the first sample image to be displayed, default value=0
                  endsampleno: the last sample image to be displayed, default value=99999
+
         :returns: NVCL core tray images
         '''
         return self.svc.get_mosaic(log_id, **options)
@@ -474,7 +475,8 @@ class NVCLReader:
         :param width: specify the number of column the images are to be displayed, default value=3
         :param startsampleno: the first sample image to be displayed, default value=0
         :param endsampleno: the last sample image to be displayed, default value=99999
-        :return: thumbnail image in HTML format
+
+        :returns: thumbnail image in HTML format
         '''
         return self.svc.get_mosaic_tray_thumbnail(dataset_id, log_id, **options)
 
@@ -483,7 +485,8 @@ class NVCLReader:
 
         :param log_id: obtained through calling 'get_tray_thumb_imglogs()'
         :param sample_no: sample number, string e.g. '0','1','2'...  optional, default is '0'
-        :return: thumbnail image in PNG format
+
+        :returns: thumbnail image in PNG format
         '''
         return self.svc.get_display_tray_thumb(log_id, sample_no)
 
@@ -491,7 +494,8 @@ class NVCLReader:
         ''' Gets tray depths
 
         :param log_id: obtained through calling 'get_tray_thumb_imglogs()' or 'get_tray_imglogs()'
-        :return: a list of SimpleNamespace objects, with attributes: 'sample_no', 'start_value' and 'end_value'
+
+        :returns: a list of SimpleNamespace objects, with attributes: 'sample_no', 'start_value' and 'end_value'
         '''
         response_str = self.svc.get_image_tray_depth(log_id)
         if not response_str:
@@ -514,6 +518,7 @@ class NVCLReader:
         ''' Retrieves a list of log objects for scalar plot service
 
         :param dataset_id: dataset_id, taken from 'get_datasetid_list()' or 'get_dataset_list()'
+
         :returns: a list of SimpleNamespace() objects, attributes are: log_id, log_name, is_public, log_type, algorithm_id. On error returns empty list
         '''
         response_str = self.svc.get_log_collection(dataset_id)
@@ -543,7 +548,8 @@ class NVCLReader:
         ''' Downloads scalar data in CSV format
 
         :param log_id_list: a list of log ids obtained through calling 'get_scalar_logs()'
-        :return: scalar data in CSV format
+
+        :returns: scalar data in CSV format
         '''
         return self.svc.download_scalar(log_id_list)
 
@@ -577,7 +583,8 @@ class NVCLReader:
              1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1
         :param legend: (optional) value=1 or 0, 1 - indicates to show the legend,
              0 to hide it, optional, default to 1
-        :return: a 2d plot as a PNG image
+
+        :returns: a 2d plot as a PNG image
         '''
         return self.svc.get_plot_scalar(log_id, **options)
 
@@ -600,7 +607,8 @@ class NVCLReader:
              1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1
         :param legend: (optional) value=yes or no, if yes - indicate to show the
              legend, default to yes
-        :return: one or more 2d plots as HTML
+
+        :returns: one or more 2d plots as HTML
         '''
         # NB: Service only plots the first 6 log ids
         return self.svc.get_plot_multi_scalar(log_id_list[:6], **options)
@@ -608,7 +616,7 @@ class NVCLReader:
     def get_algorithms(self):
         ''' Gets a dict of algorithm output ids and their versions
 
-        :return: a dict of { 'algorithmOutputId1': 'version1', 'algorithmOutputId2': 'version2', ... }
+        :returns: a dict of { 'algorithmOutputId1': 'version1', 'algorithmOutputId2': 'version2', ... }
         '''
         alg_str = self.svc.get_algorithms()
         try:
@@ -629,6 +637,7 @@ class NVCLReader:
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
+
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_type, log_name
         '''
@@ -653,6 +662,7 @@ class NVCLReader:
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
+
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, wavelength_units, sample_count, script,
                   wavelengths
@@ -694,6 +704,7 @@ class NVCLReader:
         :param log_id: obtained through calling 'get_spectrallog_data()'
         :param start_sample_no: retrieve sample numbers starting from this string e.g. '0'
         :param end_sample_no: retrieve sample numbers ending with this string e.g. '2'
+
         :returns: a binary text string
         '''
         in_opts = {}
@@ -708,6 +719,7 @@ class NVCLReader:
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
+
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, sample_count, floats_per_sample,
                   min_val, max_val
@@ -774,7 +786,7 @@ class NVCLReader:
         Returns a list of NVCL ids, can be used as input to other 'nvcl_kit' API
         calls e.g. get_spectrallog_data()
 
-        :return: a list of NVCL id strings
+        :returns: a list of NVCL id strings
         '''
         return [bh['nvcl_id'] for bh in self.borehole_list]
 
@@ -783,7 +795,8 @@ class NVCLReader:
         Fetches WFS response from owslib and make sure it returns a byte string
 
         :param getfeat_params: dict of parameters for WFS GetFeature request
-        :return: byte string response
+
+        :returns: byte string response
         '''
         
         LOGGER.debug("_clean_wfs_resp(params=%s)", str(getfeat_params))
@@ -860,7 +873,8 @@ class NVCLReader:
 
         :param kwargs: keyword arguments key is name searched for, val is a list of possible values or a single value
         :param nvcl_ids_only: if True will return a list of nvcl_id
-        :return: a list of borehole features or empty list if unsuccessful
+
+        :returns: a list of borehole features or empty list if unsuccessful
         '''
         for key, val in kwargs.items():
             val_list = val
@@ -881,7 +895,7 @@ class NVCLReader:
             [ { 'nvcl_id': XXX, 'x': XXX, 'y': XXX, 'href': XXX, ... }, { ... } ]
             See description of 'get_boreholes_list()' for more info
 
-        :return: True if operation succeeded
+        :returns: True if operation succeeded
         '''
         LOGGER.debug("_fetch_boreholes_list()")
         bhv_list = self._wfs_getfeature()
