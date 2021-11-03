@@ -11,6 +11,7 @@ Welcome to nvcl_kit's documentation!
    :caption: Contents:
 
    introduction
+   source/modules
 
 
 Indices and tables

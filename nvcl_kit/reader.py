@@ -459,8 +459,7 @@ class NVCLReader:
 
         :param log_id: obtained through calling 'get_mosaic_imglogs()' or 'get_tray_thumb_imglogs()' or 'get_tray_image_imglogs()' or 'get_imagery_imglogs()'
         :param options: optional parameters:
-                 width: number of column the images are to be displayed, default value=3
-                        set width to 1 for full size images
+                 width: number of column the images are to be displayed, default value=3 (set width to 1 for full size images)
                  startsampleno: the first sample image to be displayed, default value=0
                  endsampleno: the last sample image to be displayed, default value=99999
         :returns: NVCL core tray images

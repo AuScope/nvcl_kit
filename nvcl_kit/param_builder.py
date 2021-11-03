@@ -3,8 +3,7 @@ import logging
 from types import SimpleNamespace
 
 LOG_LVL = logging.INFO
-''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
-'''
+''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG' '''
 
 # Set up debugging
 LOGGER = logging.getLogger(__name__)
@@ -27,18 +26,20 @@ if not LOGGER.hasHandlers():
 
 def param_builder(provider, **options):
     """
+    Builds a set of parameters which can be passed to 'NVCLReader' for connecting to an NVCL service
+
     :param provider: state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
     :param options: optional keyword parameters
-                   bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved
-                         default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
+                   bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
                    polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
                    borehole_crs: CRS string, default "EPSG:4326"
                    wfs_version: WFS version string, default "1.1.0"
                    depths: Tuple of range of depths (min,max) [metres]
                    wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
                    nvcl_url: URL of NVCL service
-                   max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
-                                  default 0
+                   max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded, default 0
+
+    :returns: a SimpleNamespace object containing required connection parameters
     """
     OPTION_LIST = ['bbox', 'polygon', 'borehole_crs', 'wfs_version', 'depths', 'wfs_url', 'nvcl_url',
                    'max_boreholes', 'use_local_filtering']
