@@ -49,7 +49,7 @@ build:
 pages:
   stage: Documentation
   script:
-    - pip3 install sphinx sphinx-rtd-theme owslib shapely
+    - pip3 install sphinx sphinx-rtd-theme owslib shapely geojson
     - cd doc ; make html
     - mv _build/html/ ../public/
   artifacts:
