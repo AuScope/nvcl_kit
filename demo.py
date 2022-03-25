@@ -26,7 +26,7 @@ from nvcl_kit.generators import gen_scalar_by_depth
 #
 #
 
-state_list = ['tas', 'vic', 'nsw', 'qld', 'nt', 'sa', 'wa']
+state_list = ['nt', 'tas', 'vic', 'nsw', 'qld', 'sa', 'wa']
 
 def do_demo(state):
     print(f"\n\n*** {state} ***\n")
@@ -104,6 +104,7 @@ def do_demo(state):
 
     # GET_DATASET_LIST
     print('get_dataset_list()')
+    nvcl_id = nvcl_id_list[0]
     dataset_list = reader.get_dataset_list(nvcl_id)
     for dataset in dataset_list[:10]:
         print(dataset.dataset_id,
