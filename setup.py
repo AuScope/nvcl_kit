@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup_info = dict(
     name="nvcl_kit",
-    version="0.2.00",
+    version="0.2.01",
     description="Downloads Australian NVCL datasets",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -27,9 +27,9 @@ setup_info = dict(
         "Intended Audience :: Developers",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
