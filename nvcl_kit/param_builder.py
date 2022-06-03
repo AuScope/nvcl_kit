@@ -91,7 +91,7 @@ def param_builder(provider, **options):
     elif provider.lower() in ['nt', 'northern territory']:
         param_obj.WFS_URL = "https://geology.data.nt.gov.au/geoserver/ows"
         param_obj.NVCL_URL = "https://geology.data.nt.gov.au/NVCLDataServices/"
-        param_obj.USE_LOCAL_FILTERING = False
+        param_obj.USE_LOCAL_FILTERING = True
         param_obj.WFS_VERSION = "2.0.0"
 
     # South Australia
