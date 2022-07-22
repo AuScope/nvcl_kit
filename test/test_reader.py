@@ -58,12 +58,13 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('empty_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.readline()
-            with self.assertLogs('nvcl_kit.reader', level='DEBUG') as nvcl_log:
+            with self.assertLogs('nvcl_kit.wfs', level='DEBUG') as nvcl_log:
                 param_obj = SimpleNamespace()
                 param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
                 param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
                 rdr = NVCLReader(param_obj, log_lvl=logging.DEBUG)
-                self.assertIn("_fetch_boreholes_list()", nvcl_log.output[0])
+                self.assertTrue(len(nvcl_log.output)>0, "Missing 'fetch_wfs_bh_list()' in output")
+                self.assertIn("fetch_wfs_bh_list()", nvcl_log.output[0])
 
 
     def try_input_param(self, param_obj, msg):
@@ -73,6 +74,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
         with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
             rdr = NVCLReader(param_obj)
+            self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
             self.assertIn(msg, nvcl_log.output[0])
             self.assertEqual(rdr.wfs, None)
 
@@ -250,6 +252,7 @@ class TestNVCLReader(unittest.TestCase):
         with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
             param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
+            self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
             self.assertIn(msg, nvcl_log.output[0])
             self.assertEqual(rdr.wfs, None)
 
@@ -275,10 +278,11 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj = mock_wfs.return_value
         wfs_obj.getfeature.return_value = Mock()
         wfs_obj.getfeature.return_value.read.side_effect = excep
-        with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
+        with self.assertLogs('nvcl_kit.wfs', level='WARN') as nvcl_log:
             param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
+            self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
             self.assertIn(msg, nvcl_log.output[0])
             self.assertEqual(rdr.wfs, None)
 
@@ -427,8 +431,9 @@ class TestNVCLReader(unittest.TestCase):
         with open('badcoord_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
             param_obj = self.setup_param_obj()
-            with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
+            with self.assertLogs('nvcl_kit.wfs', level='WARN') as nvcl_log:
                 rdr = NVCLReader(param_obj)
+                self.assertTrue(len(nvcl_log.output)>0, "Missing 'Cannot parse collar coordinates'")
                 self.assertIn('Cannot parse collar coordinates', nvcl_log.output[0])
 
 
@@ -497,6 +502,7 @@ class TestNVCLReader(unittest.TestCase):
             open_obj.__enter__.return_value.read.return_value = '' 
             with self.assertLogs('nvcl_kit.svc_interface', level='WARN') as nvcl_log:
                 imagelog_data_list = fn(**params)
+                self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
                 self.assertIn(msg, nvcl_log.output[0])
     
 
