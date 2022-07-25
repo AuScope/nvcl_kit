@@ -8,7 +8,7 @@ from owslib.util import ServiceException
 from http.client import HTTPException
 import xml.etree.ElementTree as ET
 
-from nvcl_kit.xml import clean_xml_parse
+from nvcl_kit.xml_helpers import clean_xml_parse
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'

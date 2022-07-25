@@ -10,6 +10,7 @@ https://www.ga.gov.au/data-pubs/datastandards/stratigraphic-units
 import sys
 import geojson
 import logging
+import requests
 from requests import post, RequestException
 import json
 from pyproj import Transformer
@@ -74,7 +75,7 @@ def _get_asud_strat_no(lon, lat):
     try:
         wms = WebMapService(url=GA_SURF_GEO_WMS, version='1.3.0')
     except Exception as exc:
-        LOGGER.warning("Cannot connect to WMS service: %s", str(exc))
+        LOGGER.warning(f"Cannot connect to WMS service: {exc}")
         return None
 
     resp = None
@@ -92,10 +93,10 @@ def _get_asud_strat_no(lon, lat):
                               size=(1254, 318),
                               format='image/jpeg',
                               query_layers=[WMS_LAYER_NAME],
-                              info_format=info_format,
+                              info_format='application/geo+json', # Fix for ESRI bug BUG-000144235
                               xy=(789, 128))
             except (RequestException, HTTPException, ServiceException, OSError) as exc:
-                LOGGER.warning("WMS getfeatureinfo exception: %s", str(exc))
+                LOGGER.warning(f"WMS getfeatureinfo exception: {exc}")
                 return None
             break
     # If valid request, parse the geojson response
@@ -103,7 +104,7 @@ def _get_asud_strat_no(lon, lat):
         try:
             featureColl = geojson.loads(resp.read())
         except json.decoder.JSONDecodeError as exc:
-            LOGGER.warning("Error decoding geojson: %s", str(exc))
+            LOGGER.warning(f"Error decoding geojson: {exc}")
             return None
 
         # Fetch the stratigraphy number
@@ -120,7 +121,7 @@ def _get_asud_strat_no(lon, lat):
 
 
 def get_asud_record(lon, lat):
-    ''' Retrieves a stratigraphy record from the 'Australian Strategraphic Units Database'
+    ''' Retrieves a stratigraphy record from the 'Australian Stratigraphic Units Database'
 
     :param lon: longitude (float or string)
     :param lat: latitude (float or string)
@@ -149,16 +150,19 @@ def get_asud_record(lon, lat):
     strat_no = _get_asud_strat_no(lon_flt, lat_flt)
     if strat_no is not None:
         try:
-            resp = post(GSUD_API, data=json.dumps({"actionName": "searchStratigraphicUnitsDetails", "stratNo": strat_no}))
+            pstr=json.dumps({"actionName": "searchStratigraphicUnitsDetails", "stratNo": strat_no})
+            LOGGER.debug(GSUD_API + " " + pstr)
+            resp = post(GSUD_API, data=pstr)
         except RequestException as exc:
-            LOGGER.error("Error querying Stratigraphic Units DB: %s", str(exc))
+            LOGGER.error(f"Error querying Stratigraphic Units DB: {exc}")
             jresp = {"response": None}
         else:
             try:
                 jresp = json.loads(resp.text)
             except json.decoder.JSONDecodeError as exc:
-                LOGGER.warning("Error decoding ASUD json response: %s", str(exc))
+                LOGGER.warning(f"Error decoding ASUD json response: {exc}")
                 jresp = {"response": None}
+        LOGGER.debug(f"jresp = {jresp}")
         return jresp.get("response")
     return None
 

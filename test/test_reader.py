@@ -58,7 +58,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('empty_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.readline()
-            with self.assertLogs('nvcl_kit.wfs', level='DEBUG') as nvcl_log:
+            with self.assertLogs('nvcl_kit.wfs_helpers', level='DEBUG') as nvcl_log:
                 param_obj = SimpleNamespace()
                 param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
                 param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
@@ -278,7 +278,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj = mock_wfs.return_value
         wfs_obj.getfeature.return_value = Mock()
         wfs_obj.getfeature.return_value.read.side_effect = excep
-        with self.assertLogs('nvcl_kit.wfs', level='WARN') as nvcl_log:
+        with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
             param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
@@ -431,7 +431,7 @@ class TestNVCLReader(unittest.TestCase):
         with open('badcoord_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
             param_obj = self.setup_param_obj()
-            with self.assertLogs('nvcl_kit.wfs', level='WARN') as nvcl_log:
+            with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
                 rdr = NVCLReader(param_obj)
                 self.assertTrue(len(nvcl_log.output)>0, "Missing 'Cannot parse collar coordinates'")
                 self.assertIn('Cannot parse collar coordinates', nvcl_log.output[0])

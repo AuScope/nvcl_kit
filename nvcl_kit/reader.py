@@ -22,8 +22,8 @@ from shapely.geometry.polygon import LinearRing
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
-from nvcl_kit.wfs import fetch_wfs_bh_list
-from nvcl_kit.xml import clean_xml_parse
+from nvcl_kit.wfs_helpers import fetch_wfs_bh_list
+from nvcl_kit.xml_helpers import clean_xml_parse
 
 ENFORCE_IS_PUBLIC = True
 ''' Enforce the 'is_public' flag , i.e. any data with 'is_public' set to 'false'
