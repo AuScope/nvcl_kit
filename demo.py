@@ -4,7 +4,6 @@ from types import SimpleNamespace
 import yaml
 
 from nvcl_kit.reader import NVCLReader
-from nvcl_kit.asud import get_asud_record
 from nvcl_kit.param_builder import param_builder
 from nvcl_kit.constants import Scalar
 from nvcl_kit.generators import gen_scalar_by_depth
@@ -26,7 +25,7 @@ from nvcl_kit.generators import gen_scalar_by_depth
 #
 #
 
-state_list = ['nt', 'tas', 'vic', 'nsw', 'qld', 'sa', 'wa']
+state_list = ['nsw', 'tas', 'vic', 'qld', 'sa', 'wa', 'nt']
 
 def do_demo(state):
     print(f"\n\n*** {state} ***\n")
@@ -67,14 +66,6 @@ def do_demo(state):
     for bh in bh_list[:5]:
         print("\nBOREHOLE:")
         print(bh)
-        print("-"*80)
-        # If found, print borehole details and relevant records from Australian Stratigraphic Units Database
-        # (https://asud.ga.gov.au/)
-        a_rec = get_asud_record(bh.x, bh.y)
-        if a_rec is not None:
-            print("\nAUSTRALIAN STRATIGRAPHIC UNITS DATABASE RECORD:")
-            print(yaml.dump(a_rec))
-            print("="*80)
 
     # Get list of NVCL ids
     nvcl_id_list = reader.get_nvcl_id_list()

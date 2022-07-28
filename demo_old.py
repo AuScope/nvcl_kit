@@ -2,7 +2,6 @@
 import sys
 from types import SimpleNamespace
 from nvcl_kit.reader import NVCLReader
-from nvcl_kit.asud import get_asud_record
 import yaml
 
 #
@@ -60,17 +59,6 @@ def do_demo(wfs, nvcl, bbox, borehole_crs, local_filt, version, max):
     # Get boreholes list
     bh_list = reader.get_boreholes_list()
     print("len(bh_list) = ", len(bh_list))
-
-    # Print borehole details and relevant records from Australian Stratigraphic Units Database (https://asud.ga.gov.au/)
-    for bh in bh_list[:5]:
-        print("\nBOREHOLE:")
-        print(yaml.dump(bh))
-        print("-"*80)
-        a_rec = get_asud_record(bh['x'], bh['y'])
-        if a_rec is not None:
-            print("\nAUSTRALIAN STRATIGRAPHIC UNITS DATABASE RECORD:")
-            print(yaml.dump(a_rec))
-            print("="*80)
 
     # Get list of NVCL ids
     nvcl_id_list = reader.get_nvcl_id_list()
