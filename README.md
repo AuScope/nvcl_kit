@@ -1,9 +1,5 @@
 # nvcl_kit: Access AuScope National Virtual Core Library (NVCL) data services
 
-### [AuScope NVCL](https://www.auscope.org.au/nvcl)  - Australia’s mineralogy database
-
-
-
 [![pipeline status](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/badges/master/pipeline.svg)](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/commits/master)
 [![coverage report](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/badges/master/coverage.svg)](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/commits/master)
 
@@ -15,6 +11,13 @@
 The mineralogy data is maintained by Australia's State and Territory geological surveys and can be accessed via publicly available web services. **nvcl_kit** combines these services with OCG WFS borehole data to provide a complete picture of each borehole. It is designed to shield the user from the arcane details of how to establish connections, retrieve and combine datasets.
 
 **nvcl_kit** has two layers of API. The first layer is designed to make it quick and easy to access the borehole mineralogy. The second layer is for more expert users providing access to the full range of available data products. 
+
+#### More Information
+
+[AuScope NVCL - Australia’s mineralogy database](https://www.auscope.org.au/nvcl)  
+
+[Hylogger-3](https://research.csiro.au/drill-core-lab/hylogger-3/)
+
 
 ## How to use it
 
