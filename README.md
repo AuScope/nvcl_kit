@@ -5,6 +5,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/csiro-geoanalytics%2Fpython-shared%2Fnvcl_kit/HEAD)
 
 
+
 ## Introduction
 
 **nvcl_kit** is a Python package that provides access to Australia's NVCL (National Virtual Core Library). This is a national database of drill cores that have been analysed by the CSIRO-developed HyLogger hyperspectral core-scanning system. The Hylogger system uses visible and near-infrared, shortwave and thermal infrared reflectance spectroscopy and automatic mineralogical analysis to extract mineralogy data from each drill core.
@@ -23,9 +24,10 @@ The mineralogy data is maintained by Australia's State and Territory geological 
 ## How to use it
 
 1. A brief API tutorial is [here](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/-/blob/master/introduction.rst)
-2. There is a rough demonstration script [here](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/-/blob/master/demo.py)
-3. API documentation can be found [here](https://csiro-geoanalytics.gitlab.io/python-shared/nvcl_kit)
-4. Example Jupyter Notebooks are [here](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/-/tree/master/notebooks)
+2. Example Jupyter Notebooks are available to try, open this [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/csiro-geoanalytics%2Fpython-shared%2Fnvcl_kit/HEAD) and go to "notebooks" folder
+3. There is a rough demonstration script [here](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/-/blob/master/demo.py)
+4. API documentation can be found [here](https://csiro-geoanalytics.gitlab.io/python-shared/nvcl_kit)
+
 
 ## License
 
