@@ -37,8 +37,8 @@ test:
     - flake8 ./nvcl_kit --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
     - tox
     # Gitlab's python coverage
-    - pip install pytest pytest-cov
-    - coverage run -m pytest
+    #- pip install pytest pytest-cov
+    #- coverage run -m pytest
     - coverage report
     - coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
