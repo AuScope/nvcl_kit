@@ -5,4 +5,4 @@
 set -e
 
 # Install notebook dependencies
-pip install matplotlib
+pip install matplotlib xmltodict pandas
