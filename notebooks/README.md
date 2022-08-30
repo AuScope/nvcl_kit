@@ -1,17 +1,21 @@
 ## Python notebooks demonstrating NVCL_KIT
 
-**NB:** These notebooks assume user has already installed:
+If you run these notebooks via binder as mentioned in the [README](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/-/blob/master/README.md), installation of prerequisite Python packages will not be necessary
+
+But if you run these notebooks on another platform you'll need to install:
 
 - nvcl_kit
 - matplotlib
 - xmltodict
 - pandas
 
+
+
 ### Installation tips
 
-1. Some free online notebooks do not permit installation of additional packages. These platforms cannot be used for running NVCL_KIT notebooks
+1. Many free online notebooks do not permit installation of additional packages. These platforms cannot be used for running NVCL_KIT notebooks
 
-2. If your notebook allows it, you can install packages from a cell:
+2. If your notebook platform allows it, you can install packages by running this in a cell:
 
 ```
 import sys
