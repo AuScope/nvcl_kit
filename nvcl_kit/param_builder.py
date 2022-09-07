@@ -32,7 +32,7 @@ def param_builder(provider, **options):
     """
     Builds a set of parameters which can be passed to 'NVCLReader' for connecting to an NVCL service
 
-    :param provider: state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
+    :param provider: state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa', 'csiro'
     :param options: optional keyword parameters
                    bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
                    polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
@@ -105,6 +105,13 @@ def param_builder(provider, **options):
     elif provider.lower() in ['wa', 'western australia']:
         param_obj.WFS_URL = "https://geossdi.dmp.wa.gov.au/services/ows"
         param_obj.NVCL_URL = "https://geossdi.dmp.wa.gov.au/NVCLDataServices/"
+        param_obj.USE_LOCAL_FILTERING = False
+        param_obj.WFS_VERSION = "2.0.0"
+
+    # CSIRO
+    elif provider.lower() == 'csiro':
+        param_obj.WFS_URL = "https://nvclwebservices.csiro.au/geoserver/ows"
+        param_obj.NVCL_URL = "https://nvclwebservices.csiro.au/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "2.0.0"
 

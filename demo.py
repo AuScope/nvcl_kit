@@ -25,7 +25,7 @@ from nvcl_kit.generators import gen_scalar_by_depth
 #
 #
 
-state_list = ['nsw', 'tas', 'vic', 'qld', 'sa', 'wa', 'nt']
+state_list = ['csiro', 'nsw', 'tas', 'vic', 'qld', 'sa', 'wa', 'nt']
 
 def do_demo(state):
     print(f"\n\n*** {state} ***\n")
