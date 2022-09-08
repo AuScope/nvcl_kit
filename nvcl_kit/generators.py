@@ -2,7 +2,6 @@
 A collection of generator functions to make it easy to create scalar datasets, core images and plots
 '''
 
-from types import SimpleNamespace
 from nvcl_kit.constants import Scalar
 
 def gen_scalar_by_depth(reader, *, nvcl_id_list=None, resolution=20.0, scalar_class=Scalar.ANY, log_type=None, top_n=5):
