@@ -20,6 +20,8 @@ from http.client import HTTPException
 
 from shapely.geometry.polygon import LinearRing
 
+from dateutil.parser import parse, ParserError
+
 from nvcl_kit.svc_interface import _ServiceInterface
 
 from nvcl_kit.wfs_helpers import fetch_wfs_bh_list
@@ -327,7 +329,7 @@ class NVCLReader:
         ''' Retrieves a list of dataset objects
 
         :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
-        :returns: a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id
+        :returns: a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id, modified_date (datetime object)
         '''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
@@ -346,10 +348,19 @@ class NVCLReader:
             for label, key in [('borehole_uri', './boreholeURI'),
                                ('tray_id', './trayID'),
                                ('section_id', './sectionID'),
-                               ('domain_id', './domainID')]:
+                               ('domain_id', './domainID'),
+                               ('modified_date', './modifiedDate')]:
                 val = child.findtext(key, default=None)
                 if val:
-                    setattr(dataset_obj, label, val)
+                    if label != 'modified_date':
+                        setattr(dataset_obj, label, val)
+                    else:
+                        # Try to parse the modified date
+                        try:
+                            date_obj = parse(val)
+                            setattr(dataset_obj, label, date_obj)
+                        except ParserError:
+                            pass
             dataset_list.append(dataset_obj)
         return dataset_list
 
@@ -716,7 +727,8 @@ class NVCLReader:
                 max_val = float(child.findtext('./maxVal', default=0.0))
             except ValueError:
                 max_val = 0.0
-            logid_list.append(SimpleNamespace(log_id=log_id, log_name=log_name, sample_count=sample_count, floats_per_sample=floats_per_sample, min_val=min_val, max_val=max_val))
+            logid_list.append(SimpleNamespace(log_id=log_id, log_name=log_name, sample_count=sample_count,
+                              floats_per_sample=floats_per_sample, min_val=min_val, max_val=max_val))
         return logid_list
 
     def get_boreholes_list(self):

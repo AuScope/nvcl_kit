@@ -6,6 +6,8 @@ from requests.exceptions import Timeout, RequestException
 from owslib.util import ServiceException
 from http.client import HTTPException
 import logging
+import datetime
+from dateutil.tz import tzoffset
 
 from types import SimpleNamespace
 
@@ -592,6 +594,32 @@ class TestNVCLReader(unittest.TestCase):
                 open_obj.__enter__.return_value.read.return_value = fp.read()
                 dataset_list = rdr.get_dataset_list("blah")
                 self.assertEqual(len(dataset_list), 0)
+
+
+    def test_dataset_list_time(self):
+        ''' Test get_dataset_list() with modified time in response
+        '''
+        rdr = setup_reader()
+        with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
+            open_obj = mock_request.return_value
+            with open('dataset_coll_time.txt') as fp:
+                open_obj.__enter__.return_value.read.return_value = fp.read()
+                dataset_list = rdr.get_dataset_list("blah")
+                self.assertEqual(len(dataset_list), 1)
+                self.assertEqual(dataset_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+
+
+    def test_dataset_list_time_bad(self):
+        ''' Test get_dataset_list() with bad modified time in response
+        '''
+        rdr = setup_reader()
+        with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
+            open_obj = mock_request.return_value
+            with open('dataset_coll_time_bad.txt') as fp:
+                open_obj.__enter__.return_value.read.return_value = fp.read()
+                dataset_list = rdr.get_dataset_list("blah")
+                self.assertEqual(len(dataset_list), 1)
+                self.assertFalse(hasattr(dataset_list[0], 'modified_date'))
 
 
     def test_dataset_list_exception(self):
