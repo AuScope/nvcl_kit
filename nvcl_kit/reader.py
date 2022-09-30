@@ -618,23 +618,33 @@ class NVCLReader:
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
 
         :returns: a list of SimpleNamespace() objects with attributes:
-                  log_id, log_type, log_name
+                  log_id, log_name, sample_count, modified_date (optional)
         '''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
             return []
         root = clean_xml_parse(response_str)
-        logid_list = []
-        for child in root.findall('./*/Logs/Log'):
-            is_public = child.findtext('./ispublic', default='false')
-            log_name = child.findtext('./logName', default='')
-            log_type = child.findtext('./logType', default='')
-            log_id = child.findtext('./LogID', default='')
-            alg_id = child.findtext('./algorithmoutID', default='')
-            if (is_public == 'true' or not ENFORCE_IS_PUBLIC) and log_name != '' and log_type != '' and log_id != '':
-                logid_list.append(SimpleNamespace(log_id=log_id, log_type=log_type, log_name=log_name,
-                                                  algorithmout_id=alg_id))
-        return logid_list
+        log_list = []
+        mod_date_str = root.findtext('./Dataset/modifiedDate', default='')
+        date_obj = None
+        # Optionally look for 'modifiedDate' element
+        if mod_date_str != '':
+            # Try to parse the modified date
+            try:
+                date_obj = parse(mod_date_str)
+            except ParserError:
+                pass
+        for ds_child in root.findall('./Dataset'):
+            for log_child in ds_child.findall('./ImageLogs/Log'):
+                log_name = log_child.findtext('LogName', default='')
+                log_id = log_child.findtext('LogID', default='')
+                sample_count = log_child.findtext('SampleCount', default='')
+                if log_name != '' and log_id != '':
+                    log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, sample_count=sample_count)
+                    if date_obj is not None:
+                        setattr(log_obj, 'modified_date', date_obj)
+                    log_list.append(log_obj)
+        return log_list
 
     def get_spectrallog_data(self, nvcl_id):
         ''' Retrieves a set of spectral log data for a particular borehole

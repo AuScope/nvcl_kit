@@ -421,13 +421,23 @@ class TestNVCLReader(unittest.TestCase):
     def test_imagelog_data(self):
         ''' Test get_imagelog_data()
         '''
-        imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
-        self.assertEqual(len(imagelog_data_list), 5)
-
-        self.assertEqual(imagelog_data_list[0].log_id, '2023a603-7b31-4c97-ad59-efb220d93d9')
-        self.assertEqual(imagelog_data_list[0].log_name, 'Tray')
-        self.assertEqual(imagelog_data_list[0].log_type, '1')
-        self.assertEqual(imagelog_data_list[0].algorithmout_id, '0')
+        for ds_coll_file in ['dataset_coll.txt', 'dataset_coll_time.txt', 'dataset_coll_time_bad.txt']:
+            imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, ds_coll_file)
+            if ds_coll_file == 'dataset_coll.txt':
+                # Tests fetching and parsing '<ImageLog>' elements
+                self.assertEqual(len(imagelog_data_list), 4)
+                self.assertEqual(imagelog_data_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
+                self.assertEqual(imagelog_data_list[0].log_name, 'Mosaic')
+                self.assertEqual(imagelog_data_list[0].sample_count, '1')
+                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
+            elif ds_coll_file == 'dataset_coll_time.txt':
+                # Tests fetching and parsing text in '<modifiedDate>' element
+                self.assertEqual(len(imagelog_data_list), 3)
+                self.assertEqual(imagelog_data_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+                self.assertEqual(imagelog_data_list[2].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+            else:
+                # Tests badly formatted text in '<modifiedDate>' element
+                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
 
 
     def urllib_exception_tester(self, exc, fn, msg, params):
