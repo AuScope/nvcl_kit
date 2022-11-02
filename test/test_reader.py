@@ -6,10 +6,14 @@ from requests.exceptions import Timeout, RequestException
 from owslib.util import ServiceException
 from http.client import HTTPException
 import logging
+import datetime
+from dateutil.tz import tzoffset
 
 from types import SimpleNamespace
 
 from nvcl_kit.reader import NVCLReader
+
+from helpers import setup_param_obj, setup_reader, setup_urlopen
 
 MAX_BOREHOLES = 20
 
@@ -26,29 +30,6 @@ or use 'tox' to test the packaged 'pypi' version
 class TestNVCLReader(unittest.TestCase):
 
 
-    def setup_param_obj(self, max_boreholes=None, bbox=None, polygon=None, depths=None):
-        ''' Create a parameter object for passing to NVCLReader constructor
- 
-        :param max_boreholes: maximum number of boreholes to download
-        :param bbox: bounding box used to limit boreholes
-        :param polygon: polygon used to limit boreholes
-        :param depths: only retrieve data within this depth range
-        :returns: SimpleNamespace() object containing parameters
-        '''
-        param_obj = SimpleNamespace()
-        param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
-        param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-        if bbox:
-            param_obj.BBOX = bbox
-        if depths:
-            param_obj.DEPTHS = depths
-        if polygon:
-            param_obj.POLYGON = polygon
-        if max_boreholes:
-            param_obj.MAX_BOREHOLES = max_boreholes
-        return param_obj
-
-
     @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
     def test_logging_level(self, mock_wfs):
         ''' Test the 'log_lvl' parameter in the constructor
@@ -62,7 +43,7 @@ class TestNVCLReader(unittest.TestCase):
                 param_obj = SimpleNamespace()
                 param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
                 param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-                rdr = NVCLReader(param_obj, log_lvl=logging.DEBUG)
+                NVCLReader(param_obj, log_lvl=logging.DEBUG)
                 self.assertTrue(len(nvcl_log.output)>0, "Missing 'fetch_wfs_bh_list()' in output")
                 self.assertIn("fetch_wfs_bh_list()", nvcl_log.output[0])
 
@@ -250,7 +231,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         wfs_obj.getfeature.return_value.read.side_effect = excep
         with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
-            param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
+            param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
             self.assertIn(msg, nvcl_log.output[0])
@@ -279,7 +260,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         wfs_obj.getfeature.return_value.read.side_effect = excep
         with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
-            param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
+            param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
@@ -307,7 +288,7 @@ class TestNVCLReader(unittest.TestCase):
             wfs_obj = mock_wfs.return_value
             wfs_obj.getfeature.return_value = Mock()
             wfs_obj.getfeature.return_value.read.return_value = resp
-            param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
+            param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(l, [])
@@ -327,7 +308,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('empty_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.readline()
-            param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
+            param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(l, [])
@@ -347,7 +328,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('full_wfs3.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = self.setup_param_obj(max_boreholes=MAX_BOREHOLES)
+            param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(len(l), MAX_BOREHOLES)
@@ -364,7 +345,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('full_wfs3.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = self.setup_param_obj()
+            param_obj = setup_param_obj()
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(len(l), 102)
@@ -413,7 +394,7 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('bbox_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = self.setup_param_obj(max_boreholes=0, bbox={"west": 146.0,"south": -41.2,"east": 147.2,"north": -40.5})
+            param_obj = setup_param_obj(max_boreholes=0, bbox={"west": 146.0,"south": -41.2,"east": 147.2,"north": -40.5})
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(len(l), 1)
@@ -430,61 +411,33 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('badcoord_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = self.setup_param_obj()
+            param_obj = setup_param_obj()
             with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
                 rdr = NVCLReader(param_obj)
                 self.assertTrue(len(nvcl_log.output)>0, "Missing 'Cannot parse collar coordinates'")
                 self.assertIn('Cannot parse collar coordinates', nvcl_log.output[0])
 
 
-    def setup_reader(self):
-        ''' Initialises NVCLReader() object
-
-        :returns: NVLKit() object
-        '''
-        rdr = None
-        with unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True) as mock_wfs:
-            wfs_obj = mock_wfs.return_value
-            wfs_obj.getfeature.return_value = Mock()
-            with open('full_wfs3.txt') as fp:
-                wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-                param_obj = self.setup_param_obj()
-                rdr = NVCLReader(param_obj)
-        return rdr 
-
-
-    def setup_urlopen(self, fn, params, src_file, binary=False):
-        ''' Patches over 'urlopen()' call and calls a function with parameters
-
-        :param fn: function to call
-        :param params: function's parameters as a dict
-        :param src_file: filename of a file containing data returned from patched 'urlopen()'
-        :returns: data returned from function call
-        '''
-        rdr = self.setup_reader()
-        ret_list = []
-        with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
-            open_obj = mock_request.return_value
-            if not binary:
-                with open(src_file) as fp:
-                    open_obj.__enter__.return_value.read.return_value = bytes(fp.read(), 'ascii')
-            else:
-                with open(src_file, 'rb') as fp:
-                    open_obj.__enter__.return_value.read.return_value = fp.read()
-            ret_list = getattr(rdr, fn)(**params)
-        return ret_list
-   
-
     def test_imagelog_data(self):
         ''' Test get_imagelog_data()
         '''
-        imagelog_data_list = self.setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
-        self.assertEqual(len(imagelog_data_list), 5)
-
-        self.assertEqual(imagelog_data_list[0].log_id, '2023a603-7b31-4c97-ad59-efb220d93d9')
-        self.assertEqual(imagelog_data_list[0].log_name, 'Tray')
-        self.assertEqual(imagelog_data_list[0].log_type, '1')
-        self.assertEqual(imagelog_data_list[0].algorithmout_id, '0')
+        for ds_coll_file in ['dataset_coll.txt', 'dataset_coll_time.txt', 'dataset_coll_time_bad.txt']:
+            imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, ds_coll_file)
+            if ds_coll_file == 'dataset_coll.txt':
+                # Tests fetching and parsing '<ImageLog>' elements
+                self.assertEqual(len(imagelog_data_list), 4)
+                self.assertEqual(imagelog_data_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
+                self.assertEqual(imagelog_data_list[0].log_name, 'Mosaic')
+                self.assertEqual(imagelog_data_list[0].sample_count, '1')
+                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
+            elif ds_coll_file == 'dataset_coll_time.txt':
+                # Tests fetching and parsing text in '<modifiedDate>' element
+                self.assertEqual(len(imagelog_data_list), 3)
+                self.assertEqual(imagelog_data_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+                self.assertEqual(imagelog_data_list[2].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+            else:
+                # Tests badly formatted text in '<modifiedDate>' element
+                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
 
 
     def urllib_exception_tester(self, exc, fn, msg, params):
@@ -509,7 +462,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_imagelog_exception(self):
         ''' Tests exception handling in get_imagelog_data()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_imagelog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_imagelog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
@@ -517,7 +470,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_profilometer_data(self):
         ''' Test get_profilometer_data()
         '''
-        prof_data_list = self.setup_urlopen('get_profilometer_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
+        prof_data_list = setup_urlopen('get_profilometer_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
         self.assertEqual(len(prof_data_list), 1)
 
         self.assertEqual(prof_data_list[0].log_id, 'a61b105c-31e8-4da7-b790-4f21c9341c5')
@@ -531,7 +484,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_profilometer_exception(self):
         ''' Tests exception handling in get_profilometer_data()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_profilometer_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_profilometer_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
@@ -539,7 +492,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_scalar_logs(self):
         ''' Tests get_scalar_logs()
         '''
-        log_list = self.setup_urlopen('get_scalar_logs', {'dataset_id':"blah"}, 'logcoll_scalar.txt')
+        log_list = setup_urlopen('get_scalar_logs', {'dataset_id':"blah"}, 'logcoll_scalar.txt')
         self.assertEqual(len(log_list), 4)
         self.assertEqual(log_list[0].log_id, '2023a603-7b31-4c97-ad59-efb220d93d9')
         self.assertEqual(log_list[0].log_name, 'Tray')
@@ -551,7 +504,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_logs_scalar_empty(self):
         ''' Tests get_scalar_logs() with an empty response
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
             open_obj = mock_request.return_value
             with open('logcoll_empty.txt') as fp:
@@ -563,7 +516,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_logs_scalar_exception(self):
         ''' Tests exception handling in get_scalar_logs()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_scalar_logs, 'HTTP Error:', {'dataset_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_scalar_logs, 'OS Error:', {'dataset_id':'dummy-id'})
 
@@ -572,7 +525,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_mosaic_imglogs(self):
         ''' Tests get_logs_mosaic()
         '''
-        log_list = self.setup_urlopen('get_mosaic_imglogs', {'dataset_id':"blah"}, 'logcoll_mosaic.txt')
+        log_list = setup_urlopen('get_mosaic_imglogs', {'dataset_id':"blah"}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
         self.assertEqual(log_list[0].log_name, 'Mosaic')
@@ -582,7 +535,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_mosaic_imglogs_empty(self):
         ''' Tests get_mosaic_imglogs() with an empty response
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
             open_obj = mock_request.return_value
             with open('logcoll_empty.txt') as fp:
@@ -594,7 +547,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_mosaic_imglogs_exception(self):
         ''' Tests exception handling in get_mosaic_imglogs()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_mosaic_imglogs, 'HTTP Error:', {'dataset_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_mosaic_imglogs, 'OS Error:', {'dataset_id':'dummy-id'})
 
@@ -602,7 +555,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_datasetid_list(self):
         ''' Test get_datasetid_list()
         '''
-        dataset_id_list = self.setup_urlopen('get_datasetid_list', {'nvcl_id':"blah"}, 'dataset_coll.txt')
+        dataset_id_list = setup_urlopen('get_datasetid_list', {'nvcl_id':"blah"}, 'dataset_coll.txt')
         self.assertEqual(len(dataset_id_list), 1)
         self.assertEqual(dataset_id_list[0], 'a4c1ed7f-1e87-444a-90ae-3fe5abf9081')
 
@@ -610,7 +563,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_datasetid_list_empty(self):
         ''' Test get_datasetid_list() with an empty response
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
             open_obj = mock_request.return_value
             with open('dataset_coll_empty.txt') as fp:
@@ -622,7 +575,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_datasetid_list_exception(self):
         ''' Tests exception handling in get_datasetid_list()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_datasetid_list, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_datasetid_list, 'OS Error:', {'nvcl_id':'dummy-id'})
 
@@ -630,7 +583,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_dataset_list(self):
         ''' Test get_dataset_list()
         '''
-        dataset_data_list = self.setup_urlopen('get_dataset_list', {'nvcl_id':"blah"}, 'dataset_coll.txt')
+        dataset_data_list = setup_urlopen('get_dataset_list', {'nvcl_id':"blah"}, 'dataset_coll.txt')
         self.assertEqual(len(dataset_data_list), 1)
         ds = dataset_data_list[0]
         self.assertEqual(ds.dataset_id, 'a4c1ed7f-1e87-444a-90ae-3fe5abf9081')
@@ -644,7 +597,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_dataset_list_empty(self):
         ''' Test get_dataset_list() with an empty response
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
             open_obj = mock_request.return_value
             with open('dataset_coll_empty.txt') as fp:
@@ -653,10 +606,36 @@ class TestNVCLReader(unittest.TestCase):
                 self.assertEqual(len(dataset_list), 0)
 
 
+    def test_dataset_list_time(self):
+        ''' Test get_dataset_list() with modified time in response
+        '''
+        rdr = setup_reader()
+        with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
+            open_obj = mock_request.return_value
+            with open('dataset_coll_time.txt') as fp:
+                open_obj.__enter__.return_value.read.return_value = fp.read()
+                dataset_list = rdr.get_dataset_list("blah")
+                self.assertEqual(len(dataset_list), 1)
+                self.assertEqual(dataset_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+
+
+    def test_dataset_list_time_bad(self):
+        ''' Test get_dataset_list() with bad modified time in response
+        '''
+        rdr = setup_reader()
+        with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
+            open_obj = mock_request.return_value
+            with open('dataset_coll_time_bad.txt') as fp:
+                open_obj.__enter__.return_value.read.return_value = fp.read()
+                dataset_list = rdr.get_dataset_list("blah")
+                self.assertEqual(len(dataset_list), 1)
+                self.assertFalse(hasattr(dataset_list[0], 'modified_date'))
+
+
     def test_dataset_list_exception(self):
         ''' Tests exception handling in get_dataset_list()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_dataset_list, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_dataset_list, 'OS Error:', {'nvcl_id':'dummy-id'})
 
@@ -664,7 +643,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_spectrallog_data(self):
         ''' Test get_spectrallog_data()
         '''
-        spectral_data_list = self.setup_urlopen('get_spectrallog_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
+        spectral_data_list = setup_urlopen('get_spectrallog_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
         self.assertEqual(len(spectral_data_list), 15)
         self.assertEqual(spectral_data_list[0].log_id, '869f6712-f259-4267-874d-d341dd07bd5')
         self.assertEqual(spectral_data_list[0].log_name, 'Reflectance')
@@ -679,7 +658,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_spectrallog_exception(self):
         ''' Tests exception handling in get_spectrallog_data()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_spectrallog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
@@ -687,7 +666,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_spectrallog_datasets(self):
         ''' Tests get_spectrallog_datasets()
         '''
-        spectral_dataset = self.setup_urlopen('get_spectrallog_datasets', {'log_id':"blah"}, 'spectraldata', binary=True)
+        spectral_dataset = setup_urlopen('get_spectrallog_datasets', {'log_id':"blah"}, 'spectraldata', binary=True)
         self.assertEqual(spectral_dataset[0], 129)
         self.assertEqual(spectral_dataset[1], 32)
         self.assertEqual(spectral_dataset[2], 206)
@@ -696,7 +675,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_spectrallog_datasets_exception(self):
         ''' Tests exception handling in get_spectrallog_datasets()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_datasets, 'HTTP Error:', {'log_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_spectrallog_datasets, 'OS Error:', {'log_id':'dummy-id'})
 
@@ -704,7 +683,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_borehole_data(self):
         ''' Test get_borehole_data()
         '''
-        bh_data_list = self.setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class"}, 'bh_data.txt')
+        bh_data_list = setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class"}, 'bh_data.txt')
         self.assertEqual(len(bh_data_list), 28)
         self.assertEqual(isinstance(bh_data_list[5.0], SimpleNamespace), True)
 
@@ -721,7 +700,7 @@ class TestNVCLReader(unittest.TestCase):
         ''' Test get_borehole_data() with top_n parameter
         '''
         top_n = 2
-        bh_data_list = self.setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class", 'top_n': top_n}, 'bh_data.txt')
+        bh_data_list = setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class", 'top_n': top_n}, 'bh_data.txt')
         self.assertEqual(len(bh_data_list), 28)
         self.assertEqual(len(bh_data_list[5.0]), top_n)
         self.assertEqual(isinstance(bh_data_list[5.0], list), True)
@@ -748,7 +727,7 @@ class TestNVCLReader(unittest.TestCase):
         ''' Test get_borehole_data() with top_n parameter as a negative number
         '''
         top_n = -10
-        bh_data_list = self.setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class", 'top_n': top_n}, 'bh_data.txt')
+        bh_data_list = setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class", 'top_n': top_n}, 'bh_data.txt')
         self.assertEqual(len(bh_data_list), 28)
         self.assertEqual(isinstance(bh_data_list[5.0], SimpleNamespace), True)
 
@@ -764,7 +743,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_borehole_exception(self):
         ''' Tests exception handling in get_borehole_data()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_borehole_data, 'HTTP Error:', {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
         self.urllib_exception_tester(OSError, rdr.get_borehole_data, 'OS Error:',  {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
 
@@ -772,7 +751,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_image_tray_depth(self):
         ''' Tests that it can parse image tray depth data
         '''
-        depth_list = self.setup_urlopen('get_tray_depths', {'log_id': 'dummy_id'}, 'img_tray_depth.txt')
+        depth_list = setup_urlopen('get_tray_depths', {'log_id': 'dummy_id'}, 'img_tray_depth.txt')
         self.assertEqual(len(depth_list), 50)
         self.assertEqual(depth_list[0].sample_no, '0')
         self.assertEqual(depth_list[0].start_value, '3.00451')
@@ -783,7 +762,7 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_mosaic_imglogs(self):
-        log_list = self.setup_urlopen('get_mosaic_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
+        log_list = setup_urlopen('get_mosaic_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
         self.assertEqual(log_list[0].log_name, 'Mosaic')
@@ -791,7 +770,7 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_tray_thumbnail_imglogs(self):
-        log_list = self.setup_urlopen('get_tray_thumb_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
+        log_list = setup_urlopen('get_tray_thumb_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, '5e6fb391-5fef-4bb0-ae8e-dea25e7958d')
         self.assertEqual(log_list[0].log_name, 'Tray Thumbnail Images')
@@ -799,7 +778,7 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_tray_imglogs(self):
-        log_list = self.setup_urlopen('get_tray_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
+        log_list = setup_urlopen('get_tray_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, 'bc79d76a-02ef-44e2-96f2-008a4145cf3')
         self.assertEqual(log_list[0].log_name, 'Tray Images')
@@ -807,7 +786,7 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_imagery_imglogs(self):
-        log_list = self.setup_urlopen('get_imagery_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
+        log_list = setup_urlopen('get_imagery_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, 'b80a98e4-6d9b-4a58-ab04-d105c172e67')
         self.assertEqual(log_list[0].log_name, 'Imagery')
@@ -815,7 +794,7 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_algorithms(self):
-        alg_dict = self.setup_urlopen('get_algorithms', {}, 'algorithms.txt')
+        alg_dict = setup_urlopen('get_algorithms', {}, 'algorithms.txt')
         self.assertEqual(alg_dict['82'],'703')
         self.assertEqual(alg_dict['6'],'500')
         self.assertEqual(alg_dict['149'],'708')
@@ -823,7 +802,7 @@ class TestNVCLReader(unittest.TestCase):
     def test_get_algorithms_exception(self):
         ''' Tests exception handling in get_algorithms()
         '''
-        rdr = self.setup_reader()
+        rdr = setup_reader()
         self.urllib_exception_tester(HTTPException, rdr.get_algorithms, 'HTTP Error:', {})
         self.urllib_exception_tester(OSError, rdr.get_algorithms, 'OS Error:', {})
 
