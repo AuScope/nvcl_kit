@@ -269,6 +269,21 @@ class _ServiceInterface:
         params.update(options)
         return self._get_response_str(url, params)
 
+    def get_profilometer_data(self, proflog_id, **options):
+        ''' Retrieves profilometer data in the form of binary chunks or json.
+
+        :param proflog_id: obtained through the get_dataset_collection service
+        :param options: dictionary of optional parameters:
+
+            * startsampleno: the sample number of the first profilometer data point to be returned, default = '0'
+            * endsampleno: the sample number of the last profilometer data point to be returned, default = '999999'
+            * outputformat: string 'binary' or 'json', default = 'binary'
+        '''
+        url = self.NVCL_URL + '/getprofdata.html'
+        params = {'proflogid': proflog_id}
+        params.update(options)
+        return self._get_response_str(url, params)
+
     def _get_response_str(self, url, params = None):
         ''' Performs a GET request with URL and parameters and returns the response as a string
 
