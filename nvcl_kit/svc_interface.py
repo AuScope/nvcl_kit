@@ -269,10 +269,10 @@ class _ServiceInterface:
         params.update(options)
         return self._get_response_str(url, params)
 
-    def get_profilometer_data(self, proflog_id, **options):
+    def get_prof_data(self, proflog_id, **options):
         ''' Retrieves profilometer data in the form of binary chunks or json.
 
-        :param proflog_id: obtained through the get_dataset_collection service
+        :param proflog_id: profilometer log id obtained through the get_dataset_collection service
         :param options: dictionary of optional parameters:
 
             * startsampleno: the sample number of the first profilometer data point to be returned, default = '0'

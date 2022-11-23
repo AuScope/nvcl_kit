@@ -741,6 +741,22 @@ class NVCLReader:
                               floats_per_sample=floats_per_sample, min_val=min_val, max_val=max_val))
         return logid_list
 
+    def get_profilometer_datasets(self, proflog_id, **options):
+        ''' Gets profilometer datasets in JSON format
+
+        :param proflog_id: profilometer log id, retrieved using 'get_profilometer_data' API 
+        :param start_sample_no: retrieve sample numbers starting from this string e.g. '0'
+        :param end_sample_no: retrieve sample numbers ending with this string e.g. '2'
+
+        :returns: raw profilometer data in JSON format
+        '''
+        in_opts = {'outputformat': 'json'}
+        if 'start_sample_no' in options:
+            in_opts.update({ 'startsampleno': options['start_sample_no']})
+        if 'end_sample_no' in options:
+            in_opts.update({ 'endsampleno': options['end_sample_no']})
+        return self.svc.get_prof_data(proflog_id, **in_opts)
+
     def get_boreholes_list(self):
         ''' Returns a list of dictionary objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:
 

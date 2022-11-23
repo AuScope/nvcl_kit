@@ -2,6 +2,7 @@
 import sys
 from types import SimpleNamespace
 import yaml
+import json
 
 from nvcl_kit.reader import NVCLReader
 from nvcl_kit.param_builder import param_builder
@@ -211,6 +212,14 @@ def do_demo(state):
               pdl.min_val,
               pdl.floats_per_sample,
               pdl.sample_count)
+        proflog_id = pdl.log_id
+
+    # GET_PROFILOMETER_DATASETS
+    if state == 'tas':  # Currently only supported in Tasmania
+        print('get_profilometer_datasets()')
+        prof_json = reader.get_profilometer_datasets(proflog_id)
+        prof_obj = json.loads(prof_json)
+        print(json.dumps(prof_obj, indent=4))
 
     # GET_SPECTRALLOG_DATA
     print('get_spectrallog_data()')
