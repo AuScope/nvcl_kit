@@ -22,7 +22,7 @@ def gen_scalar_by_depth(reader, *, nvcl_id_list=None, resolution=20.0, scalar_cl
         imagelog_data_list = reader.get_imagelog_data(n_id)
         if imagelog_data_list:
             for ild in imagelog_data_list:
-                if (log_type is None or ild.log_type == log_type) and \
+                if (log_type is None or (hasattr(ild, 'log_type') and ild.log_type == log_type)) and \
                    (ild.log_name == scalar_class or scalar_class == Scalar.ANY):
                     scalar_data = reader.get_borehole_data(ild.log_id, resolution, ild.log_name, top_n=top_n)
                     yield n_id, ild, scalar_data
