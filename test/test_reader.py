@@ -488,6 +488,20 @@ class TestNVCLReader(unittest.TestCase):
         self.urllib_exception_tester(HTTPException, rdr.get_profilometer_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_profilometer_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
+    def test_profilometer_datasets(self):
+        ''' Tests fetching profilometer datasets
+        '''
+        prof_dataset_list = setup_urlopen('get_profilometer_datasets', {'proflog_id':"blah"}, 'profilometer_data.json')
+        self.assertEqual(prof_dataset_list[0].sampleNo, 0)
+        self.assertEqual(prof_dataset_list[0].floatprofdata[3], 33.821205)
+        self.assertEqual(prof_dataset_list[41387].sampleNo, 41387)
+        self.assertEqual(prof_dataset_list[41387].floatprofdata[19], 0.006286621)
+
+    def test_profilometer_datasets_exception(self):
+        ''' Tests fetching profilometer datasets exception handling
+        '''
+        prof_dataset_list = setup_urlopen('get_profilometer_datasets', {'proflog_id':"blah"}, 'error_page.html')
+        self.assertEqual(prof_dataset_list, [])
 
     def test_scalar_logs(self):
         ''' Tests get_scalar_logs()

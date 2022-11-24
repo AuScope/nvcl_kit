@@ -217,9 +217,8 @@ def do_demo(state):
     # GET_PROFILOMETER_DATASETS
     if state == 'tas':  # Currently only supported in Tasmania
         print('get_profilometer_datasets()')
-        prof_json = reader.get_profilometer_datasets(proflog_id)
-        prof_obj = json.loads(prof_json)
-        print(json.dumps(prof_obj, indent=4))
+        prof_list = reader.get_profilometer_datasets(proflog_id)
+        print(f"Sample number: {prof_list[0].sampleNo}, profilometer floats: {prof_list[0].floatprofdata}")
 
     # GET_SPECTRALLOG_DATA
     print('get_spectrallog_data()')

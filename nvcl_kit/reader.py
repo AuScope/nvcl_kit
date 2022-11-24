@@ -748,14 +748,21 @@ class NVCLReader:
         :param start_sample_no: retrieve sample numbers starting from this string e.g. '0'
         :param end_sample_no: retrieve sample numbers ending with this string e.g. '2'
 
-        :returns: raw profilometer data in JSON format
+        :returns: raw profilometer data as a list of 'SimpleNamespace' objects; keys are:  "sampleNo" & "floatprofdata"
+                  returns an empty list upon error
         '''
         in_opts = {'outputformat': 'json'}
         if 'start_sample_no' in options:
             in_opts.update({ 'startsampleno': options['start_sample_no']})
         if 'end_sample_no' in options:
             in_opts.update({ 'endsampleno': options['end_sample_no']})
-        return self.svc.get_prof_data(proflog_id, **in_opts)
+        prof_json = self.svc.get_prof_data(proflog_id, **in_opts)
+        ret_val = []
+        try:
+            prof_obj = json.loads(prof_json)
+        except json.decoder.JSONDecodeError as jdj:
+            return []
+        return [SimpleNamespace(**d) for d in prof_obj]
 
     def get_boreholes_list(self):
         ''' Returns a list of dictionary objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:
