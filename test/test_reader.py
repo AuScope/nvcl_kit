@@ -434,6 +434,14 @@ class TestNVCLReader(unittest.TestCase):
                 self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
 
 
+    def test_imagelog_exception(self):
+        ''' Tests exception handling in get_imagelog_data()
+        '''
+        rdr = setup_reader()
+        self.urllib_exception_tester(HTTPException, rdr.get_imagelog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_imagelog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+
+
     def urllib_exception_tester(self, exc, fn, msg, params):
         ''' Creates an exception in urllib.request.urlopen() read() and
             tests for the correct warning message
@@ -452,15 +460,33 @@ class TestNVCLReader(unittest.TestCase):
                 self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
                 self.assertIn(msg, nvcl_log.output[0])
     
+    def test_get_logs_data(self):
+        ''' Test the generic get_logs_data()
+        '''
+        bh_data_list = setup_urlopen('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll.txt')
+        self.assertEqual(len(bh_data_list), 70)
+        self.assertEqual(isinstance(bh_data_list[0], SimpleNamespace), True)
 
-    def test_imagelog_exception(self):
-        ''' Tests exception handling in get_imagelog_data()
+        self.assertEqual(bh_data_list[0].algorithm_id, '0')
+        self.assertEqual(bh_data_list[0].is_public, 'true')
+        self.assertEqual(bh_data_list[0].log_id, '2023a603-7b31-4c97-ad59-efb220d93d9')
+        self.assertEqual(bh_data_list[0].log_name, 'Tray')
+        self.assertEqual(bh_data_list[0].log_type, '1')
+
+    def test_get_logs_data_empty(self):
+        ''' Test the generic get_logs_data()
+        '''
+        bh_data_list = setup_urlopen('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll_empty.txt')
+        self.assertEqual(len(bh_data_list), 0)
+
+    def test_get_logs_exception(self):
+        ''' Tests exception handling in get_logs_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_imagelog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_imagelog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_logs_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_logs_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
-        
+
     def test_profilometer_data(self):
         ''' Test get_profilometer_data()
         '''

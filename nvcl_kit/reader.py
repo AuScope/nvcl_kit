@@ -258,7 +258,7 @@ class NVCLReader:
         LOGGER.debug(f"get_borehole_data({log_id}, {height_resol}, {class_name}, {top_n}")
         # Check top_n parameter
         if top_n < 1:
-            LOGGER.warning("get_borehole_data(): top_n parameter has invalid value, setting to default")
+            LOGGER.warning("top_n parameter has invalid value, setting to default")
             top_n = 1
 
         # Send HTTP request, get response
@@ -323,7 +323,7 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         datasetid_list = []
         for child in root.findall('./Dataset'):
-            dataset_id = child.findtext('./DatasetID', default=None)
+            dataset_id = child.findtext('./DatasetID', default='')
             if dataset_id:
                 datasetid_list.append(dataset_id)
         return datasetid_list
@@ -341,8 +341,8 @@ class NVCLReader:
         dataset_list = []
         for child in root.findall('./Dataset'):
             # Compulsory
-            dataset_id = child.findtext('./DatasetID', default=None)
-            dataset_name = child.findtext('./DatasetName', default=None)
+            dataset_id = child.findtext('./DatasetID', default='')
+            dataset_name = child.findtext('./DatasetName', default='')
             if not dataset_id or not dataset_name:
                 continue
             # Optional
@@ -353,7 +353,7 @@ class NVCLReader:
                                ('section_id', './sectionID'),
                                ('domain_id', './domainID'),
                                ('modified_date', './modifiedDate')]:
-                val = child.findtext(key, default=None)
+                val = child.findtext(key, default='')
                 if val:
                     if label != 'modified_date':
                         setattr(dataset_obj, label, val)
@@ -421,8 +421,8 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         dataset_list = []
         for child in root.findall('./Log'):
-            log_id = child.findtext('./LogID', default=None)
-            log_name = child.findtext('./LogName', default=None)
+            log_id = child.findtext('./LogID', default='')
+            log_name = child.findtext('./LogName', default='')
             try:
                 sample_count = int(child.findtext('./SampleCount', default=0))
             except ValueError:
@@ -485,9 +485,9 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         image_tray_list = []
         for child in root.findall('./ImageTray'):
-            sample_no = child.findtext('./SampleNo', default=None)
-            start_value = child.findtext('./StartValue', default=None)
-            end_value = child.findtext('./EndValue', default=None)
+            sample_no = child.findtext('./SampleNo', default='')
+            start_value = child.findtext('./StartValue', default='')
+            end_value = child.findtext('./EndValue', default='')
             if not sample_no or not start_value or not end_value:
                 continue
             image_tray_obj = SimpleNamespace(sample_no=sample_no,
@@ -501,7 +501,7 @@ class NVCLReader:
 
         :param dataset_id: dataset_id, taken from 'get_datasetid_list()' or 'get_dataset_list()'
 
-        :returns: a list of SimpleNamespace() objects, attributes are: log_id, log_name, is_public, log_type, algorithm_id. On error returns empty list
+        :returns: a list of SimpleNamespace() objects, attributes are: log_id, log_name, is_public, log_type, algorithm_id, mask_log_id. 'mask_log_id' is not supported by all services and may be an empty string. On error returns empty list
         '''
         response_str = self.svc.get_log_collection(dataset_id)
         if not response_str:
@@ -509,20 +509,22 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         log_list = []
         for child in root.findall('./Log'):
-            log_id = child.findtext('./LogID', default=None)
-            log_name = child.findtext('./logName', default=None)
-            is_public = child.findtext('./ispublic', default=None)
+            log_id = child.findtext('./LogID', default='')
+            log_name = child.findtext('./logName', default='')
+            is_public = child.findtext('./ispublic', default='')
             if ENFORCE_IS_PUBLIC and is_public and is_public.upper() == 'FALSE':
                 continue
-            log_type = child.findtext('./logType', default=None)
-            algorithm_id = child.findtext('./algorithmoutID', default=None)
+            log_type = child.findtext('./logType', default='')
+            algorithm_id = child.findtext('./algorithmoutID', default='')
+            mask_log_id = child.findtext('maskLogId', default='')
             # Only types 1,2,5,6 can be used
             if log_id and log_name and log_type in ['1', '2', '5', '6'] and algorithm_id:
                 log = SimpleNamespace(log_id=log_id,
                                       log_name=log_name,
                                       is_public=is_public,
                                       log_type=log_type,
-                                      algorithm_id=algorithm_id)
+                                      algorithm_id=algorithm_id,
+                                      mask_log_id=mask_log_id)
                 log_list.append(log)
         return log_list
 
@@ -613,6 +615,36 @@ class NVCLReader:
             LOGGER.debug(f"get_algorithms() failed to parse response: {pe_exc}")
             return {}
         return algver_dict
+
+    def get_logs_data(self, nvcl_id):
+        ''' Retrieves a set of generic log data for a particular borehole, given an nvcl id
+
+        :param nvcl_id: NVCL 'holeidentifier' parameter,
+                        the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
+
+        :returns: a list of SimpleNamespace() objects with attributes:
+                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id 
+                  'mask_log_id' is not supported by all services and may be an empty string'''
+        response_str = self.svc.get_dataset_collection(nvcl_id)
+        if not response_str:
+            return []
+        root = clean_xml_parse(response_str)
+        log_list = []
+        for ds_child in root.findall('./Dataset'):
+            for log_child in ds_child.findall('./Logs/Log'):
+                log_id = log_child.findtext('LogID', default='')
+                log_name = log_child.findtext('logName', default='')
+                is_public = log_child.findtext('ispublic', default='')
+                log_type = log_child.findtext('logType', default='')
+                algorithm_id = log_child.findtext('algorithmoutID', default='')
+                mask_log_id = log_child.findtext('maskLogId', default='')
+                if log_name != '' and log_id != '':
+                    log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, is_public=is_public, log_type=log_type,
+                                              algorithm_id=algorithm_id, mask_log_id=mask_log_id)
+                    log_list.append(log_obj)
+        return log_list
+
+
 
     def get_imagelog_data(self, nvcl_id):
         ''' Retrieves a set of image log data for a particular borehole
