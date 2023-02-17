@@ -46,7 +46,7 @@ if not LOGGER.hasHandlers():
     HANDLER = logging.StreamHandler(sys.stdout)
 
     # Create logging formatter
-    FORMATTER = logging.Formatter('%(name)s -- %(levelname)s - %(message)s')
+    FORMATTER = logging.Formatter('%(name)s -- %(levelname)s - %(funcName)s: %(message)s')
 
     # Add formatter to ch
     HANDLER.setFormatter(FORMATTER)
@@ -143,11 +143,11 @@ class NVCLReader:
             # Check BBOX dict values
             for dir in ["west", "south", "east", "north"]:
                 if dir not in self.param_obj.BBOX:
-                    LOGGER.warning("BBOX['%s'] parameter is missing", dir)
+                    LOGGER.warning(f"BBOX['{dir}'] parameter is missing")
                     return
                 if not isinstance(self.param_obj.BBOX[dir], float) and \
                    not isinstance(self.param_obj.BBOX[dir], int):
-                    LOGGER.warning("BBOX['%s'] parameter is not a number", dir)
+                    LOGGER.warning(f"BBOX['{dir}'] parameter is not a number")
                     return
         else:
             # If neither BBOX nor POLYGON is defined, use default BBOX
@@ -227,13 +227,13 @@ class NVCLReader:
                                              version=self.param_obj.WFS_VERSION,
                                              xml=None, timeout=TIMEOUT)
             except ServiceException as se_exc:
-                LOGGER.warning("WFS error: %s", str(se_exc))
+                LOGGER.warning(f"WFS error: {se_exc}")
             except RequestException as re_exc:
-                LOGGER.warning("Request error: %s", str(re_exc))
+                LOGGER.warning(f"Request error: {re_exc}")
             except HTTPException as he_exc:
-                LOGGER.warning("HTTP error code returned: %s", str(he_exc))
+                LOGGER.warning(f"HTTP error code returned: {he_exc}")
             except OSError as os_exc:
-                LOGGER.warning("OS Error: %s", str(os_exc))
+                LOGGER.warning(f"OS Error: {os_exc}")
         else:
             self.wfs = wfs
 
@@ -247,7 +247,7 @@ class NVCLReader:
         self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT)
 
     def get_borehole_data(self, log_id, height_resol, class_name, top_n=1):
-        ''' Retrieves borehole mineral data for a borehole
+        ''' Retrieves borehole mineral data for a borehole, will only return mineral class data
 
         :param log_id: borehole log identifier, string e.g. 'ce2df1aa-d3e7-4c37-97d5-5115fc3c33d' This is the first id from the list of triplets [log id, log type, log name] fetched from 'get_imagelog_data()'
         :param height_resol: height resolution, float
@@ -258,7 +258,7 @@ class NVCLReader:
         LOGGER.debug(f"get_borehole_data({log_id}, {height_resol}, {class_name}, {top_n}")
         # Check top_n parameter
         if top_n < 1:
-            LOGGER.warning("top_n parameter has invalid value, setting to default")
+            LOGGER.warning("get_borehole_data(): top_n parameter has invalid value, setting to default")
             top_n = 1
 
         # Send HTTP request, get response
@@ -266,31 +266,34 @@ class NVCLReader:
                                                   interval=height_resol, outputformat='json',
                                                   startdepth=self.min_depth, enddepth=self.max_depth)
         if not json_data:
-            LOGGER.debug("get_borehole_data() json_data= %s", repr(json_data))
+            LOGGER.debug(f"no json_data = {json_data}")
             return OrderedDict()
-        LOGGER.debug('json_data = %s', json_data[:100])
+        LOGGER.debug(f"json_data = {json_data[:100]}")
         meas_list = []
         depth_dict = OrderedDict()
         try:
             meas_list = json.loads(json_data.decode('utf-8'))
-        except json.decoder.JSONDecodeError:
-            LOGGER.warning("Logid not known")
+        except json.decoder.JSONDecodeError as jde:
+            LOGGER.warning(f"Cannot parse response from server {jde}")
         else:
             # Sometimes meas_list is None
             if isinstance(meas_list, list):
                 # Sort then group by depth
                 sorted_meas_list = sorted(meas_list, key=lambda x: x['roundedDepth'])
                 for depth, group in itertools.groupby(sorted_meas_list, lambda x: x['roundedDepth']):
-                    # Filter out invalid values
-                    clean_group = itertools.filterfalse(lambda x: x['classText'].upper() in ['INVALID', 'NOTAROK'],
-                                                           group)
+                    # Filter out invalid and non-mineral class values
+                    clean_group = itertools.filterfalse(lambda x: x.get('classText','INVALID').upper() in ['INVALID', 'NOTAROK'],
+                                                        group)
 
                     # Make a dict keyed on depth, value is element with largest count
                     try:
                         sorted_elem = sorted(clean_group, key=lambda x: x['classCount'], reverse=True)
                     except ValueError:
                         # Sometimes 'filtered_group' is empty
-                        LOGGER.warning("No valid values at depth %s", str(depth))
+                        LOGGER.warning(f"No valid values at depth {depth}")
+                        continue
+                    # If found no data skip
+                    if len(sorted_elem) == 0:
                         continue
                     depth_dict[depth] = []
                     for elem in sorted_elem[:top_n]:
@@ -305,7 +308,7 @@ class NVCLReader:
                     if top_n == 1 and len(depth_dict[depth]) == 1:
                         depth_dict[depth] = depth_dict[depth][0]
 
-        LOGGER.debug("get_borehole_data() Returning %s", repr(depth_dict))
+        LOGGER.debug(f"Returning {depth_dict}")
         return depth_dict
 
     def get_datasetid_list(self, nvcl_id):

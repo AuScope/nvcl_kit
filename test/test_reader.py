@@ -18,13 +18,7 @@ from helpers import setup_param_obj, setup_reader, setup_urlopen
 MAX_BOREHOLES = 20
 
 '''
-To run this from the command line to test code in local repo:
-
-$ export PYTHONPATH=$HOME/gitlab/nvcl_kit
-$ python -m unittest test_reader.py
-
-or use 'tox' to test the packaged 'pypi' version 
-
+Tests for the reader module
 '''
 
 class TestNVCLReader(unittest.TestCase):
@@ -708,6 +702,12 @@ class TestNVCLReader(unittest.TestCase):
         self.assertEqual(bh_data_list[275.0].className, 'dummy-class')
         self.assertEqual(bh_data_list[275.0].classText, 'WHITE-MICA')
         self.assertEqual(bh_data_list[275.0].colour, (1.0, 1.0, 0.0, 1.0))
+
+    def test_borehole_data_noclasses(self):
+        ''' Test get_borehole_data() with data which has no mineral class data, it should not crash and return no data
+        '''
+        bh_data_list = setup_urlopen('get_borehole_data', {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class"}, 'bh_data_avgval.txt')
+        self.assertEqual(len(bh_data_list), 0)
 
 
     def test_borehole_data_top_n(self):

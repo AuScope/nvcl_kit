@@ -19,7 +19,7 @@ if not LOGGER.hasHandlers():
     HANDLER = logging.StreamHandler(sys.stdout)
 
     # Create logging formatter
-    FORMATTER = logging.Formatter('%(name)s -- %(levelname)s - %(message)s')
+    FORMATTER = logging.Formatter('%(name)s -- %(levelname)s - %(funcName)s: %(message)s')
 
     # Add formatter to ch
     HANDLER.setFormatter(FORMATTER)
