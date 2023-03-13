@@ -1,0 +1,42 @@
+[tool.pdm]
+
+[project]
+name = "nvcl_kit"
+version = "0.2.7"
+description = "Downloads Australian NVCL datasets"
+authors = [
+    {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
+]
+dependencies = [
+    "OWSLib==0.22.0",
+    "shapely==1.8.5.post1",
+    "requests==2.27.1",
+    "pyproj==3.0.1",
+    "geojson==2.5.0",
+    "pyyaml==6.0",
+    "python-dateutil==2.8.2",
+    "geojson",
+    "pyproj",
+    "requests",
+    "shapely",
+]
+requires-python = ">=3.6"
+readme = "README.md"
+license = {text = "CSIRO BSD/MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering",
+]
+[project.urls]
+Homepage = "https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit"
+
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
