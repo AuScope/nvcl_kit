@@ -282,8 +282,9 @@ class NVCLReader:
                 sorted_meas_list = sorted(meas_list, key=lambda x: x['roundedDepth'])
                 for depth, group in itertools.groupby(sorted_meas_list, lambda x: x['roundedDepth']):
                     # Filter out invalid and non-mineral class values
-                    clean_group = itertools.filterfalse(lambda x: x.get('classText','INVALID').upper() in ['INVALID', 'NOTAROK'],
-                                                        group)
+                    clean_group = itertools.filterfalse(
+                                 lambda x: x.get('classText', 'INVALID').upper() in ['INVALID', 'NOTAROK'],
+                                 group)
 
                     # Make a dict keyed on depth, value is element with largest count
                     try:
@@ -623,7 +624,7 @@ class NVCLReader:
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
 
         :returns: a list of SimpleNamespace() objects with attributes:
-                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id 
+                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id
                   'mask_log_id' is not supported by all services and may be an empty string'''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
@@ -643,8 +644,6 @@ class NVCLReader:
                                               algorithm_id=algorithm_id, mask_log_id=mask_log_id)
                     log_list.append(log_obj)
         return log_list
-
-
 
     def get_imagelog_data(self, nvcl_id):
         ''' Retrieves a set of image log data for a particular borehole
@@ -733,9 +732,9 @@ class NVCLReader:
         '''
         in_opts = {}
         if 'start_sample_no' in options:
-            in_opts.update({ 'startsampleno': options['start_sample_no']})
+            in_opts.update({'startsampleno': options['start_sample_no']})
         if 'end_sample_no' in options:
-            in_opts.update({ 'endsampleno': options['end_sample_no']})
+            in_opts.update({'endsampleno': options['end_sample_no']})
         return self.svc.get_spectral_data(log_id, **in_opts)
 
     def get_profilometer_data(self, nvcl_id):
@@ -779,7 +778,7 @@ class NVCLReader:
     def get_profilometer_datasets(self, proflog_id, **options):
         ''' Gets profilometer datasets in JSON format
 
-        :param proflog_id: profilometer log id, retrieved using 'get_profilometer_data' API 
+        :param proflog_id: profilometer log id, retrieved using 'get_profilometer_data' API
         :param start_sample_no: retrieve sample numbers starting from this string e.g. '0'
         :param end_sample_no: retrieve sample numbers ending with this string e.g. '2'
 
@@ -788,14 +787,13 @@ class NVCLReader:
         '''
         in_opts = {'outputformat': 'json'}
         if 'start_sample_no' in options:
-            in_opts.update({ 'startsampleno': options['start_sample_no']})
+            in_opts.update({'startsampleno': options['start_sample_no']})
         if 'end_sample_no' in options:
-            in_opts.update({ 'endsampleno': options['end_sample_no']})
+            in_opts.update({'endsampleno': options['end_sample_no']})
         prof_json = self.svc.get_prof_data(proflog_id, **in_opts)
-        ret_val = []
         try:
             prof_obj = json.loads(prof_json)
-        except json.decoder.JSONDecodeError as jdj:
+        except json.decoder.JSONDecodeError:
             return []
         return [SimpleNamespace(**d) for d in prof_obj]
 
@@ -827,7 +825,7 @@ class NVCLReader:
 
             :returns: a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
         '''
-        return [ SimpleNamespace(**bh) for bh in self.borehole_list]
+        return [SimpleNamespace(**bh) for bh in self.borehole_list]
 
     def get_nvcl_id_list(self):
         '''
@@ -837,7 +835,6 @@ class NVCLReader:
         :returns: a list of NVCL id strings
         '''
         return [bh['nvcl_id'] for bh in self.borehole_list]
-
 
     def filter_feat_list(self, nvcl_ids_only=False, **kwargs):
         ''' Returns a list of borehole features given a filter parameter
@@ -852,13 +849,13 @@ class NVCLReader:
         '''
         for key, val in kwargs.items():
             val_list = val
-            if not isinstance(val,list):
+            if not isinstance(val, list):
                 val_list = [val]
-            bh_list = [ bh for bh in self.borehole_list if key in bh and bh[key] in val]
-                
+            bh_list = [bh for bh in self.borehole_list if key in bh and bh[key] in val]
+
             if not nvcl_ids_only:
-                return [ SimpleNamespace(**bh) for bh in bh_list ]
+                return [SimpleNamespace(**bh) for bh in bh_list]
             else:
-                return [ bh['nvcl_id'] for bh in bh_list ]
+                return [bh['nvcl_id'] for bh in bh_list]
 
         return []

@@ -284,7 +284,7 @@ class _ServiceInterface:
         params.update(options)
         return self._get_response_str(url, params)
 
-    def _get_response_str(self, url, params = None):
+    def _get_response_str(self, url, params=None):
         ''' Performs a GET request with URL and parameters and returns the response as a string
 
         :param url: URL of request, string

@@ -115,6 +115,7 @@ def get_feature(wfs, param_obj):
         LOGGER.error("Cannot have USE_LOCAL_FILTERING and WFS_VERSION < 2.0.0")
         return []
 
+
 def clean_resp(wfs, getfeat_params):
     '''
     Fetches WFS response from owslib and make sure it returns a byte string
@@ -124,7 +125,7 @@ def clean_resp(wfs, getfeat_params):
 
     :returns: byte string response
     '''
-    
+
     LOGGER.debug(f"clean_resp(params={getfeat_params})")
     response = wfs.getfeature(**getfeat_params).read()
     LOGGER.debug(f"clean_resp(): response={response}")
@@ -135,6 +136,7 @@ def clean_resp(wfs, getfeat_params):
     else:
         response_str = response.encode('utf-8', 'ignore')
     return response_str
+
 
 def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
     ''' Returns a list of WFS borehole data within bounding box, but only NVCL boreholes
@@ -147,7 +149,7 @@ def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
     bhv_list = get_feature(wfs, param_obj)
     if len(bhv_list) == 0:
         LOGGER.debug('fetch_wfs_bh_list(): No response')
-        return [] 
+        return []
     LOGGER.debug(f'len(bhv_list) = {len(bhv_list)}')
     LOGGER.debug(f'bhv_list = {repr(bhv_list)}')
     borehole_cnt = 0
@@ -246,4 +248,3 @@ def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
         LOGGER.debug(f'record_cnt = {record_cnt}')
     LOGGER.debug(f'fetch_boreholes_list() returns {len(borehole_list)}')
     return borehole_list
-

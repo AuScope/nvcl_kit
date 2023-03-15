@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+
 def clean_xml_parse(xml_str):
     ''' Filters out badly-formatted XML
 

@@ -14,7 +14,7 @@ def gen_scalar_by_depth(reader, *, nvcl_id_list=None, resolution=20.0, scalar_cl
     :return: yields a tuple of (nvcl_id, image log object, scalar data object)
     '''
     if nvcl_id_list is None:
-        nvcl_id_list = reader.get_nvcl_id_list() 
+        nvcl_id_list = reader.get_nvcl_id_list()
         if not nvcl_id_list:
             raise StopIteration()
     
@@ -35,7 +35,7 @@ def gen_downhole_scalar_plots(reader, *, nvcl_id_list=None):
     :return: yields a tuple of (nvcl id, dataset id, scalar data object, PNG image byte array)
     '''
     if nvcl_id_list is None:
-        nvcl_id_list = reader.get_nvcl_id_list() 
+        nvcl_id_list = reader.get_nvcl_id_list()
         if not nvcl_id_list:
             raise StopIteration()
 
@@ -56,7 +56,7 @@ def gen_tray_thumb_imgs(reader, *, nvcl_id_list=None):
     :return: yields a tuple of (nvcl id, dataset id, image log object, tray depth list, JPEG image byte array)
     '''
     if nvcl_id_list is None:
-        nvcl_id_list = reader.get_nvcl_id_list() 
+        nvcl_id_list = reader.get_nvcl_id_list()
         if not nvcl_id_list:
             raise StopIteration()
 
