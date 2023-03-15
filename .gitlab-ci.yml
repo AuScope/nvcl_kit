@@ -15,8 +15,9 @@ variables:
 #    - .cache/pip
 #    - venv/
 
-#before_script:
-#  - python -V  # Print out python version for debugging
+before_script:
+  - python -V  # Print out python version for debugging
+  - pip install pdm
 #  - pip install virtualenv
 #  - virtualenv venv
 #  - source venv/bin/activate
@@ -30,7 +31,7 @@ stages:
 test:
   stage: Test
   script:
-    - pip install tox flake8 pdm
+    - pip install tox flake8
     # stop the build if there are Python syntax errors or undefined names
     - pdm run flake8 ./nvcl_kit --count --select=E9,F63,F7,F82 --show-source --statistics
     # exit-zero treats all errors as warnings
@@ -45,7 +46,7 @@ test:
 
 build:
   stage: Build
-  script:
+  script: 
     - pdm install
     - pdm build
   artifacts:
@@ -67,7 +68,7 @@ pages:
 deploy:
   stage: Deploy
   script:
-    - pip install twine pdm
+    - pip install twine
     - echo "$PYPI_CONFIG" > "/root/.pypirc"
     - pdm install
     - pdm build
