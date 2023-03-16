@@ -249,7 +249,7 @@ class NVCLReader:
     def get_borehole_data(self, log_id, height_resol, class_name, top_n=1):
         ''' Retrieves borehole mineral data for a borehole, will only return mineral class data
 
-        :param log_id: borehole log identifier, string e.g. 'ce2df1aa-d3e7-4c37-97d5-5115fc3c33d' This is the first id from the list of triplets [log id, log type, log name] fetched from 'get_imagelog_data()'
+        :param log_id: borehole log identifier, string e.g. 'ce2df1aa-d3e7-4c37-97d5-5115fc3c33d' This is the first id from the list of triplets [log id, log type, log name] fetched from API calls such as 'get_logs_data()'
         :param height_resol: height resolution, float
         :param class_name: name of scalar class, returned in output for informational purposes
         :param top_n: optional number
