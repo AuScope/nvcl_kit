@@ -11,7 +11,7 @@ def gen_scalar_by_depth(reader, *, nvcl_id_list=None, resolution=20.0, scalar_cl
     :param resolution: optional nvcl_kit.constants.Scalar class object, default Scalar.ANY
     :param log_type: optional log type e.g. '1' or '2'
     :param top_n: optional, only retrieve the first n scalara at each depth, default  value is 5
-    :return: yields a tuple of (nvcl_id, image log object, scalar data object)
+    :return: yields a tuple of (nvcl_id, logs object, scalar data object); logs object is retrieved from 'get_logs_data()'
     '''
     if nvcl_id_list is None:
         nvcl_id_list = reader.get_nvcl_id_list()
@@ -19,13 +19,13 @@ def gen_scalar_by_depth(reader, *, nvcl_id_list=None, resolution=20.0, scalar_cl
             raise StopIteration()
     
     for n_id in nvcl_id_list:
-        imagelog_data_list = reader.get_imagelog_data(n_id)
-        if imagelog_data_list:
-            for ild in imagelog_data_list:
-                if (log_type is None or (hasattr(ild, 'log_type') and ild.log_type == log_type)) and \
-                   (ild.log_name == scalar_class or scalar_class == Scalar.ANY):
-                    scalar_data = reader.get_borehole_data(ild.log_id, resolution, ild.log_name, top_n=top_n)
-                    yield n_id, ild, scalar_data
+        logs_data_list = reader.get_logs_data(n_id)
+        if logs_data_list:
+            for ld in logs_data_list:
+                if (log_type is None or (hasattr(ld, 'log_type') and ld.log_type == log_type)) and \
+                   (ld.log_name == scalar_class or scalar_class == Scalar.ANY):
+                    scalar_data = reader.get_borehole_data(ld.log_id, resolution, ld.log_name, top_n=top_n)
+                    yield n_id, ld, scalar_data
 
 
 def gen_downhole_scalar_plots(reader, *, nvcl_id_list=None):
