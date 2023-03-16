@@ -802,6 +802,8 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_mosaic_imglogs(self):
+        ''' Tests 'get_mosaic_imglogs' API
+        '''
         log_list = setup_urlopen('get_mosaic_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
@@ -810,6 +812,8 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_tray_thumbnail_imglogs(self):
+        ''' Tests 'get_tray_thumbnail_imglogs' API
+        '''
         log_list = setup_urlopen('get_tray_thumb_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, '5e6fb391-5fef-4bb0-ae8e-dea25e7958d')
@@ -818,6 +822,8 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_tray_imglogs(self):
+        ''' Tests 'get_tray_imglogs' API
+        '''
         log_list = setup_urlopen('get_tray_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, 'bc79d76a-02ef-44e2-96f2-008a4145cf3')
@@ -826,6 +832,8 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_imagery_imglogs(self):
+        ''' Tests 'get_imagery_imglogs' API
+        '''
         log_list = setup_urlopen('get_imagery_imglogs', {'dataset_id':'dummy-id'}, 'logcoll_mosaic.txt')
         self.assertEqual(len(log_list), 1)
         self.assertEqual(log_list[0].log_id, 'b80a98e4-6d9b-4a58-ab04-d105c172e67')
@@ -834,6 +842,8 @@ class TestNVCLReader(unittest.TestCase):
 
 
     def test_get_algorithms(self):
+        ''' Tests 'get_algorithms' API
+        '''
         alg_dict = setup_urlopen('get_algorithms', {}, 'algorithms.txt')
         self.assertEqual(alg_dict['82'],'703')
         self.assertEqual(alg_dict['6'],'500')
@@ -846,4 +856,36 @@ class TestNVCLReader(unittest.TestCase):
         self.urllib_exception_tester(HTTPException, rdr.get_algorithms, 'HTTP Error:', {})
         self.urllib_exception_tester(OSError, rdr.get_algorithms, 'OS Error:', {})
 
+    def test_filter_feat_list(self):
+        ''' Tests 'filter_feat_list' API
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(name=['MAC23', 'ABC2'])
+        assert(len(f_list) == 2)
+        assert(f_list[0].name == 'MAC23')
+        assert(f_list[1].name == 'ABC2')
 
+    def test_filter_feat_list_single(self):
+        ''' Tests 'filter_feat_list' API
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(name='MAC25')
+        assert(len(f_list) == 1)
+        assert(f_list[0].name == 'MAC25')
+
+    def test_filter_feat_list_ids_only(self):
+        ''' Tests 'filter_feat_list' API, with 'nvcl_ids_only' keyword
+        '''
+        rdr = setup_reader()
+        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name=['MAC23', 'ABC2'])
+        assert(len(id_list) == 2)
+        assert(id_list[0] == '10026')
+        assert(id_list[1] == '6341')
+
+    def test_filter_feat_list_ids_only_single(self):
+        ''' Tests 'filter_feat_list' API, with 'nvcl_ids_only' keyword and single value
+        '''
+        rdr = setup_reader()
+        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name='MAC25')
+        assert(len(id_list) == 1)
+        assert(id_list[0] == '10027')

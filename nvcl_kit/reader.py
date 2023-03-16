@@ -851,7 +851,7 @@ class NVCLReader:
             val_list = val
             if not isinstance(val, list):
                 val_list = [val]
-            bh_list = [bh for bh in self.borehole_list if key in bh and bh[key] in val]
+            bh_list = [bh for bh in self.borehole_list if key in bh and bh[key] in val_list]
 
             if not nvcl_ids_only:
                 return [SimpleNamespace(**bh) for bh in bh_list]
