@@ -1,8 +1,0 @@
-#!/bin/bash
-# "postBuild" file installs extra packages for binder notebooks
-
-# Stop when there's an error
-set -e
-
-# Install notebook dependencies
-pip install matplotlib xmltodict pandas
