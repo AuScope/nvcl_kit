@@ -2,7 +2,7 @@
 
 [project]
 name = "nvcl_kit"
-version = "0.2.7"
+version = "0.2.8"
 description = "Downloads Australian NVCL datasets"
 authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
@@ -28,7 +28,6 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering",
 ]
 [project.urls]
