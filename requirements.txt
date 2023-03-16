@@ -1,7 +1,1 @@
-OWSLib==0.22.0
-shapely
-requests
-pyproj
-geojson
-pyyaml
-python-dateutil
+nvcl_kit
