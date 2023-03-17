@@ -9,12 +9,12 @@ authors = [
 ]
 dependencies = [
     "owslib==0.28.1",
-    "shapely==2.0.1",
-    "requests==2.28.2",
-    "pyproj==3.2.1",
-    "geojson==2.5.0",
-    "pyyaml==6.0",
-    "python-dateutil==2.8.2",
+    "shapely~=2.0",
+    "requests~=2.28",
+    "pyproj~=3.2",
+    "geojson~=2.5",
+    "pyyaml~=6.0",
+    "python-dateutil~=2.8",
 ]
 requires-python = ">=3.7"
 readme = "README.md"

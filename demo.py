@@ -88,6 +88,7 @@ def do_demo(state):
     # Here we extract data for 'Grp1 uTSAS' using 'Scalar' class
     #
     # GEN_SCALAR_BY_DEPTH
+    print('gen_scalar_by_depth()')
     for nvcl_id, log_id, sca_list in gen_scalar_by_depth(reader, scalar_class=Scalar.Grp1_uTSAS, log_type='1', top_n=4):
         for depth in sca_list:
             for meas in sca_list[depth]:
