@@ -2,7 +2,7 @@
 
 [project]
 name = "nvcl_kit"
-version = "1.0.0"
+version = "1.0.1"
 description = "Downloads Australian NVCL datasets"
 authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
