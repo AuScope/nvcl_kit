@@ -486,6 +486,19 @@ class TestNVCLReader(unittest.TestCase):
         self.urllib_exception_tester(HTTPException, rdr.get_logs_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
         self.urllib_exception_tester(OSError, rdr.get_logs_data, 'OS Error:', {'nvcl_id':'dummy-id'})
 
+    def test_get_logs_time(self):
+        ''' Tests time retrieval in get_logs_data()
+        '''
+        bh_data_list = setup_urlopen('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll_time.txt')
+        self.assertEqual(isinstance(bh_data_list[0], SimpleNamespace), True)
+        self.assertEqual(bh_data_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+
+    def test_get_logs_badtime(self):
+        ''' Tests badly formatted time retrieval in get_logs_data()
+        '''
+        bh_data_list = setup_urlopen('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll_time_bad.txt')
+        self.assertEqual(isinstance(bh_data_list[0], SimpleNamespace), True)
+        self.assertFalse(hasattr(bh_data_list[0], 'modified_date'))
 
     def test_profilometer_data(self):
         ''' Test get_profilometer_data()

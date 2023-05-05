@@ -624,14 +624,24 @@ class NVCLReader:
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
 
         :returns: a list of SimpleNamespace() objects with attributes:
-                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id
-                  'mask_log_id' is not supported by all services and may be an empty string'''
+                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
+                     modified_date (optional datetime object not supported by all services)
+                  NB: 'mask_log_id' is not supported by all services and may be an empty string'''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
             return []
         root = clean_xml_parse(response_str)
         log_list = []
         for ds_child in root.findall('./Dataset'):
+            # Get the modified date
+            date_str = ds_child.findtext('./modifiedDate', default='')
+            date_obj = None
+            if date_str:
+                # Try to parse the modified date from the dataset attributes
+                try:
+                    date_obj = parse(date_str)
+                except ParserError:
+                    pass
             for log_child in ds_child.findall('./Logs/Log'):
                 log_id = log_child.findtext('LogID', default='')
                 log_name = log_child.findtext('logName', default='')
@@ -642,6 +652,8 @@ class NVCLReader:
                 if log_name != '' and log_id != '':
                     log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, is_public=is_public, log_type=log_type,
                                               algorithm_id=algorithm_id, mask_log_id=mask_log_id)
+                    if date_obj is not None:
+                        setattr(log_obj, 'modified_date', date_obj)
                     log_list.append(log_obj)
         return log_list
 
