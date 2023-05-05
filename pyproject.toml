@@ -2,7 +2,7 @@
 
 [project]
 name = "nvcl_kit"
-version = "1.1.0"
+version = "1.1.1"
 description = "Downloads Australian NVCL datasets"
 authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
@@ -16,7 +16,7 @@ dependencies = [
     "pyyaml~=6.0",
     "python-dateutil~=2.8",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.6"
 readme = "README.md"
 license = {text = "CSIRO BSD/MIT"}
 classifiers = [
