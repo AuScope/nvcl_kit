@@ -32,3 +32,9 @@ The mineralogy data is maintained by Australia's State and Territory geological 
 ## License
 
 **nvcl_kit** is available under [CSIRO Open Source Software Licence Agreement](LICENSE) (variation of the BSD / MIT License)
+
+## Citation
+
+If you use this package in your research please cite:
+
+Fazio, Vincent; Mule, Shane (2023): nvcl_kit: Access AuScope National Virtual Core Library (NVCL) data services. CSIRO. Service Collection. http://hdl.handle.net/102.100.100/480016?index=1
