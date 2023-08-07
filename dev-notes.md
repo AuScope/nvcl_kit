@@ -35,10 +35,10 @@ tox
 
 # RELEASE PROCEDURE
 
-### Create a new 'X.Y.Z' version of nvcl_kit in pypi package [repository](https://pypi.org/project/nvcl-kit/)
+### Creates a new 'X.Y.Z' version of nvcl_kit in pypi package [repository](https://pypi.org/project/nvcl-kit/)
 
-1. Increment version in "pyproject.toml"
-2. Commit to git repo
+1. Increment to version 'X.Y.Z' in "pyproject.toml"
+2. Commit "pyproject.toml" to git repo
 ```
 git add pyproject.toml
 git commit
