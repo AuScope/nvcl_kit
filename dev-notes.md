@@ -1,36 +1,52 @@
 # DEVELOPMENT NOTES
 
-## Make current shell include the nvcl_kit packages
+Uses [pdm](https://pdm.fming.dev/latest/) for package management 
 
-```eval $(pdm venv activate)```
+### Make current shell include the nvcl_kit packages
 
-## Release the nvcl_kit packages
+```
+eval $(pdm venv activate)
+```
 
-```deactivate```
+### Release the nvcl_kit packages
 
-## Writes to the lock file after you have altered ‘pyproject.toml’
+```
+deactivate
+```
 
-```pdm lock```
+### Writes to the lock file after you have altered ‘pyproject.toml’
 
-## Installs packages
+```
+pdm lock
+```
 
-```pdm install```
+### Installs packages
+
+```
+pdm install
+```
 
 
-## To test, run this in the root repository dir:
+### To test, run this in the root repository dir:
 
-```tox``` 
+```
+tox
+``` 
 
 # RELEASE PROCEDURE
 
-## Create a new 'X.Y.Z' version in pypi
+### Create a new 'X.Y.Z' version of nvcl_kit in pypi package [repository](https://pypi.org/project/nvcl-kit/)
 
 1. Increment version in "pyproject.toml"
 2. Commit to git repo
-```git add pyproject.toml
-      git commit```
+```
+git add pyproject.toml
+git commit
+```
 3. Do this:
-```git tag -a vX.Y.Z -m "Version X.Y.Z"
-git push --tags origin master```
-
+```
+git tag -a vX.Y.Z -m "Version X.Y.Z"
+git push --tags origin master
+```
+4. The CI/CD system will pick up the tagged version and deploy it to pypi
 
