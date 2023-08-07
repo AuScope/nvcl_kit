@@ -1,24 +1,29 @@
-* DEVELOPMENT NOTES
+# DEVELOPMENT NOTES
 
-** Make current shell include the nvcl_kit packages
+## Make current shell include the nvcl_kit packages
+
 ```eval $(pdm venv activate)```
 
-** Release the nvcl_kit packages
+## Release the nvcl_kit packages
+
 ```deactivate```
 
-** Writes to the lock file after you have altered ‘pyproject.toml’
+## Writes to the lock file after you have altered ‘pyproject.toml’
+
 ```pdm lock```
 
-** Installs packages
+## Installs packages
+
 ```pdm install```
 
 
-** To test, run this in the root repository dir:
+## To test, run this in the root repository dir:
+
 ```tox``` 
 
-* RELEASE PROCEDURE
+# RELEASE PROCEDURE
 
-** Create a new 'X.Y.Z' version in pypi
+## Create a new 'X.Y.Z' version in pypi
 
 1. Increment version in "pyproject.toml"
 2. Commit to git repo
