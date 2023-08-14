@@ -2,7 +2,7 @@
 This module contains a class of scalar constants
 """
 from enum import Enum
-
+from typing import Union
 
 class Scalar(str, Enum):  # pragma: no cover
     """
@@ -148,7 +148,7 @@ class Scalar(str, Enum):  # pragma: no cover
     Wt3_sTSAT = "Wt3 uTSAT"
     Wt3_ujCLST = "Wt3 ujCLST"
 
-def has_tsa(scalar: Scalar|str) -> bool:
+def has_tsa(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate a TSA ('The Spectral Assistant') algorithm ?
 
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
@@ -156,7 +156,7 @@ def has_tsa(scalar: Scalar|str) -> bool:
     '''
     return str(scalar)[-4:-1] == 'TSA'
 
-def has_cls(scalar: Scalar|str) -> bool:
+def has_cls(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate a Constrained Least Squares (CLS) algorithm ?
 
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
@@ -164,7 +164,7 @@ def has_cls(scalar: Scalar|str) -> bool:
     '''
     return str(scalar)[-4:-1] == 'CLS'
 
-def has_VNIR(scalar: Scalar|str) -> bool:
+def has_VNIR(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate visible and near-infrared (VNIR) wavelengths ?
 
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
@@ -172,7 +172,7 @@ def has_VNIR(scalar: Scalar|str) -> bool:
     '''
     return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'V'
 
-def has_SWIR(scalar: Scalar|str) -> bool:
+def has_SWIR(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate short-wavelength infrared (SWIR) wavelengths ?
 
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
@@ -180,7 +180,7 @@ def has_SWIR(scalar: Scalar|str) -> bool:
     '''
     return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'S'
 
-def has_TIR(scalar: Scalar|str) -> bool:
+def has_TIR(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate thermal infrared wavelengths (TIR) ?
 
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
