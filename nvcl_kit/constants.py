@@ -22,7 +22,7 @@ class Scalar(str, Enum):  # pragma: no cover
 
     References:
 
-    http://geodownloads.dmp.wa.gov.au/Downloads/Hylogger/SH_WRD10570-001.pdf
+    - [Chart](https://drillhole.pir.sa.gov.au/Resources/ISM62.pdf) courtesy of Geological Survey of South Australia (GSSA) 
 
     Schodlok, MC, Whitbourn, L, Huntington, J, Mason, P, Green, A, Berman, M, Coward, D, Connor, P,
     Wright, W, Jolivet, M and Martinez, R 2016, HyLogger-3, a visible to shortwave and thermal
