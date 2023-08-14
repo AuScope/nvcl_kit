@@ -11,7 +11,7 @@ class Scalar(str, Enum):  # pragma: no cover
     The names of scalar classes have 3 parts; first part is class grouping type, second is the TSA mineral matching technique, third part is wavelength:
      1. Min1,2,3 = 1st, 2nd, 3rd most common mineral type OR Grp1,2,3 = 1st, 2nd, 3rd most common group of minerals
      2. uTSA - user, dTSA - domaining, sTSA = system
-     3. V = visible light, S = shortwave IR, T = thermal IR
+     3. V = visible light, S = shortwave IR, T = thermal IR, also known as LWIR (long wavelength infrared)
 
     Source of most class names: "National Virtual Core Scalars":
      http://vocabs.ardc.edu.au/repository/api/lda/csiro/national-virtual-core-library-scalars/v0-3/concept.html
@@ -147,3 +147,44 @@ class Scalar(str, Enum):  # pragma: no cover
     Wt3_sjCLST = "Wt3 sjCLST"
     Wt3_sTSAT = "Wt3 uTSAT"
     Wt3_ujCLST = "Wt3 ujCLST"
+
+def has_tsa(scalar: Scalar|str) -> bool:
+    ''' Does this scalar indicate a TSA ('The Spectral Assistant') algorithm ?
+
+    :param scalar: a scalar in the form of either a string or a 'Scalar' object
+    :return: True iff scalar indicates TSA
+    '''
+    return str(scalar)[-4:-1] == 'TSA'
+
+def has_cls(scalar: Scalar|str) -> bool:
+    ''' Does this scalar indicate a Constrained Least Squares (CLS) algorithm ?
+
+    :param scalar: a scalar in the form of either a string or a 'Scalar' object
+    :return: True iff scalar indicates CLS 
+    '''
+    return str(scalar)[-4:-1] == 'CLS'
+
+def has_VNIR(scalar: Scalar|str) -> bool:
+    ''' Does this scalar indicate visible and near-infrared (VNIR) wavelengths ?
+
+    :param scalar: a scalar in the form of either a string or a 'Scalar' object
+    :return: True iff scalar indicates VNIR
+    '''
+    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'V'
+
+def has_SWIR(scalar: Scalar|str) -> bool:
+    ''' Does this scalar indicate short-wavelength infrared (SWIR) wavelengths ?
+
+    :param scalar: a scalar in the form of either a string or a 'Scalar' object
+    :return: True iff scalar indicates SWIR 
+    '''
+    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'S'
+
+def has_TIR(scalar: Scalar|str) -> bool:
+    ''' Does this scalar indicate thermal infrared wavelengths (TIR) ?
+
+    :param scalar: a scalar in the form of either a string or a 'Scalar' object
+    :return: True iff scalar indicates TIR
+    '''
+    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'T'
+
