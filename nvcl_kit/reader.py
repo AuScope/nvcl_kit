@@ -88,10 +88,10 @@ class NVCLReader:
             * NVCL_URL - URL of NVCL service
             * WFS_URL - URL of WFS service, GeoSciML V4.1 BoreholeView
             * WFS_VERSION - (optional - default "1.1.0")
-            * BOREHOLE_CRS - (optional - default "EPSG:4326")
+            * BOREHOLE_CRS - (optional - default "urn:x-ogc:def:crs:EPSG:4283")
             * DEPTHS - (optional) Tuple of range of depths (min,max) [metres]
             * POLYGON - (optional) 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
-            * BBOX - (optional - default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0}) 2D bounding box in EPSG:4326, only boreholes within box are retrieved
+            * BBOX - (optional - default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0}) 2D bounding box in EPSG:4283, only boreholes within box are retrieved
             * MAX_BOREHOLES - (optional - default 0) Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
 
           ::
@@ -100,7 +100,7 @@ class NVCLReader:
               from types import SimpleNamespace
               from shapely.geometry.polygon import LinearRing
               param_obj = SimpleNamespace()
-              # Uses EPSG:4326
+              # Uses EPSG:4283
               param_obj.BBOX = { "west": 132.76, "south": -28.44, "east": 134.39, "north": -26.87 }
               # Or use a POLYGON instead of a BBOX
               param_obj.POLYGON = LinearRing([(132.76, -28.44), (132.76, -26.87), (134.39, -26.87), (134.39, -28.44), (132.76, -28.44)])
@@ -192,9 +192,9 @@ class NVCLReader:
 
         # Roughly check BOREHOLE_CRS EPSG: value
         if not hasattr(self.param_obj, 'BOREHOLE_CRS'):
-            self.param_obj.BOREHOLE_CRS = "EPSG:4326"   # "EPSG:4283"
+            self.param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:4283"
         elif (not isinstance(self.param_obj.BOREHOLE_CRS, str) or
-              "EPSG:" not in self.param_obj.BOREHOLE_CRS.upper() or
+              "EPSG" not in self.param_obj.BOREHOLE_CRS.upper() or
               not self.param_obj.BOREHOLE_CRS[-4:].isnumeric()):
             LOGGER.warning("'BOREHOLE_CRS' parameter is not an EPSG string")
             return

@@ -34,10 +34,10 @@ def do_demo(state):
     # Assemble parameters
     #     First parameter is state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
     #     Other parameters are optional:
-    #               bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved
+    #               bbox: 2D bounding box in EPSG:4283, only boreholes within box are retrieved
     #                     default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
     #               polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
-    #               borehole_crs: CRS string, default "EPSG:4326"
+    #               borehole_crs: CRS string, default "urn:x-ogc:def:crs:EPSG:4283"
     #               wfs_version: WFS version string, default "1.1.0"
     #               depths: Tuple of range of depths (min,max) [metres]
     #               wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView

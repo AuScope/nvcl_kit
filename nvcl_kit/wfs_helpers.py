@@ -241,10 +241,13 @@ def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
                 borehole_cnt += 1
                 borehole_list.append(borehole_dict)
                 LOGGER.debug(f"borehole_cnt = {borehole_cnt}")
+            else:
+                LOGGER.debug(f"Not in BBOX or POLYGON")
 
             if param_obj.MAX_BOREHOLES > 0 and borehole_cnt >= param_obj.MAX_BOREHOLES:
                 break
         record_cnt += 1
         LOGGER.debug(f'record_cnt = {record_cnt}')
-    LOGGER.debug(f'fetch_boreholes_list() returns {len(borehole_list)}')
+        LOGGER.debug(f'borehole_cnt = {borehole_cnt}')
+    LOGGER.debug(f'fetch_wfs_bh_list() returns {len(borehole_list)}')
     return borehole_list

@@ -3,12 +3,14 @@ from unittest.mock import Mock
 
 from types import SimpleNamespace
 
+import shapely
 
 from nvcl_kit.reader import NVCLReader
 
 
 
-def setup_reader():
+
+def setup_reader() -> NVCLReader:
     ''' Initialises NVCLReader() object
 
     :returns: NVCLReader() object
@@ -17,14 +19,14 @@ def setup_reader():
     with unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True) as mock_wfs:
         wfs_obj = mock_wfs.return_value
         wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs3.txt') as fp:
+        with open('full_wfs_yx.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
             param_obj = setup_param_obj()
             rdr = NVCLReader(param_obj)
     return rdr
 
 
-def setup_urlopen(fn, params, src_file, binary=False):
+def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False) -> list:
     ''' Patches over 'urlopen()' call and calls a function with parameters
 
     :param fn: function to call
@@ -46,13 +48,15 @@ def setup_urlopen(fn, params, src_file, binary=False):
     return ret_list
 
 
-def setup_param_obj(max_boreholes=None, bbox=None, polygon=None, depths=None):
-    ''' Create a parameter object for passing to NVCLReader constructor
+def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shapely.geometry.LinearRing = None, 
+        depths: tuple = None, borehole_crs: str = None) -> SimpleNamespace:
+    ''' Create a parameter object for passing to NVCLReader constructor, used for testing only
 
     :param max_boreholes: maximum number of boreholes to download
-    :param bbox: bounding box used to limit boreholes
+    :param bbox: bounding box used to limit boreholes {"west": -180.0,"south": -90.0, ... }
     :param polygon: polygon used to limit boreholes
-    :param depths: only retrieve data within this depth range
+    :param depths: only retrieve data within this depth range  (0.0, 1230.0)
+    :param borehole_crs: borehole coordinate system e.g. 'EPSG:4326'
     :returns: SimpleNamespace() object containing parameters
     '''
     param_obj = SimpleNamespace()
@@ -66,4 +70,6 @@ def setup_param_obj(max_boreholes=None, bbox=None, polygon=None, depths=None):
         param_obj.POLYGON = polygon
     if max_boreholes:
         param_obj.MAX_BOREHOLES = max_boreholes
+    if borehole_crs:
+        param_obj.BOREHOLE_CRS = borehole_crs
     return param_obj

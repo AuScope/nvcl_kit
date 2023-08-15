@@ -28,15 +28,15 @@ if not LOGGER.hasHandlers():
     LOGGER.addHandler(HANDLER)
 
 
-def param_builder(provider, **options):
+def param_builder(provider: str, **options: dict) -> SimpleNamespace:
     """
     Builds a set of parameters which can be passed to 'NVCLReader' for connecting to an NVCL service
 
     :param provider: state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa', 'csiro'
     :param options: optional keyword parameters
-                   bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
+                   bbox: 2D bounding box in EPSG:4283, only boreholes within box are retrieved, default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
                    polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
-                   borehole_crs: CRS string, default "EPSG:4326"
+                   borehole_crs: CRS string, default "urn:x-ogc:def:crs:EPSG:4283"
                    wfs_version: WFS version string, default "1.1.0"
                    depths: Tuple of range of depths (min,max) [metres]
                    wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
@@ -65,6 +65,7 @@ def param_builder(provider, **options):
         param_obj.NVCL_URL = "https://www.mrt.tas.gov.au/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "1.1.0"
+        param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:4283"
 
     # Victoria
     elif provider.lower() in ['vic', 'victoria']:
@@ -72,6 +73,7 @@ def param_builder(provider, **options):
         param_obj.NVCL_URL = "https://geology.data.vic.gov.au/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "1.1.0"
+        param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:4326"
 
     # New South Wales
     elif provider.lower() in ['nsw', 'new south wales']:
@@ -79,6 +81,7 @@ def param_builder(provider, **options):
         param_obj.NVCL_URL = "https://nvcl.geoscience.nsw.gov.au/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "1.1.0"
+        param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:4283"
 
     # Queensland
     elif provider.lower() in ['qld', 'queensland']:
@@ -100,6 +103,7 @@ def param_builder(provider, **options):
         param_obj.NVCL_URL = "https://sarigdata.pir.sa.gov.au/nvcl/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "1.1.0"
+        param_obj.BOREHOLE_CRS = "http://www.opengis.net/def/crs/EPSG/0/4283"
 
     # Western Australia
     elif provider.lower() in ['wa', 'western australia']:
@@ -125,6 +129,8 @@ def param_builder(provider, **options):
         param_obj.BBOX = options['bbox']
     elif 'polygon' in options:
         param_obj.POLYGON = options['polygon']
+
+    # Set all remaining parameters
     for p in OPTION_LIST[2:]:
         if p in options:
             setattr(param_obj, p.upper(), options[p])

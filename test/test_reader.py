@@ -320,7 +320,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
         wfs_obj = mock_wfs.return_value
         wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs3.txt') as fp:
+        with open('full_wfs_yx.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
@@ -331,15 +331,17 @@ class TestNVCLReader(unittest.TestCase):
 
 
     @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_all_bh_wfs(self, mock_wfs):
-        ''' Test full WFS response, unlimited number of boreholes
+    def test_all_bh_wfs_xy(self, mock_wfs):
+        ''' Test full WFS response, unlimited number of boreholes, XY-coords
             (tests get_boreholes_list() & get_nvcl_id_list() )
         '''
         wfs_obj = mock_wfs.return_value
         wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs3.txt') as fp:
+        with open('full_wfs_xy.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = setup_param_obj()
+            # NB: To get XY-coords, would send geoserver a CRS of 'EPSG:4326'
+            # (https://docs.geoserver.org/latest/en/user/services/wfs/axis_order.html#wfs-basics-axis)
+            param_obj = setup_param_obj(borehole_crs='EPSG:4326')
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(len(l), 102)
@@ -378,6 +380,54 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(l[0:3], ['10026','10027','10343'])
 
 
+
+    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
+    def test_all_bh_wfs_yx(self, mock_wfs):
+        ''' Test full WFS response, unlimited number of boreholes, YX-coords
+        '''
+        wfs_obj = mock_wfs.return_value
+        wfs_obj.getfeature.return_value = Mock()
+        with open('full_wfs_yx.txt') as fp:
+            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+            param_obj = setup_param_obj()
+            rdr = NVCLReader(param_obj)
+            l = rdr.get_boreholes_list()
+            self.assertEqual(len(l), 62)
+            # Test with all fields having values
+            self.assertEqual(l[4], {
+                'nvcl_id': '12991',
+                'x': 145.67616489, 'y': -41.61921239,
+                'href': 'http://www.blah.gov.au/resource/feature/blah/borehole/12991',
+                'name': 'MC3',
+                'description': 'descr',
+                'purpose': 'purp',
+                'status': 'STATUS',
+                'drillingMethod': 'unknown',
+                'operator': 'Opera',
+                'driller': 'Blah Exploration Pty Ltd',
+                'drillStartDate': '1978-05-28Z',
+                'drillEndDate': '1979-05-28Z',
+                'startPoint': 'unknown',
+                'inclinationType': 'inclined down',
+                'boreholeMaterialCustodian': 'blah',
+                'boreholeLength_m': '60.3',
+                'elevation_m': '791.4',
+                'elevation_srs': 'http://www.opengis.net/def/crs/EPSG/0/5711',
+		'positionalAccuracy': '1.2',
+		'source': 'Src',
+                'parentBorehole_uri': 'http://blah.org/blah-d354454546e3esd3454',
+                'metadata_uri': 'http://blah.org/geosciml-drillhole-locations-in-blah-d354a70a4a29536166ab8a9ca6470a79d628c05e',
+                'genericSymbolizer': 'SSSSS',
+                'z': 791.4})
+
+            # Test an almost completely empty borehole
+            self.assertEqual(l[5], {'nvcl_id': '12992', 'x': 145.67585285, 'y': -41.61422342, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': '', 'elevation_m': '', 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0})
+
+            l = rdr.get_nvcl_id_list()
+            self.assertEqual(len(l), 62)
+            self.assertEqual(l[0:3], ['10026','10027','10343'])
+
+
     @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
     def test_bbox_wfs(self, mock_wfs):
         ''' Test bounding box precision of selecting boreholes
@@ -388,7 +438,10 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('bbox_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = setup_param_obj(max_boreholes=0, bbox={"west": 146.0,"south": -41.2,"east": 147.2,"north": -40.5})
+            # This file has XY-coords so set borehole_crs to 'EPSG:4326'
+            param_obj = setup_param_obj(max_boreholes=0,
+                                        bbox={"west": 146.0,"south": -41.2,"east": 147.2,"north": -40.5},
+                                        borehole_crs='EPSG:4326')
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
             self.assertEqual(len(l), 1)
@@ -405,7 +458,8 @@ class TestNVCLReader(unittest.TestCase):
         wfs_obj.getfeature.return_value = Mock()
         with open('badcoord_wfs.txt') as fp:
             wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            param_obj = setup_param_obj()
+            # This file has XY-coords so set borehole_crs to 'EPSG:4326'
+            param_obj = setup_param_obj(borehole_crs='EPSG:4326')
             with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
                 rdr = NVCLReader(param_obj)
                 self.assertTrue(len(nvcl_log.output)>0, "Missing 'Cannot parse collar coordinates'")
