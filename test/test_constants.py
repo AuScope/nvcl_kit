@@ -27,7 +27,7 @@ class TestConstants(unittest.TestCase):
         self.assertFalse(has_cls("Error dTSAS"))
         self.assertTrue(has_cls("Min1 ujCLST"))
 
-    def has_SWIR(self):
+    def test_has_SWIR(self):
         ''' Tests 'has_SWIR' API
         '''
         self.assertFalse(has_SWIR(Scalar.Min1_sjCLST))
@@ -42,7 +42,7 @@ class TestConstants(unittest.TestCase):
         self.assertFalse(has_SWIR(Scalar.Grp1_uTSAV))
         self.assertFalse(has_SWIR("Grp1 uTSAV"))
 
-    def has_TIR(self):
+    def test_has_TIR(self):
         ''' Tests 'has_TIR' API
         '''
         self.assertTrue(has_TIR(Scalar.Min1_sjCLST))
@@ -57,7 +57,7 @@ class TestConstants(unittest.TestCase):
         self.assertFalse(has_TIR(Scalar.Grp1_uTSAV))
         self.assertFalse(has_TIR("Grp1 uTSAV"))
 
-    def has_VNIR(self):
+    def test_has_VNIR(self):
         ''' Tests 'has_VNIR' API
         '''
         self.assertFalse(has_VNIR(Scalar.Min1_sjCLST))

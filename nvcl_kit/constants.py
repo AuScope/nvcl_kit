@@ -170,7 +170,7 @@ def has_VNIR(scalar: Union[Scalar,str]) -> bool:
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
     :return: True iff scalar indicates VNIR
     '''
-    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'V'
+    return (has_tsa(scalar) or has_cls(scalar)) and str(scalar)[-1] == 'V'
 
 def has_SWIR(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate short-wavelength infrared (SWIR) wavelengths ?
@@ -178,7 +178,7 @@ def has_SWIR(scalar: Union[Scalar,str]) -> bool:
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
     :return: True iff scalar indicates SWIR 
     '''
-    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'S'
+    return (has_tsa(scalar) or has_cls(scalar)) and str(scalar)[-1] == 'S'
 
 def has_TIR(scalar: Union[Scalar,str]) -> bool:
     ''' Does this scalar indicate thermal infrared wavelengths (TIR) ?
@@ -186,5 +186,5 @@ def has_TIR(scalar: Union[Scalar,str]) -> bool:
     :param scalar: a scalar in the form of either a string or a 'Scalar' object
     :return: True iff scalar indicates TIR
     '''
-    return has_tsa(scalar) or has_cls(scalar) and str(scalar)[-1] == 'T'
+    return (has_tsa(scalar) or has_cls(scalar)) and str(scalar)[-1] == 'T'
 
