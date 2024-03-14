@@ -2,6 +2,8 @@
 This forms the interface between the 'reader' class and the low-level web APIs.
 
 """
+import os
+import time
 import urllib
 import urllib.parse
 import urllib.request
@@ -38,12 +40,14 @@ class _ServiceInterface:
         NB: 'ServiceInterface' should only be called from within the 'reader' class.
     '''
 
-    def __init__(self, nvcl_url, timeout):
+    def __init__(self, nvcl_url,  timeout, cache_path = None):
         '''
         :param nvcl_url: URL of the NVCL service
         :param timeout: timeout value for connection to NVCL service (seconds)
+        :param cache_path: optional folder path for cache files
         '''
         self.NVCL_URL = nvcl_url
+        self.CACHE_PATH = cache_path
         self.TIMEOUT = timeout
 
     def get_algorithms(self):
@@ -297,16 +301,40 @@ class _ServiceInterface:
         req = urllib.request.Request(url, data=enc_params)
         LOGGER.debug(f"Sending: {url}, {enc_params}")
         response_str = b''
-        try:
-            with urllib.request.urlopen(req, timeout=self.TIMEOUT) as response:
-                response_str = response.read()
-        except HTTPException as he_exc:
-            LOGGER.warning(f"HTTP Error: {he_exc}")
-            return ""
-        except OSError as os_exc:
-            LOGGER.warning(f"OS Error: {os_exc}")
-            return ""
+        fileCachePath = None
+        if (self.CACHE_PATH is not None):
+            fileCachePath = self.CACHE_PATH + urllib.parse.quote(f'{url}?{enc_params.decode("utf-8")}', '')+'.txt'
+            if (os.path.exists(fileCachePath)):
+                with open(fileCachePath, 'rb') as cacheFile:
+                    response_str = cacheFile.read()
+                    LOGGER.debug(f'read cache:{fileCachePath}')
+                    return response_str
+        for cc in range(5):
+            try:
+                with urllib.request.urlopen(req, timeout=self.TIMEOUT) as response:
+                    response_str = response.read()
+                    break
+            except HTTPException as he_exc:
+                LOGGER.warning(f"HTTP Error: {he_exc}")
+                LOGGER.warning(f'retry:{cc}')
+                if(cc<5):
+                    time.sleep(5)
+                    continue
+                return ""
+            except OSError as os_exc:
+                LOGGER.warning(f"OS Error: {os_exc}")
+                LOGGER.warning(f'retry:{cc}')
+                if(cc<5):
+                    time.sleep(5)
+                    continue
+                return ""
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")
+
+        if (self.CACHE_PATH is not None and not os.path.exists(fileCachePath)):
+            with open(fileCachePath, 'wb') as cacheFile:
+                cacheFile.write(response_str)
+                cacheFile.close()
+                LOGGER.debug(f'write cache:{fileCachePath}')
         return response_str
 
     def _make_multi_logids(self, log_id_list, options={}):

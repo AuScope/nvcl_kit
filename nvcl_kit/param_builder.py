@@ -42,11 +42,12 @@ def param_builder(provider: str, **options: dict) -> SimpleNamespace:
                    wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
                    nvcl_url: URL of NVCL service
                    max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded, default 0
+                   cache_path: the folder path for cache files
 
     :returns: a SimpleNamespace object containing required connection parameters
     """
     OPTION_LIST = ['bbox', 'polygon', 'borehole_crs', 'wfs_version', 'depths', 'wfs_url', 'nvcl_url',
-                   'max_boreholes', 'use_local_filtering']
+                   'max_boreholes', 'use_local_filtering','cache_path']
 
     # Check if options are valid
     for opt in options:
