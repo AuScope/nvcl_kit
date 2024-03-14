@@ -80,7 +80,7 @@ class NVCLReader:
     ''' A class to extract NVCL borehole data (see README.md for details)
     '''
 
-    def __init__(self, param_obj, wfs=None, log_lvl=None):
+    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist = False):
         '''
         :param param_obj: SimpleNamespace() object with parameters.
           Fields are:
@@ -112,7 +112,7 @@ class NVCLReader:
         :param wfs: optional owslib 'WebFeatureService' object
         :param log_lvl: optional logging level (see 'logging' package),
                         default is logging.INFO
-
+        :param skip_bhlist: optional fast init NVCLReader without loading the bhlist
         **NOTE: Check if 'wfs' is not 'None' to see if this instance initialised properly**
 
         '''
@@ -238,13 +238,16 @@ class NVCLReader:
             self.wfs = wfs
 
         # Fetch boreholes from OCG WFS service
-        if self.wfs:
+        if self.wfs and not skip_bhlist:
             self.borehole_list = fetch_wfs_bh_list(self.wfs, self.param_obj)
             if self.borehole_list == []:
                 self.wfs = None
 
         # Initialise interface to NVCL service
-        self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT)
+        if (hasattr(self.param_obj, 'CACHE_PATH')):
+            self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT, self.param_obj.CACHE_PATH)
+        else:
+            self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT)
 
     def get_borehole_data(self, log_id, height_resol, class_name, top_n=1):
         ''' Retrieves borehole mineral data for a borehole, will only return mineral class data
