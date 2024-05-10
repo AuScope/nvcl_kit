@@ -469,23 +469,32 @@ class TestNVCLReader(unittest.TestCase):
     def test_imagelog_data(self):
         ''' Test get_imagelog_data()
         '''
-        for ds_coll_file in ['dataset_coll.txt', 'dataset_coll_time.txt', 'dataset_coll_time_bad.txt']:
-            imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, ds_coll_file)
-            if ds_coll_file == 'dataset_coll.txt':
-                # Tests fetching and parsing '<ImageLog>' elements
-                self.assertEqual(len(imagelog_data_list), 4)
-                self.assertEqual(imagelog_data_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
-                self.assertEqual(imagelog_data_list[0].log_name, 'Mosaic')
-                self.assertEqual(imagelog_data_list[0].sample_count, '1')
-                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
-            elif ds_coll_file == 'dataset_coll_time.txt':
-                # Tests fetching and parsing text in '<modifiedDate>' element
-                self.assertEqual(len(imagelog_data_list), 3)
-                self.assertEqual(imagelog_data_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
-                self.assertEqual(imagelog_data_list[2].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
-            else:
-                # Tests badly formatted text in '<modifiedDate>' element
-                self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
+        imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, 'dataset_coll.txt')
+        # Tests fetching and parsing '<ImageLog>' elements
+        self.assertEqual(len(imagelog_data_list), 4)
+        self.assertEqual(imagelog_data_list[0].log_id, '5f14ca9c-6d2d-4f86-9759-742dc738736')
+        self.assertEqual(imagelog_data_list[0].log_name, 'Mosaic')
+        self.assertEqual(imagelog_data_list[0].sample_count, '1')
+        self.assertFalse(hasattr(imagelog_data_list[0], 'created_date'))
+        self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
+
+    
+    def test_imagelog_data_time(self):
+        ''' Test get_imagelog_data() time parsing
+        '''
+        imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, 'dataset_coll_time.txt')
+        # Tests fetching and parsing text in '<createdDate>' and '<modifiedDate>' elements
+        self.assertEqual(len(imagelog_data_list), 4)
+        self.assertEqual(imagelog_data_list[0].created_date, datetime.datetime(2022, 9, 13, 14, 38, 24, tzinfo=tzoffset(None, 34200)))
+        self.assertEqual(imagelog_data_list[0].modified_date, datetime.datetime(2022, 9, 14, 14, 38, 39, tzinfo=tzoffset(None, 34200)))
+
+
+    def test_imagelog_data_time_bad(self):
+        ''' Test get_imagelog_data() bad time parsing
+        '''
+        imagelog_data_list = setup_urlopen('get_imagelog_data', {'nvcl_id':"blah"}, 'dataset_coll_time_bad.txt')
+        # Tests badly formatted text in '<modifiedDate>' element
+        self.assertFalse(hasattr(imagelog_data_list[0], 'modified_date'))
 
 
     def test_imagelog_exception(self):
@@ -545,7 +554,8 @@ class TestNVCLReader(unittest.TestCase):
         '''
         bh_data_list = setup_urlopen('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll_time.txt')
         self.assertEqual(isinstance(bh_data_list[0], SimpleNamespace), True)
-        self.assertEqual(bh_data_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+        self.assertEqual(bh_data_list[2].created_date, datetime.datetime(2022, 9, 13, 14, 38, 24, tzinfo=tzoffset(None, 34200)))
+        self.assertEqual(bh_data_list[2].modified_date, datetime.datetime(2022, 9, 14, 14, 38, 39, tzinfo=tzoffset(None, 34200)))
 
     def test_get_logs_badtime(self):
         ''' Tests badly formatted time retrieval in get_logs_data()
@@ -717,7 +727,8 @@ class TestNVCLReader(unittest.TestCase):
                 open_obj.__enter__.return_value.read.return_value = fp.read()
                 dataset_list = rdr.get_dataset_list("blah")
                 self.assertEqual(len(dataset_list), 1)
-                self.assertEqual(dataset_list[0].modified_date, datetime.datetime(2011, 3, 23, 19, 13, 50, tzinfo=tzoffset(None, 39600)))
+                self.assertEqual(dataset_list[0].created_date, datetime.datetime(2022, 9, 13, 14, 38, 24, tzinfo=tzoffset(None, 34200)))
+                self.assertEqual(dataset_list[0].modified_date, datetime.datetime(2022, 9, 14, 14, 38, 39, tzinfo=tzoffset(None, 34200)))
 
 
     def test_dataset_list_time_bad(self):

@@ -20,12 +20,10 @@ from http.client import HTTPException
 
 from shapely.geometry.polygon import LinearRing
 
-from dateutil.parser import parse, ParserError
-
 from nvcl_kit.svc_interface import _ServiceInterface
 
 from nvcl_kit.wfs_helpers import fetch_wfs_bh_list
-from nvcl_kit.xml_helpers import clean_xml_parse
+from nvcl_kit.xml_helpers import clean_xml_parse, parse_dates
 
 ENFORCE_IS_PUBLIC = True
 ''' Enforce the 'is_public' flag , i.e. any data with 'is_public' set to 'false'
@@ -336,7 +334,7 @@ class NVCLReader:
         ''' Retrieves a list of dataset objects
 
         :param nvcl_id: NVCL 'holeidentifier' parameter, the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
-        :returns: a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id, modified_date (datetime object)
+        :returns: a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id, created_date, (optional datetime object), modified_date (optional datetime object)
         '''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
@@ -355,19 +353,14 @@ class NVCLReader:
             for label, key in [('borehole_uri', './boreholeURI'),
                                ('tray_id', './trayID'),
                                ('section_id', './sectionID'),
-                               ('domain_id', './domainID'),
-                               ('modified_date', './modifiedDate')]:
+                               ('domain_id', './domainID')]:
                 val = child.findtext(key, default='')
                 if val:
-                    if label != 'modified_date':
-                        setattr(dataset_obj, label, val)
-                    else:
-                        # Try to parse the modified date
-                        try:
-                            date_obj = parse(val)
-                            setattr(dataset_obj, label, date_obj)
-                        except ParserError:
-                            pass
+                    setattr(dataset_obj, label, val)
+            # Look for created & modified dates
+            for key, val in parse_dates(child).items():
+                setattr(dataset_obj, key, val)
+
             dataset_list.append(dataset_obj)
         return dataset_list
 
@@ -628,7 +621,7 @@ class NVCLReader:
 
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
-                     modified_date (optional datetime object not supported by all services)
+                     created_date, modified_date (optional datetime objects not supported by all services)
                   NB: 'mask_log_id' is not supported by all services and may be an empty string'''
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
@@ -636,15 +629,9 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         log_list = []
         for ds_child in root.findall('./Dataset'):
-            # Get the modified date
-            date_str = ds_child.findtext('./modifiedDate', default='')
-            date_obj = None
-            if date_str:
-                # Try to parse the modified date from the dataset attributes
-                try:
-                    date_obj = parse(date_str)
-                except ParserError:
-                    pass
+            # Get the dates from the 'Dataset' elements
+            date_dict = parse_dates(ds_child)
+            # Get the log data from the 'Logs' elements
             for log_child in ds_child.findall('./Logs/Log'):
                 log_id = log_child.findtext('LogID', default='')
                 log_name = log_child.findtext('logName', default='')
@@ -655,8 +642,9 @@ class NVCLReader:
                 if log_name != '' and log_id != '':
                     log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, is_public=is_public, log_type=log_type,
                                               algorithm_id=algorithm_id, mask_log_id=mask_log_id)
-                    if date_obj is not None:
-                        setattr(log_obj, 'modified_date', date_obj)
+                    # Set dates, if they were found
+                    for key, val in date_dict.items():
+                        setattr(log_obj, key, val)
                     log_list.append(log_obj)
         return log_list
 
@@ -674,24 +662,16 @@ class NVCLReader:
             return []
         root = clean_xml_parse(response_str)
         log_list = []
-        mod_date_str = root.findtext('./Dataset/modifiedDate', default='')
-        date_obj = None
-        # Optionally look for 'modifiedDate' element
-        if mod_date_str != '':
-            # Try to parse the modified date
-            try:
-                date_obj = parse(mod_date_str)
-            except ParserError:
-                pass
         for ds_child in root.findall('./Dataset'):
+            date_dict = parse_dates(ds_child)
             for log_child in ds_child.findall('./ImageLogs/Log'):
                 log_name = log_child.findtext('LogName', default='')
                 log_id = log_child.findtext('LogID', default='')
                 sample_count = log_child.findtext('SampleCount', default='')
                 if log_name != '' and log_id != '':
                     log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, sample_count=sample_count)
-                    if date_obj is not None:
-                        setattr(log_obj, 'modified_date', date_obj)
+                    for key, val in date_dict.items():
+                        setattr(log_obj, key, val)
                     log_list.append(log_obj)
         return log_list
 
