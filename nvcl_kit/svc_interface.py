@@ -306,7 +306,7 @@ class _ServiceInterface:
         if (self.CACHE_PATH is not None):
             fileCachePath = self.CACHE_PATH + urllib.parse.quote(f'{url}?{enc_params.decode("utf-8")}', '')+'.txt'
             if len(fileCachePath) > 256:
-                param = hashlib.sha1(enc_params.decode("utf-8")).hexdigest()
+                param = hashlib.sha1(enc_params).hexdigest()
                 fileCachePath = self.CACHE_PATH + urllib.parse.quote(f'{url}?{param}', '')+'.txt'
             if (os.path.exists(fileCachePath)):
                 with open(fileCachePath, 'rb') as cacheFile:
