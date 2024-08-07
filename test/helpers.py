@@ -26,15 +26,18 @@ def setup_reader() -> NVCLReader:
     return rdr
 
 
-def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False) -> list:
+def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False, rdr: NVCLReader = None) -> list:
     ''' Patches over 'urlopen()' call and calls a function with parameters
 
     :param fn: function to call
     :param params: function's parameters as a dict
     :param src_file: filename of a file containing data returned from patched 'urlopen()'
+    :param rdr: optional NVCLReader() object
     :returns: data returned from function call
     '''
-    rdr = setup_reader()
+    # If NVCLReader() is not supplied create one
+    if rdr is None:
+        rdr = setup_reader()
     ret_list = []
     with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
         open_obj = mock_request.return_value
@@ -49,7 +52,7 @@ def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False) -> list
 
 
 def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shapely.geometry.LinearRing = None, 
-        depths: tuple = None, borehole_crs: str = None) -> SimpleNamespace:
+        depths: tuple = None, borehole_crs: str = None, cache_path = None) -> SimpleNamespace:
     ''' Create a parameter object for passing to NVCLReader constructor, used for testing only
 
     :param max_boreholes: maximum number of boreholes to download
@@ -57,6 +60,7 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
     :param polygon: polygon used to limit boreholes
     :param depths: only retrieve data within this depth range  (0.0, 1230.0)
     :param borehole_crs: borehole coordinate system e.g. 'EPSG:4326'
+    :param cache_path: path used to cache network responses to local filesystem
     :returns: SimpleNamespace() object containing parameters
     '''
     param_obj = SimpleNamespace()
@@ -72,4 +76,6 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
         param_obj.MAX_BOREHOLES = max_boreholes
     if borehole_crs:
         param_obj.BOREHOLE_CRS = borehole_crs
+    if cache_path:
+        param_obj.CACHE_PATH = cache_path
     return param_obj

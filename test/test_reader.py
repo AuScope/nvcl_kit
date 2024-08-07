@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import sys, os
+import glob
+import random
 import unittest
 from unittest.mock import patch, Mock
 from requests.exceptions import Timeout, RequestException
@@ -447,6 +449,38 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(len(l), 1)
             l = rdr.get_nvcl_id_list()
             self.assertEqual(len(l), 1)
+
+
+    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
+    def test_cache(self, mock_wfs):
+        ''' Test CACHE_PATH option
+            Tests for existence of both forms of the cache file
+        '''
+        temp_short = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(10) ])
+        temp_long = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(100) ])
+        wfs_obj = mock_wfs.return_value
+        wfs_obj.getfeature.return_value = Mock()
+        with open('full_wfs_yx.txt') as fp:
+            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+            for cache_path, tmp_file in [
+                               # Test when parameters are incorporated in filename
+                               (temp_short, temp_short + 'https%3A%2F%2Fblah.blah.blah%2Fnvcl%2FNVCLDataServices%2FgetDownsampledData.html%3Flogid%3Ddummy-id%26interval%3D10.0%26outputformat%3Djson%26startdepth%3D0.0%26enddepth%3D10000.0.txt'),
+                               # Test when parameters are hashed because filename is too long
+                               (temp_long, temp_long + 'https%3A%2F%2Fblah.blah.blah%2Fnvcl%2FNVCLDataServices%2FgetDownsampledData.html%3F6024443c534411d094f0cc87b78b708c2c7f4b14.txt')]:
+                # Setup params for NVCLReader() with CACHE_PATH set
+                param_obj = setup_param_obj(max_boreholes=0, cache_path=cache_path)
+                rdr = NVCLReader(param_obj)
+                # Calls '_get_response_str()' which will create a cache file
+                setup_urlopen('get_borehole_data',
+                              {'log_id':"dummy-id", 'height_resol':10.0, 'class_name':"dummy-class"},
+                              'bh_data.txt',
+                              rdr=rdr)
+                # Test for existence of cache file
+                dir_list = glob.glob("tmp-*")
+                self.assertEqual(dir_list[0], tmp_file)
+                self.assertEqual(len(dir_list), 1)
+                # Remove cache file
+                os.remove(tmp_file)
 
 
     @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
