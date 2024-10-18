@@ -85,17 +85,18 @@ def gen_core_images(reader, *, nvcl_id_list=None, startsampleno=0, endsampleno=1
         if not nvcl_id_list:
             raise StopIteration()
 
-    width=0
-    if max_magnify:
-        width=1 
     for n_id in nvcl_id_list:
         datasetid_list = reader.get_datasetid_list(n_id)
         if datasetid_list:
             for ds_id in datasetid_list:
                 img_log_list = reader.get_imagery_imglogs(ds_id)
                 for ilog in img_log_list:
-                    html = reader.get_mosaic_image(ilog.log_id, startsampleno=startsampleno, endsampleno=endsampleno,
-                                                   width=width)
+                    if max_magnify:
+                        html = reader.get_mosaic_image(ilog.log_id, startsampleno=startsampleno,
+                                                       endsampleno=endsampleno, width=1)
+                    else:
+                        html = reader.get_mosaic_image(ilog.log_id, startsampleno=startsampleno,
+                                                       endsampleno=endsampleno)
                     depth_list = reader.get_tray_depths(ilog.log_id)
                     yield n_id, ds_id, ilog, depth_list, html
 
