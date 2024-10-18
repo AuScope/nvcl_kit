@@ -90,6 +90,8 @@ def param_builder(provider: str, **options: dict) -> SimpleNamespace:
         param_obj.NVCL_URL = "https://geology.information.qld.gov.au/NVCLDataServices/"
         param_obj.USE_LOCAL_FILTERING = False
         param_obj.WFS_VERSION = "1.1.0"
+        # Prevents warning message
+        param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:7844"
 
     # Northern Territory
     elif provider.lower() in ['nt', 'northern territory']:
