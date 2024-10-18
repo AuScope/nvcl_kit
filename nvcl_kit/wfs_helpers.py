@@ -2,7 +2,7 @@ import logging
 import sys
 
 from owslib.fes import PropertyIsLike, etree
-from shapely.geometry.polygon import Point
+from shapely import Point
 from requests.exceptions import RequestException
 from owslib.util import ServiceException
 from http.client import HTTPException
@@ -218,20 +218,23 @@ def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
             except ValueError:
                 borehole_dict['z'] = 0.0
 
-            LOGGER.debug(f"borehole_dict = {repr(borehole_dict)}\n"
-                         f"BBOX={param_obj.BBOX}\n"
+            LOGGER.debug(f"borehole_dict = {repr(borehole_dict)}\n")
+            if hasattr(param_obj, 'BBOX'):
+                LOGGER.debug(f"BBOX={param_obj.BBOX}\n"
                          f"{param_obj.BBOX['west']} < {borehole_dict['x']},"
                          f"{param_obj.BBOX['east']} > {borehole_dict['x']}\n"
                          f"{param_obj.BBOX['north']} > {borehole_dict['y']},"
                          f"{param_obj.BBOX['south']} < {borehole_dict['y']}")
 
-            # If POLYGON is set, only accept if within linear ring
+            # If POLYGON is set, only accept if within polygon
             if hasattr(param_obj, 'POLYGON'):
                 point = Point(borehole_dict['x'], borehole_dict['y'])
                 if point.within(param_obj.POLYGON):
                     borehole_cnt += 1
                     borehole_list.append(borehole_dict)
                     LOGGER.debug(f"borehole_cnt = {borehole_cnt}")
+                else:
+                    LOGGER.debug(f"{point} is not within {param_obj.POLYGON}")
 
             # Else only accept if within bounding box
             elif (param_obj.BBOX['west'] < borehole_dict['x'] and

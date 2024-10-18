@@ -18,7 +18,7 @@ from owslib.util import ServiceException
 
 from http.client import HTTPException
 
-from shapely.geometry.polygon import LinearRing
+from shapely import Polygon
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
@@ -78,7 +78,7 @@ class NVCLReader:
     ''' A class to extract NVCL borehole data (see README.md for details)
     '''
 
-    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist = False):
+    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False):
         '''
         :param param_obj: SimpleNamespace() object with parameters.
           Fields are:
@@ -88,7 +88,7 @@ class NVCLReader:
             * WFS_VERSION - (optional - default "1.1.0")
             * BOREHOLE_CRS - (optional - default "urn:x-ogc:def:crs:EPSG:4283")
             * DEPTHS - (optional) Tuple of range of depths (min,max) [metres]
-            * POLYGON - (optional) 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
+            * POLYGON - (optional) 2D 'shapely.Polygon' object, only boreholes within this polygon are retrieved
             * BBOX - (optional - default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0}) 2D bounding box in EPSG:4283, only boreholes within box are retrieved
             * MAX_BOREHOLES - (optional - default 0) Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
 
@@ -96,12 +96,12 @@ class NVCLReader:
 
               e.g.
               from types import SimpleNamespace
-              from shapely.geometry.polygon import LinearRing
+              from shapely import Polygon
               param_obj = SimpleNamespace()
               # Uses EPSG:4283
               param_obj.BBOX = { "west": 132.76, "south": -28.44, "east": 134.39, "north": -26.87 }
               # Or use a POLYGON instead of a BBOX
-              param_obj.POLYGON = LinearRing([(132.76, -28.44), (132.76, -26.87), (134.39, -26.87), (134.39, -28.44), (132.76, -28.44)])
+              param_obj.POLYGON = Polygon( ((132.76, -28.44), (132.76, -26.87), (134.39, -26.87), (134.39, -28.44), (132.76, -28.44)) )
               param_obj.DEPTHS = (100.0, 900.0)
               param_obj.WFS_URL = "http://blah.blah.blah/geoserver/wfs"
               param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
@@ -111,13 +111,14 @@ class NVCLReader:
         :param log_lvl: optional logging level (see 'logging' package),
                         default is logging.INFO
         :param skip_bhlist: optional fast init NVCLReader without loading the bhlist
-        **NOTE: Check if 'wfs' is not 'None' to see if this instance initialised properly**
-
+        **NOTE: Check if 'wfs' is not 'None' to see if any boreholes were found
+                Check if 'wfs_error' is 'True' when there is a provider error**
         '''
         # Set log level
         if log_lvl and isinstance(log_lvl, int):
             LOGGER.setLevel(log_lvl)
         self.wfs = None
+        self.wfs_error = False
         self.borehole_list = []
 
         # Check param_obj
@@ -128,8 +129,8 @@ class NVCLReader:
 
         # Check POLYGON value
         if hasattr(self.param_obj, 'POLYGON'):
-            if not isinstance(self.param_obj.POLYGON, LinearRing):
-                LOGGER.warning("'POLYGON' parameter is not a shapely.geometry.polygon.LinearRing")
+            if not isinstance(self.param_obj.POLYGON, Polygon):
+                LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon")
                 return
 
         # Check BBOX value
@@ -226,12 +227,16 @@ class NVCLReader:
                                              xml=None, timeout=TIMEOUT)
             except ServiceException as se_exc:
                 LOGGER.warning(f"WFS error: {se_exc}")
+                self.wfs_error = True
             except RequestException as re_exc:
                 LOGGER.warning(f"Request error: {re_exc}")
+                self.wfs_error = True
             except HTTPException as he_exc:
                 LOGGER.warning(f"HTTP error code returned: {he_exc}")
+                self.wfs_error = True
             except OSError as os_exc:
                 LOGGER.warning(f"OS Error: {os_exc}")
+                self.wfs_error = True
         else:
             self.wfs = wfs
 
@@ -239,6 +244,7 @@ class NVCLReader:
         if self.wfs and not skip_bhlist:
             self.borehole_list = fetch_wfs_bh_list(self.wfs, self.param_obj)
             if self.borehole_list == []:
+                LOGGER.warning("No boreholes found")
                 self.wfs = None
 
         # Initialise interface to NVCL service
@@ -465,7 +471,7 @@ class NVCLReader:
         :param log_id: obtained through calling 'get_tray_thumb_imglogs()'
         :param sample_no: sample number, string e.g. '0','1','2'...  optional, default is '0'
 
-        :returns: thumbnail image in PNG format
+        :returns: thumbnail image in JPEG format
         '''
         return self.svc.get_display_tray_thumb(log_id, sample_no)
 

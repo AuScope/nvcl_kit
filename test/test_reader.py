@@ -148,7 +148,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.POLYGON = []
-        self.try_input_param(param_obj,"'POLYGON' parameter is not a shapely.geometry.polygon.LinearRing")
+        self.try_input_param(param_obj,"'POLYGON' parameter is not a shapely.Polygon")
  
     def test_missing_wfs_param(self):
         ''' Tests that if it is missing 'WFS_URL' parameter it issues a
