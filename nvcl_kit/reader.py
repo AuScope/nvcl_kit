@@ -18,7 +18,7 @@ from owslib.util import ServiceException
 
 from http.client import HTTPException
 
-from shapely import Polygon
+from shapely import Polygon, LinearRing
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
@@ -127,9 +127,10 @@ class NVCLReader:
             return
         self.param_obj = param_obj
 
-        # Check POLYGON value
+        # Check POLYGON value, it should be a shapely 'Polygon', but still support 'LinearRing' for
+        # backwards compatibility
         if hasattr(self.param_obj, 'POLYGON'):
-            if not isinstance(self.param_obj.POLYGON, Polygon):
+            if not isinstance(self.param_obj.POLYGON, Polygon) and not isinstance(self.param_obj.POLYGON, LinearRing):
                 LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon")
                 return
 

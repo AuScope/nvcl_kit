@@ -2,7 +2,7 @@ import logging
 import sys
 
 from owslib.fes import PropertyIsLike, etree
-from shapely import Point
+from shapely import Point, LinearRing, Polygon
 from requests.exceptions import RequestException
 from owslib.util import ServiceException
 from http.client import HTTPException
@@ -229,7 +229,11 @@ def fetch_wfs_bh_list(wfs, param_obj, names=[], ids=[]):
             # If POLYGON is set, only accept if within polygon
             if hasattr(param_obj, 'POLYGON'):
                 point = Point(borehole_dict['x'], borehole_dict['y'])
-                if point.within(param_obj.POLYGON):
+                poly = param_obj.POLYGON
+                # Convert LinearRing to Polygon
+                if isinstance(param_obj.POLYGON, LinearRing):
+                    poly = Polygon(param_obj.POLYGON)
+                if point.within(poly):
                     borehole_cnt += 1
                     borehole_list.append(borehole_dict)
                     LOGGER.debug(f"borehole_cnt = {borehole_cnt}")

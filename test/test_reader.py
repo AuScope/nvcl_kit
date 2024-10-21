@@ -10,6 +10,7 @@ from http.client import HTTPException
 import logging
 import datetime
 from dateutil.tz import tzoffset
+from shapely import Polygon, LinearRing
 
 from types import SimpleNamespace
 
@@ -449,6 +450,34 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(len(l), 1)
             l = rdr.get_nvcl_id_list()
             self.assertEqual(len(l), 1)
+
+
+    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
+    def test_polygon_wfs(self, mock_wfs):
+        ''' Test polygon precision of selecting boreholes
+            There are two boreholes in the test data: one is just within
+            the bounding box, the other is just outside
+        '''
+        wfs_obj = mock_wfs.return_value
+        wfs_obj.getfeature.return_value = Mock()
+        coords = ((146.0, -41.2),
+                 (146.0, -40.5),
+                 (147.2, -40.5),
+                 (147.2, -41.2),
+                 (146.0, -41.2))
+        # Test both Polygon and LinearRing
+        for shape_type in (Polygon, LinearRing):
+            with open('bbox_wfs.txt') as fp:
+                wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+                # This file has XY-coords so set borehole_crs to 'EPSG:4326'
+                param_obj = setup_param_obj(max_boreholes=0,
+                                            polygon=shape_type(coords),
+                                            borehole_crs='EPSG:4326')
+                rdr = NVCLReader(param_obj)
+                l = rdr.get_boreholes_list()
+                self.assertEqual(len(l), 1)
+                l = rdr.get_nvcl_id_list()
+                self.assertEqual(len(l), 1)
 
 
     @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
