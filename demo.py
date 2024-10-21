@@ -3,6 +3,7 @@ import sys
 from types import SimpleNamespace
 import yaml
 import json
+from shapely import Polygon
 
 from nvcl_kit.reader import NVCLReader
 from nvcl_kit.param_builder import param_builder
@@ -13,20 +14,19 @@ from nvcl_kit.generators import gen_scalar_by_depth
 #
 # A very rough script to demonstrate 'nvcl_kit' 
 #
+# 'pdm' can be found here: https://pdm-project.org/en/latest/
+#
 # Linux command line instructions:
 #
 # git clone https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit.git
 # cd nvcl_kit
-# mkdir venv
-# python3 -m venv ./venv
-# . ./venv/bin/activate
-# pip install -U pip
-# pip install -r requirements.txt
-# ./demo_new.py
+# pdm install
+# eval $(pdm venv activate)
+# ./demo.py
 #
 #
 
-state_list = ['csiro', 'nsw', 'tas', 'vic', 'qld', 'sa', 'wa', 'nt']
+state_list = ['vic', 'qld', 'tas', 'vic', 'wa', 'nt', 'sa', 'qld', 'nsw']
 
 def do_demo(state):
     print(f"\n\n*** {state} ***\n")
@@ -44,7 +44,16 @@ def do_demo(state):
     #               nvcl_url: URL of NVCL service
     #               max_boreholes: Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
     #                              default 0
-    param = param_builder(state, max_boreholes=20)
+    if state == 'qld':
+        # Polygon
+        ring = Polygon( ((144.57376014670663, -23.098482093416653),
+        (144.57462433790562, -23.131094799153484),
+        (144.6266361146333, -23.128387283529385),
+        (144.6237025563205, -23.094963386794202),
+        (144.57376014670663, -23.098482093416653)) )
+        param = param_builder(state, max_boreholes=20, polygon=ring)
+    else:
+        param = param_builder(state, max_boreholes=20)
     if not param:
         print(f"Cannot build parameters: {param}")
         return
@@ -52,16 +61,25 @@ def do_demo(state):
     # Initialise reader
     reader = NVCLReader(param)
     if not reader.wfs:
-        print(f"ERROR! Cannot contact WFS service for {state}")
+        if reader.wfs_error:
+            print(f"ERROR! Cannot contact WFS service for {state}")
+        else:
+            print(f"Query returned no valid boreholes")
         return
 
     # Get WFS borehole feature list
     bh_list = reader.get_feature_list()
-
     # Filter features by name or other attributes
     if state == 'tas':
         brd005_list = reader.filter_feat_list(name='BRD005')
         print(f"Details of BRD005: {brd005_list}")
+
+    # Check if POLYGON worked
+    if state == 'qld':
+        if len(bh_list) == 1:
+            print(f"Polygon worked")
+        else:
+            print("ERROR! Polygon failed")
 
     # Print first 5 WFS borehole features
     for bh in bh_list[:5]:
