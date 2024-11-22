@@ -26,7 +26,7 @@ from nvcl_kit.generators import gen_scalar_by_depth
 #
 #
 
-state_list = ['vic', 'qld', 'tas', 'vic', 'wa', 'nt', 'sa', 'qld', 'nsw']
+state_list = ['nt', 'qld', 'vic', 'wa', 'sa', 'qld', 'nsw', 'tas']
 
 def do_demo(state):
     print(f"\n\n*** {state} ***\n")
@@ -34,11 +34,10 @@ def do_demo(state):
     # Assemble parameters
     #     First parameter is state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'
     #     Other parameters are optional:
-    #               bbox: 2D bounding box in EPSG:4283, only boreholes within box are retrieved
+    #               bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved
     #                     default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
-    #               polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved
-    #               borehole_crs: CRS string, default "urn:x-ogc:def:crs:EPSG:4283"
-    #               wfs_version: WFS version string, default "1.1.0"
+    #               polygon: 2D 'shapely.geometry.Polygon' object, only boreholes within this polygon are retrieved
+    #                            NB: EPSG:4326 y/x axis order
     #               depths: Tuple of range of depths (min,max) [metres]
     #               wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
     #               nvcl_url: URL of NVCL service
@@ -46,11 +45,11 @@ def do_demo(state):
     #                              default 0
     if state == 'qld':
         # Polygon
-        ring = Polygon( ((144.57376014670663, -23.098482093416653),
-        (144.57462433790562, -23.131094799153484),
-        (144.6266361146333, -23.128387283529385),
-        (144.6237025563205, -23.094963386794202),
-        (144.57376014670663, -23.098482093416653)) )
+        ring = Polygon( ((-23.098482093416653, 144.57376014670663),
+                         (-23.131094799153484, 144.57462433790562),
+                         (-23.128387283529385, 144.6266361146333),
+                         (-23.094963386794202, 144.6237025563205),
+                         (-23.098482093416653, 144.57376014670663)) )
         param = param_builder(state, max_boreholes=20, polygon=ring)
     else:
         param = param_builder(state, max_boreholes=20)

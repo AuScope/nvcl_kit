@@ -13,16 +13,13 @@ from types import SimpleNamespace
 
 from requests.exceptions import RequestException
 
-from owslib.wfs import WebFeatureService
-from owslib.util import ServiceException
-
 from http.client import HTTPException
 
 from shapely import Polygon, LinearRing
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
-from nvcl_kit.wfs_helpers import fetch_wfs_bh_list
+from nvcl_kit.wfs_helpers import get_borehole_list
 from nvcl_kit.xml_helpers import clean_xml_parse, parse_dates
 
 ENFORCE_IS_PUBLIC = True
@@ -81,16 +78,23 @@ class NVCLReader:
     def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False):
         '''
         :param param_obj: SimpleNamespace() object with parameters.
-          Fields are:
+          It is recommended to utilise the 'param_builder' function to create it.
+
+          ::
+
+              e.g. param_obj = param_builder('sa')
+
+          But if you want to create your own then here are the details:
+
+          param_obj fields are:
 
             * NVCL_URL - URL of NVCL service
             * WFS_URL - URL of WFS service, GeoSciML V4.1 BoreholeView
-            * WFS_VERSION - (optional - default "1.1.0")
-            * BOREHOLE_CRS - (optional - default "urn:x-ogc:def:crs:EPSG:4283")
+            * PROV - provider e.g. 'nt' 'wa' etc.
             * DEPTHS - (optional) Tuple of range of depths (min,max) [metres]
-            * POLYGON - (optional) 2D 'shapely.Polygon' object, only boreholes within this polygon are retrieved
-            * BBOX - (optional - default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0}) 2D bounding box in EPSG:4283, only boreholes within box are retrieved
-            * MAX_BOREHOLES - (optional - default 0) Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
+            * POLYGON - (optional) 2D 'shapely.Polygon' y/x axis order EPSG:4326, limit to boreholes inside this polygon
+            * BBOX - (optional) 2D bounding box in EPSG:4326, only boreholes within box are retrieved
+            * MAX_BOREHOLES - (optional) Maximum number of boreholes to retrieve. If < 1 then all boreholes are loaded
 
           ::
 
@@ -98,27 +102,32 @@ class NVCLReader:
               from types import SimpleNamespace
               from shapely import Polygon
               param_obj = SimpleNamespace()
-              # Uses EPSG:4283
               param_obj.BBOX = { "west": 132.76, "south": -28.44, "east": 134.39, "north": -26.87 }
-              # Or use a POLYGON instead of a BBOX
-              param_obj.POLYGON = Polygon( ((132.76, -28.44), (132.76, -26.87), (134.39, -26.87), (134.39, -28.44), (132.76, -28.44)) )
+              # Or use a POLYGON instead of a BBOX - Note the y/x axis ordering
+              param_obj.POLYGON = Polygon( ((-28.44, 132.76), (-26.87, 132.76), (-26.87, 134.39), (-28.44, 134.39), (-28.44, 132.76)) )
               param_obj.DEPTHS = (100.0, 900.0)
               param_obj.WFS_URL = "http://blah.blah.blah/geoserver/wfs"
               param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
               param_obj.MAX_BOREHOLES = 20
+              param_obj.PROV = 'blah'
 
-        :param wfs: optional owslib 'WebFeatureService' object
+        :param wfs: DEPRECATED owslib 'WebFeatureService' object
         :param log_lvl: optional logging level (see 'logging' package),
                         default is logging.INFO
         :param skip_bhlist: optional fast init NVCLReader without loading the bhlist
+
         **NOTE: Check if 'wfs' is not 'None' to see if any boreholes were found
                 Check if 'wfs_error' is 'True' when there is a provider error**
         '''
         # Set log level
         if log_lvl and isinstance(log_lvl, int):
             LOGGER.setLevel(log_lvl)
+
+        # If None then no boreholes were found
         self.wfs = None
+        # Will be set to True if there are any errors
         self.wfs_error = False
+        # List of SimpleNamespace objects with attributes taken from boreholes WFS GetFeature request
         self.borehole_list = []
 
         # Check param_obj
@@ -130,12 +139,14 @@ class NVCLReader:
         # Check POLYGON value, it should be a shapely 'Polygon', but still support 'LinearRing' for
         # backwards compatibility
         if hasattr(self.param_obj, 'POLYGON'):
+            self.param_obj.BBOX = None
             if not isinstance(self.param_obj.POLYGON, Polygon) and not isinstance(self.param_obj.POLYGON, LinearRing):
                 LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon")
                 return
 
         # Check BBOX value
         elif hasattr(self.param_obj, 'BBOX'):
+            self.param_obj.POLYGON = None
             if not isinstance(self.param_obj.BBOX, dict):
                 LOGGER.warning("'BBOX' parameter is not a dict")
                 return
@@ -151,7 +162,8 @@ class NVCLReader:
                     return
         else:
             # If neither BBOX nor POLYGON is defined, use default BBOX
-            self.param_obj.BBOX = {"west": -180.0, "south": -90.0, "east": 180.0, "north": 0.0}
+            self.param_obj.BBOX = None
+            self.param_obj.POLYGON = None
 
         # Check DEPTHS parameter
         if hasattr(self.param_obj, "DEPTHS"):
@@ -190,22 +202,6 @@ class NVCLReader:
             LOGGER.warning("'NVCL_URL' parameter is not a string")
             return
 
-        # Roughly check BOREHOLE_CRS EPSG: value
-        if not hasattr(self.param_obj, 'BOREHOLE_CRS'):
-            self.param_obj.BOREHOLE_CRS = "urn:x-ogc:def:crs:EPSG:4283"
-        elif (not isinstance(self.param_obj.BOREHOLE_CRS, str) or
-              "EPSG" not in self.param_obj.BOREHOLE_CRS.upper() or
-              not self.param_obj.BOREHOLE_CRS[-4:].isnumeric()):
-            LOGGER.warning("'BOREHOLE_CRS' parameter is not an EPSG string")
-            return
-
-        # Roughly check WFS_VERSION value
-        if not hasattr(self.param_obj, 'WFS_VERSION'):
-            self.param_obj.WFS_VERSION = "1.1.0"
-        elif not isinstance(self.param_obj.WFS_VERSION, str) or not self.param_obj.WFS_VERSION[0].isdigit():
-            LOGGER.warning("'WFS_VERSION' parameter is not a numeric string")
-            return
-
         # Check MAX_BOREHOLES value
         if not hasattr(self.param_obj, 'MAX_BOREHOLES'):
             self.param_obj.MAX_BOREHOLES = 0
@@ -213,40 +209,16 @@ class NVCLReader:
             LOGGER.warning("'MAX_BOREHOLES' parameter is not an integer")
             return
 
-        # Check USE_LOCAL_FILTERING
-        if not hasattr(self.param_obj, 'USE_LOCAL_FILTERING'):
-            self.param_obj.USE_LOCAL_FILTERING = False
-        if not isinstance(self.param_obj.USE_LOCAL_FILTERING, bool):
-            LOGGER.warning("'USE_LOCAL_FILTERING' parameter is not boolean")
+        # Check USE_CQL
+        if not hasattr(self.param_obj, 'USE_CQL'):
+            self.param_obj.USE_CQL = True
+        if not isinstance(self.param_obj.USE_CQL, bool):
+            LOGGER.warning("'USE_CQL' parameter is not boolean")
             return
 
-        # If owslib wfs is not supplied
-        if wfs is None:
-            try:
-                self.wfs = WebFeatureService(self.param_obj.WFS_URL,
-                                             version=self.param_obj.WFS_VERSION,
-                                             xml=None, timeout=TIMEOUT)
-            except ServiceException as se_exc:
-                LOGGER.warning(f"WFS error: {se_exc}")
-                self.wfs_error = True
-            except RequestException as re_exc:
-                LOGGER.warning(f"Request error: {re_exc}")
-                self.wfs_error = True
-            except HTTPException as he_exc:
-                LOGGER.warning(f"HTTP error code returned: {he_exc}")
-                self.wfs_error = True
-            except OSError as os_exc:
-                LOGGER.warning(f"OS Error: {os_exc}")
-                self.wfs_error = True
-        else:
-            self.wfs = wfs
-
-        # Fetch boreholes from OCG WFS service
-        if self.wfs and not skip_bhlist:
-            self.borehole_list = fetch_wfs_bh_list(self.wfs, self.param_obj)
-            if self.borehole_list == []:
-                LOGGER.warning("No boreholes found")
-                self.wfs = None
+        # If gathering boreholes
+        if not skip_bhlist:
+            self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
 
         # Initialise interface to NVCL service
         if (hasattr(self.param_obj, 'CACHE_PATH')):
@@ -827,7 +799,7 @@ class NVCLReader:
 
             :returns: a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
         '''
-        return [SimpleNamespace(**bh) for bh in self.borehole_list]
+        return self.borehole_list
 
     def get_nvcl_id_list(self):
         '''
@@ -836,7 +808,7 @@ class NVCLReader:
 
         :returns: a list of NVCL id strings
         '''
-        return [bh['nvcl_id'] for bh in self.borehole_list]
+        return [bh.nvcl_id for bh in self.borehole_list]
 
     def filter_feat_list(self, nvcl_ids_only=False, **kwargs):
         ''' Returns a list of borehole features given a filter parameter
@@ -853,11 +825,11 @@ class NVCLReader:
             val_list = val
             if not isinstance(val, list):
                 val_list = [val]
-            bh_list = [bh for bh in self.borehole_list if key in bh and bh[key] in val_list]
+            bh_list = [bh for bh in self.borehole_list if hasattr(bh, key) and getattr(bh, key) in val_list]
 
             if not nvcl_ids_only:
-                return [SimpleNamespace(**bh) for bh in bh_list]
+                return bh_list
             else:
-                return [bh['nvcl_id'] for bh in bh_list]
+                return [bh.nvcl_id for bh in bh_list]
 
         return []
