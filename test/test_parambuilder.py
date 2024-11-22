@@ -22,8 +22,8 @@ PROVS = ['vic', 'Victoria', 'sa', 'South Australia', 'nsw', 'New South Wales', '
                      'Northern Territory', 'wa', 'Western Australia', 'tas', 'Tasmania', 'qld',
                      'Queensland']
 
-OPTS = ['bbox', 'polygon', 'borehole_crs', 'wfs_version', 'depths', 'wfs_url', 'nvcl_url',
-                   'max_boreholes', 'use_local_filtering', 'cache_path']
+OPTS = ['bbox', 'polygon', 'depths', 'wfs_url', 'nvcl_url',
+                   'max_boreholes', 'use_cql', 'cache_path']
 
 
 class TestParamBuilder(unittest.TestCase):
