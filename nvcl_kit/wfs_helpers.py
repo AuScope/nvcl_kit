@@ -59,14 +59,14 @@ def get_borehole_list(param_obj: SimpleNamespace) -> (list, bool, bool):
             f.y = float(feature['geometry']['coordinates'][1])
             try:
                 f.z = float(props['elevation_m'])
-            except ValueError:
+            except (ValueError, KeyError):
                 f.z = 0.0
 
             # Get HREF
             f.href = props['identifier']
 
-            # Loop over possible values (from GeoSciML BoreholeView v4.1) and 'tenement'
-            for to_attr in ('identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer', 'tenement'):
+            # Loop over possible values (from GeoSciML BoreholeView v4.1) and 'tenement' + 'project'
+            for to_attr in ('identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer', 'tenement', 'project'):
                 if to_attr in props:
                     setattr(f, to_attr, props[to_attr])
         except Exception as exc:
