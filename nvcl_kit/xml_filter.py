@@ -1,12 +1,14 @@
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
 import sys
 import logging
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+from urllib3.exceptions import HTTPError
+from urllib3.util import Retry
 
 from shapely import Polygon
 import requests
-
-from nvcl_kit.param_builder import param_builder
+from requests import Session
+from requests.adapters import HTTPAdapter
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -97,17 +99,27 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int):
            }
     # Send the POST request with the XML payload 
     try:
-        response = requests.post(url, data=data)
-    except requests.RequestException as re:
-        LOGGER.error(f"{prov} returned error sending WFS GetFeature: {re}")
+        with requests.Session() as s:
+
+            # Retry with backoff
+            retries = Retry(total=5,
+                            backoff_factor=0.5,
+                            status_forcelist=[429, 502, 503, 504]
+                           )
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+
+            # Sending the request
+            response = s.post(url, data=data)
+    except (HTTPError, requests.RequestException) as e:
+        LOGGER.error(f"{prov} returned error sending WFS GetFeature: {e}")
         return []
 
     # Check if the request was successful
     if response.status_code == 200:
         try:
             resp = response.json()
-        except requests.JSONDecodeError:
-            LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {jde}")
+        except (TypeError, requests.JSONDecodeError) as e:
+            LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {e}")
             return []
         return resp['features']
     LOGGER.error(f"{prov} returned error {response.status_code} in WFS GetFeature response: {response.text}")
