@@ -1,8 +1,13 @@
-from shapely import Polygon
-import requests
 import sys
 import logging
 import json
+from urllib3.util import Retry
+
+from shapely import Polygon
+import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.exceptions import HTTPError
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -62,19 +67,28 @@ def make_cql_request(url: str, prov: str, cql_filter: str, max_features: int):
               "maxFeatures": str(max_features)
              }
 
-    # Sending the request
     try:
-        response = requests.get(url, params=params)
-    except requests.RequestException as re:
-        LOGGER.error(f"{prov} returned error sending WFS GetFeature: {re}")
+        with requests.Session() as s:
+
+            # Retry with backoff
+            retries = Retry(total=5,
+                            backoff_factor=0.5,
+                            status_forcelist=[429, 502, 503, 504]
+                           )
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+
+            # Sending the request
+            response = s.get(url, params=params)
+    except (HTTPError, requests.RequestException) as e:
+        LOGGER.error(f"{prov} returned error sending WFS GetFeature: {e}")
         return []
 
     # Check if the request was successful
     if response.status_code == 200:
         try:
             resp = response.json()
-        except requests.JSONDecodeError as jde:
-            LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {jde}")
+        except (TypeError, requests.JSONDecodeError) as e:
+            LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {e}")
             return []
         return resp['features']
     LOGGER.error(f"{prov} returned error {response.status_code} in WFS GetFeature response: {response.text}")
