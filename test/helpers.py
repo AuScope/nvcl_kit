@@ -1,5 +1,7 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
+from io import IOBase
+import json
 
 from types import SimpleNamespace
 
@@ -8,6 +10,27 @@ import shapely
 from nvcl_kit.reader import NVCLReader
 
 
+def setup_reqs_obj(inp, reqs_obj):
+    ''' Set up the mock requests get() reponse
+
+    :param inp: string or file object containing the desired response
+    :param reqs_obj: return value of the Mock get() request object
+    :return: new Mock get() request object, JSON response
+    '''
+    if isinstance(inp, IOBase):
+        resp_str = inp.read().rstrip('\n')
+    else:
+        resp_str = inp
+    try:
+        json_obj = json.loads(resp_str)
+    except (TypeError, json.JSONDecodeError, UnicodeDecodeError) as e:
+        json_obj = None
+    reqs_obj.text = resp_str
+    reqs_obj.status_code = 200
+    if json_obj is not None:
+        reqs_obj.json = MagicMock()
+        reqs_obj.json.return_value = {"features": json_obj["features"]}
+    return reqs_obj, json_obj
 
 
 def setup_reader() -> NVCLReader:
@@ -16,11 +39,10 @@ def setup_reader() -> NVCLReader:
     :returns: NVCLReader() object
     '''
     rdr = None
-    with unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True) as mock_wfs:
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs_yx.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+    with unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get', autospec=True) as mock_reqs:
+        reqs_obj = mock_reqs.return_value
+        with open('full_wfs_yx.json') as fp:
+            reqs_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj()
             rdr = NVCLReader(param_obj)
     return rdr
@@ -78,4 +100,5 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
         param_obj.BOREHOLE_CRS = borehole_crs
     if cache_path:
         param_obj.CACHE_PATH = cache_path
+    param_obj.PROV = 'blah'
     return param_obj

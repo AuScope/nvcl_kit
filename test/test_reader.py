@@ -3,9 +3,11 @@ import sys, os
 import glob
 import random
 import unittest
-from unittest.mock import patch, Mock
-from requests.exceptions import Timeout, RequestException
-from owslib.util import ServiceException
+import json
+import urllib3  # Used for WFS Feature request retries
+
+from unittest.mock import patch, Mock, MagicMock
+from requests.exceptions import Timeout, RequestException, ConnectionError, TooManyRedirects
 from http.client import HTTPException
 import logging
 import datetime
@@ -16,9 +18,9 @@ from types import SimpleNamespace
 
 from nvcl_kit.reader import NVCLReader
 
-from helpers import setup_param_obj, setup_reader, setup_urlopen
+from helpers import setup_param_obj, setup_reader, setup_urlopen, setup_reqs_obj
 
-MAX_BOREHOLES = 20
+MAX_BOREHOLES = 6
 
 '''
 Tests for the reader module
@@ -27,23 +29,23 @@ Tests for the reader module
 class TestNVCLReader(unittest.TestCase):
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_logging_level(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get', autospec=True)
+    def test_logging_level(self, mock_reqs):
         ''' Test the 'log_lvl' parameter in the constructor
         '''
-        # Use an empty response
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('empty_wfs.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.readline()
-            with self.assertLogs('nvcl_kit.wfs_helpers', level='DEBUG') as nvcl_log:
+        reqs_obj = mock_reqs.return_value
+        reqs_obj.get.return_value = Mock()
+        with open('empty_wfs.json') as fp:
+            reqs_obj.get.return_value.read.return_value = fp.readline()
+            with self.assertLogs('nvcl_kit.cql_filter', level='DEBUG') as nvcl_log:
                 param_obj = SimpleNamespace()
+                param_obj.PROV = 'blah'
                 param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
                 param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
                 NVCLReader(param_obj, log_lvl=logging.DEBUG)
-                self.assertTrue(len(nvcl_log.output)>0, "Missing 'fetch_wfs_bh_list()' in output")
-                self.assertIn("fetch_wfs_bh_list()", nvcl_log.output[0])
-
+                self.assertTrue(len(nvcl_log.output)>0, "Missing ERROR message in output")
+                self.assertIn("blah returned error", nvcl_log.output[0])
+        
 
     def try_input_param(self, param_obj, msg):
         ''' Used to test variations in erroneous constructor input parameters
@@ -65,39 +67,6 @@ class TestNVCLReader(unittest.TestCase):
                               "'param_obj' is not a SimpleNamespace() object")
 
 
-    def test_bad_crs_param(self):
-        ''' Tests that if has a bad 'BOREHOLE_CRS' parameter it issues a
-            warning message and returns wfs attribute as None
-        '''
-        param_obj = SimpleNamespace()
-        param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-        param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
-        param_obj.BOREHOLE_CRS = "blah"
-        self.try_input_param(param_obj, "'BOREHOLE_CRS' parameter is not an EPSG string")
-
-
-    def test_bad_wfs_ver_param1(self):
-        ''' Tests that if has a bad 'WFS_VERSION' parameter it issues a
-            warning message and returns wfs attribute as None
-        '''
-        param_obj = SimpleNamespace()
-        param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-        param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
-        param_obj.WFS_VERSION = 1.1
-        self.try_input_param(param_obj, "'WFS_VERSION' parameter is not a numeric string")
-
-
-    def test_bad_wfs_ver_param2(self):
-        ''' Tests that if has a badly formatted 'WFS_VERSION' parameter it
-            issues a warning message and returns wfs attribute as None
-        '''
-        param_obj = SimpleNamespace()
-        param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-        param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
-        param_obj.WFS_VERSION = "v1.1"
-        self.try_input_param(param_obj, "'WFS_VERSION' parameter is not a numeric string")
-
-
     def test_bad_maxbh_param(self):
         ''' Tests that if has a bad 'MAX_BOREHOLES' parameter it issues a
             warning message and returns wfs attribute as None
@@ -106,6 +75,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.MAX_BOREHOLES = "blah"
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'MAX_BOREHOLES' parameter is not an integer")
 
 
@@ -117,6 +87,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.BBOX = "blah"
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'BBOX' parameter is not a dict")
 
 
@@ -128,6 +99,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.BBOX = { 'north': 0, 'west':90, 'east':180 }
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "BBOX['south'] parameter is missing")
 
 
@@ -139,6 +111,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.BBOX = { 'south': '-40', 'north': 0, 'west': 90, 'east':180 }
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "BBOX['south'] parameter is not a number")
 
     def test_bad_polygon_param(self):
@@ -149,6 +122,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
         param_obj.POLYGON = []
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj,"'POLYGON' parameter is not a shapely.Polygon")
  
     def test_missing_wfs_param(self):
@@ -157,6 +131,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
         param_obj = SimpleNamespace()
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'WFS_URL' parameter is missing")
 
 
@@ -167,6 +142,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj = SimpleNamespace()
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
         param_obj.WFS_URL = None
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'WFS_URL' parameter is not a string")
 
 
@@ -176,6 +152,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
         param_obj = SimpleNamespace()
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'NVCL_URL' parameter is missing")
 
 
@@ -186,6 +163,7 @@ class TestNVCLReader(unittest.TestCase):
         param_obj = SimpleNamespace()
         param_obj.NVCL_URL = None
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
+        param_obj.PROV = "blah"
         self.try_input_param(param_obj, "'NVCL_URL' parameter is not a string")
 
 
@@ -201,33 +179,34 @@ class TestNVCLReader(unittest.TestCase):
             param_obj = SimpleNamespace()
             param_obj.DEPTHS = depths
             param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
+            param_obj.PROV = "blah"
             self.try_input_param(param_obj, err_str)
 
 
-    def test_bad_use_local_filt_param(self):
-        ''' Tests that if the 'USE_LOCAL_FILTERING' is a bad value it issues a
+    def test_bad_use_cql_param(self):
+        ''' Tests that if the 'USE_CQL' is a bad value it issues a
             warning message and returns wfs attribute as None
         '''
         param_obj = SimpleNamespace()
         param_obj.NVCL_URL = "https://blah.blah.blah/nvcl/NVCLDataServices"
-        param_obj.USE_LOCAL_FILTERING = "True"
+        param_obj.USE_CQL = "True"
         param_obj.WFS_URL = "http://blah.blah.blah/nvcl/geoserver/wfs"
-        self.try_input_param(param_obj, "'USE_LOCAL_FILTERING' parameter is not boolean")
+        param_obj.PROV = "blah"
+        self.try_input_param(param_obj, "'USE_CQL' parameter is not boolean")
 
 
-    def wfs_exception_tester(self, mock_wfs, excep, msg):
-        ''' Creates an exception in owslib getfeature() read()
+    def wfs_exception_tester(self, mock_reqs, excep, msg):
+        ''' Creates an exception in requests get()
             and tests to see that the correct warning message is generated
 
-        :param mock_wfs: mock version of WebFeatureService() object
+        :param mock_reqs: mock version of WebFeatureService() object
         :param excep: exception that is to be created
         :param msg: warning message to test for
         '''
-        mock_wfs.side_effect = excep
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        wfs_obj.getfeature.return_value.read.side_effect = excep
-        with self.assertLogs('nvcl_kit.reader', level='WARN') as nvcl_log:
+        mock_reqs.side_effect = excep
+        mock_reqs.return_value.text = ""
+        mock_reqs.return_value.status_code = 200
+        with self.assertLogs('nvcl_kit.cql_filter', level='WARN') as nvcl_log:
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             self.assertTrue(len(nvcl_log.output)>0, f"Missing '{msg}' in output")
@@ -235,28 +214,25 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(rdr.wfs, None)
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_exception_wfs(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_exception_wfs(self, mock_get):
         ''' Tests that NVCLReader() can handle exceptions in WebFeatureService
             function
         '''
-        self.wfs_exception_tester(mock_wfs, ServiceException, 'WFS error:')
-        self.wfs_exception_tester(mock_wfs, RequestException, 'Request error:')
-        self.wfs_exception_tester(mock_wfs, HTTPException, 'HTTP error code returned:')
-        self.wfs_exception_tester(mock_wfs, OSError, 'OS Error:')
+        self.wfs_exception_tester(mock_get, RequestException, 'returned error sending WFS GetFeature')
+        self.wfs_exception_tester(mock_get, urllib3.exceptions.HTTPError, 'returned error sending WFS GetFeature')
 
 
-    def wfs_read_exception_tester(self, mock_wfs, excep, msg):
-        ''' Creates an exception in owslib getfeature() and tests for the
+    def wfs_read_exception_tester(self, mock_reqs, excep, msg):
+        ''' Creates an exception in requests get() and tests for the
             correct warning message
-        :param mock_wfs: mock version of WebFeatureService() object
+        :param mock_reqs: mock version of WebFeatureService() object
         :param excep: exception that is to be created
         :param msg: warning message to test for
         '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        wfs_obj.getfeature.return_value.read.side_effect = excep
-        with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
+        reqs_obj = mock_reqs.return_value
+        mock_reqs.side_effect = excep
+        with self.assertLogs('nvcl_kit.cql_filter', level='ERROR') as nvcl_log:
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
@@ -265,16 +241,16 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(rdr.wfs, None)
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_exception_getfeature_read(self, mock_wfs):
-        ''' Tests that can handle exceptions in getfeature's read() function
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_exception_get_read(self, mock_get):
+        ''' Tests that it can handle exceptions in requests get() function
         '''
-        for excep in [Timeout, RequestException, HTTPException, ServiceException, OSError]:
-            self.wfs_read_exception_tester(mock_wfs, excep, 'WFS GetFeature failed')
+        for excep in [Timeout, RequestException, urllib3.exceptions.HTTPError]:
+            self.wfs_read_exception_tester(mock_get, excep, 'returned error sending WFS GetFeature')
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_none_wfs(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_none_wfs(self, mock_get):
         ''' Test that it does not crash upon 'None', empty string, non-ascii byte string responses
             (tests get_boreholes_list() & get_nvcl_id_list() )
         '''
@@ -282,9 +258,8 @@ class TestNVCLReader(unittest.TestCase):
         byte_str = b'Test String \xf0\x9f\x98\x80'
         utf_str = byte_str.decode('utf-8')
         for resp in [None, b"", "", byte_str, bad_byte_str, utf_str, []]:
-            wfs_obj = mock_wfs.return_value
-            wfs_obj.getfeature.return_value = Mock()
-            wfs_obj.getfeature.return_value.read.return_value = resp
+            reqs_obj = mock_get.return_value
+            reqs_obj = setup_reqs_obj(resp, reqs_obj)
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
@@ -292,19 +267,18 @@ class TestNVCLReader(unittest.TestCase):
             l = rdr.get_nvcl_id_list()
             self.assertEqual(l, [])
             # Check that read() is called once only
-            if hasattr(wfs_obj.getfeature.return_value.read, 'assert_called_once'):
-                wfs_obj.getfeature.return_value.read.assert_called_once()
+            if hasattr(reqs_obj, 'assert_called_once'):
+                reqs_obj.read.assert_called_once()
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_empty_wfs(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_empty_wfs(self, mock_get):
         ''' Test empty but valid WFS response
             (tests get_boreholes_list() & get_nvcl_id_list() )
         '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('empty_wfs.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.readline()
+        reqs_obj = mock_get.return_value
+        with open('empty_wfs.json') as fp:
+            reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
@@ -312,19 +286,18 @@ class TestNVCLReader(unittest.TestCase):
             l = rdr.get_nvcl_id_list()
             self.assertEqual(l, [])
             # Check that read() is called once only
-            if hasattr(wfs_obj.getfeature.return_value.read, 'assert_called_once'):
-                wfs_obj.getfeature.return_value.read.assert_called_once()
+            if hasattr(reqs_obj.json, 'assert_called_once'):
+                reqs_obj.json.assert_called_once()
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_max_bh_wfs(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_max_bh_wfs(self, mock_get):
         ''' Test full WFS response, maximum number of boreholes is enforced
             (tests get_boreholes_list() & get_nvcl_id_list() )
         '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs_yx.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+        reqs_obj = mock_get.return_value
+        with open('full_wfs_yx.json') as fp:
+            reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             l = rdr.get_boreholes_list()
@@ -333,169 +306,79 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(len(l), MAX_BOREHOLES)
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_all_bh_wfs_xy(self, mock_wfs):
-        ''' Test full WFS response, unlimited number of boreholes, XY-coords
-            (tests get_boreholes_list() & get_nvcl_id_list() )
-        '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs_xy.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            # NB: To get XY-coords, would send geoserver a CRS of 'EPSG:4326'
-            # (https://docs.geoserver.org/latest/en/user/services/wfs/axis_order.html#wfs-basics-axis)
-            param_obj = setup_param_obj(borehole_crs='EPSG:4326')
-            rdr = NVCLReader(param_obj)
-            l = rdr.get_boreholes_list()
-            self.assertEqual(len(l), 102)
-            # Test with all fields having values
-            self.assertEqual(l[4], {
-                'nvcl_id': '12991',
-                'x': 145.67616489, 'y': -41.61921239,
-                'href': 'http://www.blah.gov.au/resource/feature/blah/borehole/12991',
-                'name': 'MC3',
-                'description': 'descr',
-                'purpose': 'purp',
-                'status': 'STATUS',
-                'drillingMethod': 'unknown',
-                'operator': 'Opera',
-                'driller': 'Blah Exploration Pty Ltd',
-                'drillStartDate': '1978-05-28Z',
-                'drillEndDate': '1979-05-28Z',
-                'startPoint': 'unknown',
-                'inclinationType': 'inclined down',
-                'boreholeMaterialCustodian': 'blah',
-                'boreholeLength_m': '60.3',
-                'elevation_m': '791.4',
-                'elevation_srs': 'http://www.opengis.net/def/crs/EPSG/0/5711',
-		'positionalAccuracy': '1.2',
-		'source': 'Src',
-                'parentBorehole_uri': 'http://blah.org/blah-d354454546e3esd3454',
-                'metadata_uri': 'http://blah.org/geosciml-drillhole-locations-in-blah-d354a70a4a29536166ab8a9ca6470a79d628c05e',
-                'genericSymbolizer': 'SSSSS',
-                'z': 791.4})
-
-            # Test an almost completely empty borehole
-            self.assertEqual(l[5], {'nvcl_id': '12992', 'x': 145.67585285, 'y': -41.61422342, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': '', 'elevation_m': '', 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0})
-
-            l = rdr.get_nvcl_id_list()
-            self.assertEqual(len(l), 102)
-            self.assertEqual(l[0:3], ['10026','10027','10343'])
-
-
-
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_all_bh_wfs_yx(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_all_bh_wfs_yx(self, mock_get):
         ''' Test full WFS response, unlimited number of boreholes, YX-coords
         '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs_yx.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+        reqs_obj = mock_get.return_value
+        with open('full_wfs_yx.json') as fp:
+            reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
+            feat_len = len(json_obj["features"])
+
             param_obj = setup_param_obj()
             rdr = NVCLReader(param_obj)
-            l = rdr.get_boreholes_list()
-            self.assertEqual(len(l), 62)
+            bhs = rdr.get_boreholes_list()
+            # Check that number passed in == number fetched
+            self.assertEqual(len(bhs), feat_len)
             # Test with all fields having values
-            self.assertEqual(l[4], {
-                'nvcl_id': '12991',
-                'x': 145.67616489, 'y': -41.61921239,
-                'href': 'http://www.blah.gov.au/resource/feature/blah/borehole/12991',
-                'name': 'MC3',
-                'description': 'descr',
-                'purpose': 'purp',
-                'status': 'STATUS',
-                'drillingMethod': 'unknown',
-                'operator': 'Opera',
-                'driller': 'Blah Exploration Pty Ltd',
-                'drillStartDate': '1978-05-28Z',
-                'drillEndDate': '1979-05-28Z',
-                'startPoint': 'unknown',
-                'inclinationType': 'inclined down',
-                'boreholeMaterialCustodian': 'blah',
-                'boreholeLength_m': '60.3',
-                'elevation_m': '791.4',
-                'elevation_srs': 'http://www.opengis.net/def/crs/EPSG/0/5711',
-		'positionalAccuracy': '1.2',
-		'source': 'Src',
-                'parentBorehole_uri': 'http://blah.org/blah-d354454546e3esd3454',
-                'metadata_uri': 'http://blah.org/geosciml-drillhole-locations-in-blah-d354a70a4a29536166ab8a9ca6470a79d628c05e',
-                'genericSymbolizer': 'SSSSS',
-                'z': 791.4})
+            should_be = SimpleNamespace(**{
+                "identifier":"https://gs.geoscience.nsw.gov.au/resource/feature/gsnsw/borehole/MIN_305246",
+	            "nvcl_id":"MIN_305246",
+                "x":147.93071504,
+                "y":-35.12615836,
+                "z":290,
+                "href":"https://gs.geoscience.nsw.gov.au/resource/feature/gsnsw/borehole/MIN_305246",
+                "name":"Mundarlo: MURC004",
+                "description":"Metallic minerals",
+                "purpose": "any purpose",
+                "status": "any status",
+                "drillingMethod":"diamond drill",
+                "operator":"Mclatchie",
+                "driller":"any driller",
+                "drillStartDate":"2018",
+                "drillEndDate":"2018",
+                "inclinationType":"vertical",
+                "startPoint":"any startPoint",
+                "inclinationType":"any inclinationType",
+                "boreholeMaterialCustodian":"any custodian",
+                "boreholeLength_m":519.6,
+                "elevation_m":290,
+                "elevation_srs":"EPSG:1234",
+                "positionalAccuracy":"positional accuracy",
+                "source":"NSW Geoscientific Data Warehouse",
+                "parentBorehole_uri":"borehole URI",
+                "metadata_uri":"https://geonetwork.geoscience.nsw.gov.au/geonetwork/srv/eng/catalog.search#/metadata/0ba7fe4639b8b9a073ef3e8ea82a29b31a171162",
+                "genericSymbolizer":"unknown",
+                "project":"Mundarlo",
+                "tenement":"EL8096"})
+            self.assertEqual(bhs[5], should_be)
 
             # Test an almost completely empty borehole
-            self.assertEqual(l[5], {'nvcl_id': '12992', 'x': 145.67585285, 'y': -41.61422342, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': '', 'elevation_m': '', 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0})
+            should_be = SimpleNamespace(**{
+                'identifier':'', 'nvcl_id': 'MIN_138214', 'x': 147.91664131, 'y':-35.1982468, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': 0.0, 'elevation_m': 0.0, 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0})
+            self.assertEqual(bhs[4], should_be)
 
-            l = rdr.get_nvcl_id_list()
-            self.assertEqual(len(l), 62)
-            self.assertEqual(l[0:3], ['10026','10027','10343'])
-
-
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_bbox_wfs(self, mock_wfs):
-        ''' Test bounding box precision of selecting boreholes
-            There are two boreholes in the test data: one is just within
-            the bounding box, the other is just outside
-        '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('bbox_wfs.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            # This file has XY-coords so set borehole_crs to 'EPSG:4326'
-            param_obj = setup_param_obj(max_boreholes=0,
-                                        bbox={"west": 146.0,"south": -41.2,"east": 147.2,"north": -40.5},
-                                        borehole_crs='EPSG:4326')
-            rdr = NVCLReader(param_obj)
-            l = rdr.get_boreholes_list()
-            self.assertEqual(len(l), 1)
-            l = rdr.get_nvcl_id_list()
-            self.assertEqual(len(l), 1)
+            # Test fetching borehole ids
+            ids = rdr.get_nvcl_id_list()
+            self.assertEqual(len(ids), 6)
+            self.assertEqual(ids[0:3], ['MIN_007619', 'MIN_007633', 'MIN_007637'])
 
 
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_polygon_wfs(self, mock_wfs):
-        ''' Test polygon precision of selecting boreholes
-            There are two boreholes in the test data: one is just within
-            the bounding box, the other is just outside
-        '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        coords = ((146.0, -41.2),
-                 (146.0, -40.5),
-                 (147.2, -40.5),
-                 (147.2, -41.2),
-                 (146.0, -41.2))
-        # Test both Polygon and LinearRing
-        for shape_type in (Polygon, LinearRing):
-            with open('bbox_wfs.txt') as fp:
-                wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-                # This file has XY-coords so set borehole_crs to 'EPSG:4326'
-                param_obj = setup_param_obj(max_boreholes=0,
-                                            polygon=shape_type(coords),
-                                            borehole_crs='EPSG:4326')
-                rdr = NVCLReader(param_obj)
-                l = rdr.get_boreholes_list()
-                self.assertEqual(len(l), 1)
-                l = rdr.get_nvcl_id_list()
-                self.assertEqual(len(l), 1)
-
-
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_cache(self, mock_wfs):
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_cache(self, mock_get):
         ''' Test CACHE_PATH option
             Tests for existence of both forms of the cache file
         '''
         temp_short = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(10) ])
         temp_long = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(100) ])
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('full_wfs_yx.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
+        with open('full_wfs_yx.json') as fp:
             for cache_path, tmp_file in [
                                # Test when parameters are incorporated in filename
                                (temp_short, temp_short + 'https%3A%2F%2Fblah.blah.blah%2Fnvcl%2FNVCLDataServices%2FgetDownsampledData.html%3Flogid%3Ddummy-id%26interval%3D10.0%26outputformat%3Djson%26startdepth%3D0.0%26enddepth%3D10000.0.txt'),
                                # Test when parameters are hashed because filename is too long
                                (temp_long, temp_long + 'https%3A%2F%2Fblah.blah.blah%2Fnvcl%2FNVCLDataServices%2FgetDownsampledData.html%3F6024443c534411d094f0cc87b78b708c2c7f4b14.txt')]:
+                reqs_obj = mock_get.return_value
+                reqs_obj = setup_reqs_obj(fp, reqs_obj)
                 # Setup params for NVCLReader() with CACHE_PATH set
                 param_obj = setup_param_obj(max_boreholes=0, cache_path=cache_path)
                 rdr = NVCLReader(param_obj)
@@ -510,23 +393,6 @@ class TestNVCLReader(unittest.TestCase):
                 self.assertEqual(len(dir_list), 1)
                 # Remove cache file
                 os.remove(tmp_file)
-
-
-    @unittest.mock.patch('nvcl_kit.reader.WebFeatureService', autospec=True)
-    def test_bad_coord_wfs(self, mock_wfs):
-        ''' Test WFS response with bad coordinates
-            (tests get_boreholes_list() & get_nvcl_id_list() )
-        '''
-        wfs_obj = mock_wfs.return_value
-        wfs_obj.getfeature.return_value = Mock()
-        with open('badcoord_wfs.txt') as fp:
-            wfs_obj.getfeature.return_value.read.return_value = fp.read().rstrip('\n')
-            # This file has XY-coords so set borehole_crs to 'EPSG:4326'
-            param_obj = setup_param_obj(borehole_crs='EPSG:4326')
-            with self.assertLogs('nvcl_kit.wfs_helpers', level='WARN') as nvcl_log:
-                rdr = NVCLReader(param_obj)
-                self.assertTrue(len(nvcl_log.output)>0, "Missing 'Cannot parse collar coordinates'")
-                self.assertIn('Cannot parse collar coordinates', nvcl_log.output[0])
 
 
     def test_imagelog_data(self):
@@ -1001,32 +867,32 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests 'filter_feat_list' API
         '''
         rdr = setup_reader()
-        f_list = rdr.filter_feat_list(name=['MAC23', 'ABC2'])
+        f_list = rdr.filter_feat_list(name=['Mundarlo: MURC004', 'Mount Adrah: GG12'])
         assert(len(f_list) == 2)
-        assert(f_list[0].name == 'MAC23')
-        assert(f_list[1].name == 'ABC2')
+        assert(f_list[0].name == 'Mount Adrah: GG12')
+        assert(f_list[1].name == 'Mundarlo: MURC004')
 
     def test_filter_feat_list_single(self):
         ''' Tests 'filter_feat_list' API
         '''
         rdr = setup_reader()
-        f_list = rdr.filter_feat_list(name='MAC25')
+        f_list = rdr.filter_feat_list(name='Mundarlo: MURC004')
         assert(len(f_list) == 1)
-        assert(f_list[0].name == 'MAC25')
+        assert(f_list[0].name == 'Mundarlo: MURC004')
 
     def test_filter_feat_list_ids_only(self):
         ''' Tests 'filter_feat_list' API, with 'nvcl_ids_only' keyword
         '''
         rdr = setup_reader()
-        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name=['MAC23', 'ABC2'])
+        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name=['Mundarlo: MURC004', 'Mount Adrah: GG12'])
         assert(len(id_list) == 2)
-        assert(id_list[0] == '10026')
-        assert(id_list[1] == '6341')
+        assert(id_list[0] == 'MIN_007619')
+        assert(id_list[1] == 'MIN_305246')
 
     def test_filter_feat_list_ids_only_single(self):
         ''' Tests 'filter_feat_list' API, with 'nvcl_ids_only' keyword and single value
         '''
         rdr = setup_reader()
-        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name='MAC25')
+        id_list = rdr.filter_feat_list(nvcl_ids_only=True, name='Mundarlo: MURC004')
         assert(len(id_list) == 1)
-        assert(id_list[0] == '10027')
+        assert(id_list[0] == 'MIN_305246')

@@ -6,11 +6,11 @@ authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
 ]
 dependencies = [
-    "owslib>=0.29.2",
     "shapely>=2.0.1",
     "requests>=2.31.0",
     "pyyaml>=6.0.1",
     "pyproj>=3.5.0",
+    "python-dateutil>=2.9.0.post0",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -32,3 +32,4 @@ Homepage = "https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit"
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
+
