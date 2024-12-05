@@ -340,8 +340,8 @@ class TestNVCLReader(unittest.TestCase):
                 "startPoint":"any startPoint",
                 "inclinationType":"any inclinationType",
                 "boreholeMaterialCustodian":"any custodian",
-                "boreholeLength_m":519.6,
-                "elevation_m":290,
+                "boreholeLength_m":"519.6",
+                "elevation_m":"290",
                 "elevation_srs":"EPSG:1234",
                 "positionalAccuracy":"positional accuracy",
                 "source":"NSW Geoscientific Data Warehouse",
@@ -354,7 +354,7 @@ class TestNVCLReader(unittest.TestCase):
 
             # Test an almost completely empty borehole
             should_be = SimpleNamespace(**{
-                'identifier':'', 'nvcl_id': 'MIN_138214', 'x': 147.91664131, 'y':-35.1982468, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': 0.0, 'elevation_m': 0.0, 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0})
+                'identifier':'', 'nvcl_id': 'MIN_138214', 'x': 147.91664131, 'y':-35.1982468, 'href': '', 'name': '', 'description': '', 'purpose': '', 'status': '', 'drillingMethod': '', 'operator': '', 'driller': '', 'drillStartDate': '', 'drillEndDate': '', 'startPoint': '', 'inclinationType': '', 'boreholeMaterialCustodian': '', 'boreholeLength_m': '0.0', 'elevation_m': '0.0', 'elevation_srs': '', 'positionalAccuracy': '', 'source': '', 'parentBorehole_uri': '', 'metadata_uri': '', 'genericSymbolizer': '', 'z': 0.0, 'tenement':'', 'project':''})
             self.assertEqual(bhs[4], should_be)
 
             # Test fetching borehole ids
@@ -387,13 +387,27 @@ class TestNVCLReader(unittest.TestCase):
                 "href":"http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/1113668_ECD12",
                 "name":"ECD12",
                 "drillingMethod":"Diamond Drill",
+                "operator":"",
                 "driller":"Unknown",
+                "drillStartDate":"",
+                "drillEndDate":"",
+                "description":"",
+                "purpose":"",
+                "status":"",
+                "source":"",
+                "parentBorehole_uri":"",
+                "elevation_m":"",
                 "startPoint":"other: unknown",
                 "inclinationType":"vertical",
                 "boreholeMaterialCustodian":"Northern Territory Geological Survey",
-                "boreholeLength_m":175.8,
+                "boreholeLength_m":"175.8",
                 "elevation_srs":"EPSG:5711",
+                "positionalAccuracy":"",
+                "status":"",
                 "metadata_uri":"http://researchdata.ands.org.au/nvcl-borehole",
+                "genericSymbolizer":"",
+                "tenement":"",
+                "project":""
                 })
             self.assertEqual(bhs[5], should_be)
 
