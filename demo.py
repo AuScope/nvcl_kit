@@ -70,8 +70,8 @@ def do_demo(state):
     bh_list = reader.get_feature_list()
     # Filter features by name or other attributes
     if state == 'tas':
-        brd005_list = reader.filter_feat_list(name='BRD005')
-        print(f"Details of BRD005: {brd005_list}")
+        mac25_list = reader.filter_feat_list(name='MAC25')
+        print(f"Details of MAC25: {mac25_list}")
 
     # Check if POLYGON worked
     if state == 'qld':
