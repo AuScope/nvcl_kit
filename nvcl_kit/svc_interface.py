@@ -322,14 +322,14 @@ class _ServiceInterface:
                 LOGGER.warning(f"HTTP Error: {he_exc}")
                 LOGGER.warning(f'retry:{cc}')
                 if(cc<5):
-                    time.sleep(5)
+                    time.sleep(1)
                     continue
                 return ""
             except OSError as os_exc:
                 LOGGER.warning(f"OS Error: {os_exc}")
                 LOGGER.warning(f'retry:{cc}')
                 if(cc<5):
-                    time.sleep(5)
+                    time.sleep(1)
                     continue
                 return ""
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")

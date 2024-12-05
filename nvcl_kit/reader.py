@@ -49,7 +49,7 @@ if not LOGGER.hasHandlers():
     # Add handler to LOGGER and set level
     LOGGER.addHandler(HANDLER)
 
-TIMEOUT = 1
+TIMEOUT = 2
 ''' Timeout for querying WFS and NVCL services (seconds)
 '''
 
