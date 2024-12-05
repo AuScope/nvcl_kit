@@ -51,10 +51,11 @@ def get_borehole_list(param_obj: SimpleNamespace) -> (list, bool, bool):
             f = SimpleNamespace()
             props = feature['properties']
 
+
             # Get NVCL_ID
             f.nvcl_id = feature['id'].split('.')[-1:][0]
 
-            # Get 3D coords
+            # Get 3D coords - they are produced as floats
             f.x = float(feature['geometry']['coordinates'][0])
             f.y = float(feature['geometry']['coordinates'][1])
             try:
@@ -68,7 +69,10 @@ def get_borehole_list(param_obj: SimpleNamespace) -> (list, bool, bool):
             # Loop over possible values (from GeoSciML BoreholeView v4.1) and 'tenement' + 'project'
             for to_attr in ('identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer', 'tenement', 'project'):
                 if to_attr in props:
-                    setattr(f, to_attr, props[to_attr])
+                    setattr(f, to_attr, str(props[to_attr]))
+                else:
+                    setattr(f, to_attr, '')
+
         except Exception as exc:
             LOGGER.debug(f"Exception parsing JSON response from {prov}: {exc}")
             continue
