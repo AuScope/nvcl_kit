@@ -41,7 +41,7 @@ def setup_reader() -> NVCLReader:
     rdr = None
     with unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get', autospec=True) as mock_reqs:
         reqs_obj = mock_reqs.return_value
-        with open('full_wfs_yx.json') as fp:
+        with open('full_wfs_cql.json') as fp:
             reqs_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj()
             rdr = NVCLReader(param_obj)
@@ -74,7 +74,7 @@ def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False, rdr: NV
 
 
 def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shapely.geometry.LinearRing = None, 
-        depths: tuple = None, borehole_crs: str = None, cache_path = None) -> SimpleNamespace:
+        depths: tuple = None, borehole_crs: str = None, cache_path = None, use_cql = None) -> SimpleNamespace:
     ''' Create a parameter object for passing to NVCLReader constructor, used for testing only
 
     :param max_boreholes: maximum number of boreholes to download
@@ -100,5 +100,7 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
         param_obj.BOREHOLE_CRS = borehole_crs
     if cache_path:
         param_obj.CACHE_PATH = cache_path
+    if use_cql:
+        param_obj.USE_CQL = use_cql
     param_obj.PROV = 'blah'
     return param_obj

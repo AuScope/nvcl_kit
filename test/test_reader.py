@@ -296,7 +296,7 @@ class TestNVCLReader(unittest.TestCase):
             (tests get_boreholes_list() & get_nvcl_id_list() )
         '''
         reqs_obj = mock_get.return_value
-        with open('full_wfs_yx.json') as fp:
+        with open('full_wfs_cql.json') as fp:
             reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj(max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
@@ -307,11 +307,11 @@ class TestNVCLReader(unittest.TestCase):
 
 
     @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
-    def test_all_bh_wfs_yx(self, mock_get):
-        ''' Test full WFS response, unlimited number of boreholes, YX-coords
+    def test_all_bh_wfs_cql(self, mock_get):
+        ''' Test full WFS response from CQL_FILTER request, unlimited number of boreholes
         '''
         reqs_obj = mock_get.return_value
-        with open('full_wfs_yx.json') as fp:
+        with open('full_wfs_cql.json') as fp:
             reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
             feat_len = len(json_obj["features"])
 
@@ -337,7 +337,6 @@ class TestNVCLReader(unittest.TestCase):
                 "driller":"any driller",
                 "drillStartDate":"2018",
                 "drillEndDate":"2018",
-                "inclinationType":"vertical",
                 "startPoint":"any startPoint",
                 "inclinationType":"any inclinationType",
                 "boreholeMaterialCustodian":"any custodian",
@@ -365,13 +364,53 @@ class TestNVCLReader(unittest.TestCase):
 
 
     @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    def test_all_bh_wfs_xml(self, mock_get):
+        ''' Test minimal WFS response, XML FILTER reasponse, unlimited number of boreholes
+        '''
+        reqs_obj = mock_get.return_value
+        with open('full_wfs_xml.json') as fp:
+            reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
+            feat_len = len(json_obj["features"])
+
+            param_obj = setup_param_obj(use_cql=False)
+            rdr = NVCLReader(param_obj)
+            bhs = rdr.get_boreholes_list()
+            # Check that number passed in == number fetched
+            self.assertEqual(len(bhs), feat_len)
+            # Test with minimal fields having values
+            should_be = SimpleNamespace(**{
+                "identifier":"http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/1113668_ECD12",
+	            "nvcl_id":"1113668_ECD12",
+                "x":131.33847,
+                "y":-22.37914,
+                "z":0.0,
+                "href":"http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/1113668_ECD12",
+                "name":"ECD12",
+                "drillingMethod":"Diamond Drill",
+                "driller":"Unknown",
+                "startPoint":"other: unknown",
+                "inclinationType":"vertical",
+                "boreholeMaterialCustodian":"Northern Territory Geological Survey",
+                "boreholeLength_m":175.8,
+                "elevation_srs":"EPSG:5711",
+                "metadata_uri":"http://researchdata.ands.org.au/nvcl-borehole",
+                })
+            self.assertEqual(bhs[5], should_be)
+
+            # Test fetching borehole ids
+            ids = rdr.get_nvcl_id_list()
+            self.assertEqual(len(ids), 141)
+            self.assertEqual(ids[:3], ['1108848_DD95RC128', '1113632_DD85GL5', '1113636_DD85GL6'])
+
+
+    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
     def test_cache(self, mock_get):
         ''' Test CACHE_PATH option
             Tests for existence of both forms of the cache file
         '''
         temp_short = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(10) ])
         temp_long = 'tmp-' + ''.join([chr(random.randint(65, 90)) for x in range(100) ])
-        with open('full_wfs_yx.json') as fp:
+        with open('full_wfs_cql.json') as fp:
             for cache_path, tmp_file in [
                                # Test when parameters are incorporated in filename
                                (temp_short, temp_short + 'https%3A%2F%2Fblah.blah.blah%2Fnvcl%2FNVCLDataServices%2FgetDownsampledData.html%3Flogid%3Ddummy-id%26interval%3D10.0%26outputformat%3Djson%26startdepth%3D0.0%26enddepth%3D10000.0.txt'),
