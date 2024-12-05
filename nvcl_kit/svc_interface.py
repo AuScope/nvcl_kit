@@ -41,10 +41,10 @@ class _ServiceInterface:
         NB: 'ServiceInterface' should only be called from within the 'reader' class.
     '''
 
-    def __init__(self, nvcl_url,  timeout, cache_path = None):
+    def __init__(self, nvcl_url, timeout, cache_path = None):
         '''
         :param nvcl_url: URL of the NVCL service
-        :param timeout: timeout value for connection to NVCL service (seconds)
+        :param timeout: initial timeout value for connection to NVCL service, doubles at each attempt, 5 attempts in total (seconds)
         :param cache_path: optional folder path for cache files
         '''
         self.NVCL_URL = nvcl_url
@@ -315,7 +315,7 @@ class _ServiceInterface:
                     return response_str
         for cc in range(5):
             try:
-                with urllib.request.urlopen(req, timeout=self.TIMEOUT) as response:
+                with urllib.request.urlopen(req, timeout=self.TIMEOUT*2**cc) as response:
                     response_str = response.read()
                     break
             except HTTPException as he_exc:
