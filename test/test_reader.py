@@ -483,8 +483,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_imagelog_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_imagelog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_imagelog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_imagelog_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_imagelog_data, 'OS Error with', {'nvcl_id':'dummy-id'})
 
 
     def urllib_exception_tester(self, exc, fn, msg, params):
@@ -528,8 +528,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_logs_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_logs_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_logs_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_logs_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_logs_data, 'OS Error with', {'nvcl_id':'dummy-id'})
 
     def test_get_logs_time(self):
         ''' Tests time retrieval in get_logs_data()
@@ -564,8 +564,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_profilometer_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_profilometer_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_profilometer_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_profilometer_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_profilometer_data, 'OS Error with', {'nvcl_id':'dummy-id'})
 
     def test_profilometer_datasets(self):
         ''' Tests fetching profilometer datasets
@@ -610,8 +610,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_scalar_logs()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_scalar_logs, 'HTTP Error:', {'dataset_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_scalar_logs, 'OS Error:', {'dataset_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_scalar_logs, 'HTTP Error with', {'dataset_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_scalar_logs, 'OS Error with', {'dataset_id':'dummy-id'})
 
 
 
@@ -641,8 +641,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_mosaic_imglogs()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_mosaic_imglogs, 'HTTP Error:', {'dataset_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_mosaic_imglogs, 'OS Error:', {'dataset_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_mosaic_imglogs, 'HTTP Error with', {'dataset_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_mosaic_imglogs, 'OS Error with', {'dataset_id':'dummy-id'})
 
 
     def test_datasetid_list(self):
@@ -669,8 +669,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_datasetid_list()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_datasetid_list, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_datasetid_list, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_datasetid_list, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_datasetid_list, 'OS Error with', {'nvcl_id':'dummy-id'})
 
 
     def test_dataset_list(self):
@@ -730,8 +730,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_dataset_list()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_dataset_list, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_dataset_list, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_dataset_list, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_dataset_list, 'OS Error with', {'nvcl_id':'dummy-id'})
 
 
     def test_spectrallog_data(self):
@@ -753,8 +753,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_spectrallog_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_data, 'HTTP Error:', {'nvcl_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_spectrallog_data, 'OS Error:', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_spectrallog_data, 'OS Error with', {'nvcl_id':'dummy-id'})
 
 
     def test_spectrallog_datasets(self):
@@ -770,8 +770,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_spectrallog_datasets()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_datasets, 'HTTP Error:', {'log_id':'dummy-id'})
-        self.urllib_exception_tester(OSError, rdr.get_spectrallog_datasets, 'OS Error:', {'log_id':'dummy-id'})
+        self.urllib_exception_tester(HTTPException, rdr.get_spectrallog_datasets, 'HTTP Error with', {'log_id':'dummy-id'})
+        self.urllib_exception_tester(OSError, rdr.get_spectrallog_datasets, 'OS Error with', {'log_id':'dummy-id'})
 
 
     def test_borehole_data(self):
@@ -844,8 +844,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_borehole_data()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_borehole_data, 'HTTP Error:', {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
-        self.urllib_exception_tester(OSError, rdr.get_borehole_data, 'OS Error:',  {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
+        self.urllib_exception_tester(HTTPException, rdr.get_borehole_data, 'HTTP Error with', {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
+        self.urllib_exception_tester(OSError, rdr.get_borehole_data, 'OS Error with',  {'log_id': 'dummy-logid', 'height_resol': 20, 'class_name': 'dummy-class'})
 
 
     def test_image_tray_depth(self):
@@ -913,8 +913,8 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests exception handling in get_algorithms()
         '''
         rdr = setup_reader()
-        self.urllib_exception_tester(HTTPException, rdr.get_algorithms, 'HTTP Error:', {})
-        self.urllib_exception_tester(OSError, rdr.get_algorithms, 'OS Error:', {})
+        self.urllib_exception_tester(HTTPException, rdr.get_algorithms, 'HTTP Error with', {})
+        self.urllib_exception_tester(OSError, rdr.get_algorithms, 'OS Error with', {})
 
     def test_filter_feat_list(self):
         ''' Tests 'filter_feat_list' API

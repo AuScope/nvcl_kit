@@ -9,6 +9,7 @@ import urllib
 import urllib.parse
 import urllib.request
 from http.client import HTTPException
+from socket import timeout
 import sys
 import logging
 
@@ -320,18 +321,16 @@ class _ServiceInterface:
                     response_str = response.read()
                     break
             except HTTPException as he_exc:
-                LOGGER.debug(f'retry:{cc}')
-                if(cc<5):
-                    time.sleep(1)
-                    continue
-                LOGGER.warning(f"HTTP Error: {he_exc}")
+                LOGGER.warning(f"HTTP Error with {url}: {he_exc}")
                 return ""
             except OSError as os_exc:
-                LOGGER.debug(f'retry:{cc}')
-                if(cc<5):
-                    time.sleep(1)
-                    continue
-                LOGGER.warning(f"OS Error: {os_exc}")
+                # Catch and retry timeouts
+                if isinstance(os_exc, timeout):
+                    LOGGER.debug(f"Timeout with {url} retry: #{cc+1}")
+                    if cc < 5:
+                        time.sleep(1)
+                        continue
+                LOGGER.warning(f"OS Error with {url}: {os_exc}")
                 return ""
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")
 
