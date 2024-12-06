@@ -315,22 +315,23 @@ class _ServiceInterface:
                     return response_str
         for cc in range(5):
             try:
+                # TODO: Upgrade to requests & urllib3 timeout and error management
                 with urllib.request.urlopen(req, timeout=self.TIMEOUT*2**cc) as response:
                     response_str = response.read()
                     break
             except HTTPException as he_exc:
-                LOGGER.warning(f"HTTP Error: {he_exc}")
-                LOGGER.warning(f'retry:{cc}')
+                LOGGER.debug(f'retry:{cc}')
                 if(cc<5):
                     time.sleep(1)
                     continue
+                LOGGER.warning(f"HTTP Error: {he_exc}")
                 return ""
             except OSError as os_exc:
-                LOGGER.warning(f"OS Error: {os_exc}")
-                LOGGER.warning(f'retry:{cc}')
+                LOGGER.debug(f'retry:{cc}')
                 if(cc<5):
                     time.sleep(1)
                     continue
+                LOGGER.warning(f"OS Error: {os_exc}")
                 return ""
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")
 
