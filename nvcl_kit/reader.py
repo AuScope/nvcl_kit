@@ -772,7 +772,7 @@ class NVCLReader:
         return [SimpleNamespace(**d) for d in prof_obj]
 
     def get_boreholes_list(self):
-        ''' Returns a list of dictionary objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:
+        ''' Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:
 
             'nvcl_id', 'identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'href', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'x', 'y, 'z', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer'
 
@@ -781,8 +781,9 @@ class NVCLReader:
                 (2) 'href' corresponds to 'gsmlp:identifier'
                 (3) 'x', 'y', 'z' are x-coordinate, y-coordinate and elevation
                 (4) 'nvcl_id' is the GML 'id', used as an id in the NVCL services
+                (5) Use 'vars()' function to convert SimpleNamespace to a dict
 
-            :returns: a list of dictionaries whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
+            :returns: a list of SimpleNamespace whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView
         '''
         return self.borehole_list
 
