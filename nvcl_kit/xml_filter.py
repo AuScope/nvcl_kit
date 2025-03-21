@@ -63,67 +63,82 @@ def make_polygon_prop(coords: str) -> str:
     xml_str = ET.tostring(intersects, encoding='unicode')
     return xml_str
 
-def make_nvcl_like_filter():
-    """
-    This works for all services, using 'PropertyIsLike' because "PropertyIsEqualTo" does not work for NT
-    """
-    xml_filter ="""<ogc:Filter xmlns:gsmlp="http://xmlns.geosciml.org/geosciml-portrayal/4.0"
-                               xmlns:ogc="http://www.opengis.net/ogc">
-                        <ogc:PropertyIsLike wildCard="%" singleChar="#" escapeChar="!">
-                            <ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName>
-                            <ogc:Literal>true</ogc:Literal>
-                        </ogc:PropertyIsLike>
-                   </ogc:Filter>"""
-    return xml_filter
-
-def make_nvcl_like_prop():
-    xml_filter ="""<ogc:PropertyIsLike xmlns:ogc="http://www.opengis.net/ogc" xmlns:gsmlp="http://xmlns.geosciml.org/geosciml-portrayal/4.0" wildCard="%" singleChar="#" escapeChar="!">
-                       <ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName>
-                       <ogc:Literal>true</ogc:Literal>
-                   </ogc:PropertyIsLike>"""
-    return xml_filter
-
-def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int):
+def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) -> list:
     """
     Makes an OGC WFS GetFeature v1.0.0 request using POST and expecting a JSON response
+    This also implements local feature filtering for 'nvclCollection' attribute
+
+    :param url: OGC WFS URL
+    :param prov: provider e.g. 'nsw'
+    :param xml_filter: XML filter string e.g. filter by polygon
+    :param max_features: maximum number of features to return, if < 1 then all boreholes are returned
+    :returns: list of features, each feature is a dict
     """
-    data = { "service": "WFS",
-             "filter": xml_filter,
+    BATCH_SIZE = 10000
+    batch_count = 0
+    done = False
+    feat_list = []
+    feat_ids = set()
+
+    # This is designed for the NTGS WFS borehole service which does not respond to CQL filter requests
+
+    # Loop which pages through all the WFS requests
+    while not done:
+        data = { "service": "WFS",
              "version": "1.0.0",
              "request": "GetFeature",
              "typeName": "gsmlp:BoreholeView",
              "outputFormat": "json",
              "resultType": "results",
-             # NT is misconfigured and returns no features if 'maxFeatures' is used
-             # "maxFeatures": str(max_features) 
+             # NB: NT was misconfigured and returned no features if 'maxFeatures' is used
+             "maxFeatures": "10000",
+             "startIndex": str(batch_count)
            }
-    # Send the POST request with the XML payload 
-    try:
-        with requests.Session() as s:
-
-            # Retry with backoff
-            retries = Retry(total=5,
-                            backoff_factor=0.5,
-                            status_forcelist=[429, 502, 503, 504]
-                           )
-            s.mount('https://', HTTPAdapter(max_retries=retries))
-
-            # Sending the request
-            response = s.post(url, data=data)
-    except (HTTPError, requests.RequestException) as e:
-        LOGGER.error(f"{prov} returned error sending WFS GetFeature: {e}")
-        return []
-
-    # Check if the request was successful
-    if response.status_code == 200:
+        if xml_filter is None or len(xml_filter) > 0:
+            data["filter"] = xml_filter
+        # Send the POST request with the XML payload 
         try:
-            resp = response.json()
-        except (TypeError, requests.JSONDecodeError) as e:
-            LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {e}")
-            return []
-        return resp['features']
-    LOGGER.error(f"{prov} returned error {response.status_code} in WFS GetFeature response: {response.text}")
-    return []
+            with requests.Session() as s:
+
+                # Retry with backoff
+                retries = Retry(total=5,
+                                backoff_factor=0.5,
+                                status_forcelist=[429, 502, 503, 504]
+                            )
+                s.mount('https://', HTTPAdapter(max_retries=retries))
+
+                # Sending the request
+                response = s.post(url, data=data)
+        except (HTTPError, requests.RequestException) as e:
+            LOGGER.error(f"{prov} returned error sending WFS GetFeature: {e}")
+            return feat_list
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            try:
+                resp = response.json()
+            except (TypeError, requests.JSONDecodeError) as e:
+                LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {e}")
+                return feat_list
+            
+            # If no more features left we can exit loop
+            if len(resp['features']) == 0:
+                done = True
+            # Collect the NVCL features
+            for f in resp['features']:
+                if f['properties']['nvclCollection'] == 'true':
+                    feat_list.append(f)
+                    feat_ids.add(f['id'])
+                # Exit when we reach maximum features limit
+                if max_features > 0 and len(feat_list) == max_features:
+                    done = True
+                    break
+            batch_count += len(resp['features'])
+
+        else:
+            LOGGER.error(f"{prov} returned error {response.status_code} in WFS GetFeature response: {response.text}")
+            break
+    return feat_list
 
 
 def make_poly_coords(bbox: dict, poly: Polygon) -> str:
@@ -147,11 +162,9 @@ def make_xml_filter(bbox: dict, poly: Polygon) -> str:
     Used in OGC WFS v1.0.0 "FILTER" parameter
     """
     if bbox is not None or poly is not None:
-        # Filter NVCL boreholes and within bbox or polygon
+        # Filter within bbox or polygon
         polygon = make_poly_coords(bbox, poly)
         poly_prop = make_polygon_prop(polygon)
-        nvcl_prop = make_nvcl_like_prop()
-        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}{nvcl_prop}</ogc:And></ogc:Filter>"""
-    # Filter NVCL boreholes only
-    return make_nvcl_like_filter()
+        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}</ogc:And></ogc:Filter>"""
+    return ""
 
