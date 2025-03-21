@@ -43,19 +43,19 @@ def make_cql_filter(bbox: dict, poly: Polygon) -> str:
     else:
         return "nvclCollection = 'true'"
 
-def is_all_nvcl(features):
-    """
-    Test for all NVCL boreholes
-    """
-    for feature in features:
-        try:
-            assert(feature['properties']['nvclCollection'] == 'true')
-        except:
-            print("FAIL - Not all NVCL!!")
-            return
-        print("PASS - all NVCL")
-
 def make_cql_request(url: str, prov: str, cql_filter: str, max_features: int):
+    """
+    Makes an OGC WFS GetFeature v1.1.0 request using GET and expecting a JSON response
+    Caller can supply a CQL filter
+
+    :param url: OGC WFS URL
+    :param prov: provider e.g. 'nsw'
+    :param cql_filter: CQL filter string e.g. filter by polygon
+    :param max_features: maximum number of features to return, if < 1 then all boreholes are returned
+    :returns: list of features, each feature is a dict
+    """
+    # NB: Does not perform WFS request paging, may be required in future
+
     # Parameters for the GetFeature request
     params = {
               "service": "WFS",
@@ -63,9 +63,10 @@ def make_cql_request(url: str, prov: str, cql_filter: str, max_features: int):
               "request": "GetFeature",
               "typename": "gsmlp:BoreholeView",
               "outputFormat": "json",
-              "CQL_FILTER": cql_filter,
-              "maxFeatures": str(max_features)
+              "CQL_FILTER": cql_filter
              }
+    if max_features > 0:
+        params["maxFeatures"] = str(max_features)
 
     try:
         with requests.Session() as s:
