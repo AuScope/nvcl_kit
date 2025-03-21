@@ -33,7 +33,7 @@ if not LOGGER.hasHandlers():
     # Add handler to LOGGER and set level
     LOGGER.addHandler(HANDLER)
 
-def get_borehole_list(param_obj: SimpleNamespace) -> (list, bool, bool):
+def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
     prov = param_obj.PROV
     if param_obj.USE_CQL:
         cql_filter = make_cql_filter(param_obj.BBOX, param_obj.POLYGON)
