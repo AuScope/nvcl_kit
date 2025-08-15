@@ -1,6 +1,6 @@
 [project]
 name = "nvcl_kit"
-version = "1.2.4"
+version = "1.2.5"
 description = "Downloads Australian National Virtual Core Library (NVCL) datasets"
 authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering",
 ]
 [project.urls]
