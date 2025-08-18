@@ -28,7 +28,7 @@ The mineralogy data is maintained by Australia's State and Territory geological 
 1. A brief API tutorial is [here](https://github.com/AuScope/nvcl_kit/blob/master/introduction.rst)
 2. Example Jupyter Notebooks are available to try, open this [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/csiro-geoanalytics%2Fpython-shared%2Fnvcl_kit/HEAD) and go to "notebooks" folder
 3. There is a rough demonstration script [here](https://github.com/AuScope/nvcl_kit/blob/master/demo.py)
-4. API documentation can be found [here](https://csiro-geoanalytics.gitlab.io/python-shared/nvcl_kit)
+4. API documentation can be found [here](https://auscope.github.io/nvcl_kit)
 
 
 ## License
