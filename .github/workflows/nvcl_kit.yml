@@ -1,4 +1,4 @@
-name: nvcl_kit
+name: nvcl_kit build, test, pages
 on:
   push:
   workflow_dispatch:
