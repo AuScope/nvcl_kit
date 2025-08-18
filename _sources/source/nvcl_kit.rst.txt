@@ -4,13 +4,41 @@ nvcl\_kit package
 Submodules
 ----------
 
-nvcl\_kit.asud module
+nvcl\_kit.cql_filter module
 ---------------------
 
-.. automodule:: nvcl_kit.asud
+.. automodule:: nvcl_kit.cql_filter
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+nvcl\_kit.xml_filter module
+---------------------
+
+.. automodule:: nvcl_kit.xml_filter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+nvcl\_kit.xml_helpers module
+---------------------
+
+.. automodule:: nvcl_kit.xml_helpers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+nvcl\_kit.wfs_helpers module
+---------------------
+
+.. automodule:: nvcl_kit.wfs_helpers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 nvcl\_kit.constants module
 --------------------------
@@ -19,6 +47,7 @@ nvcl\_kit.constants module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 nvcl\_kit.generators module
 ---------------------------
@@ -35,6 +64,7 @@ nvcl\_kit.param_builder module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 nvcl\_kit.reader module
 -----------------------

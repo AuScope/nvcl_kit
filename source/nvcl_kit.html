@@ -47,7 +47,31 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">nvcl_kit</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">nvcl_kit package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-asud-module">nvcl_kit.asud module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-cql-filter-module">nvcl_kit.cql_filter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_filter"><code class="docutils literal notranslate"><span class="pre">make_cql_filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_request"><code class="docutils literal notranslate"><span class="pre">make_cql_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-xml-filter-module">nvcl_kit.xml_filter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_poly_coords"><code class="docutils literal notranslate"><span class="pre">make_poly_coords()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_polygon_prop"><code class="docutils literal notranslate"><span class="pre">make_polygon_prop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_filter"><code class="docutils literal notranslate"><span class="pre">make_xml_filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_request"><code class="docutils literal notranslate"><span class="pre">make_xml_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.pretty_print"><code class="docutils literal notranslate"><span class="pre">pretty_print()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-xml-helpers-module">nvcl_kit.xml_helpers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_helpers.clean_xml_parse"><code class="docutils literal notranslate"><span class="pre">clean_xml_parse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_helpers.parse_dates"><code class="docutils literal notranslate"><span class="pre">parse_dates()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-wfs-helpers-module">nvcl_kit.wfs_helpers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.wfs_helpers.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.wfs_helpers.get_borehole_list"><code class="docutils literal notranslate"><span class="pre">get_borehole_list()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.constants">nvcl_kit.constants module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_SWIR"><code class="docutils literal notranslate"><span class="pre">has_SWIR()</span></code></a></li>
@@ -120,8 +144,137 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="nvcl-kit-asud-module">
-<h2>nvcl_kit.asud module<a class="headerlink" href="#nvcl-kit-asud-module" title="Link to this heading"></a></h2>
+<section id="nvcl-kit-cql-filter-module">
+<h2>nvcl_kit.cql_filter module<a class="headerlink" href="#nvcl-kit-cql-filter-module" title="Link to this heading"></a></h2>
+<dl class="py data" id="module-nvcl_kit.cql_filter">
+<dt class="sig sig-object py" id="nvcl_kit.cql_filter.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.cql_filter.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.cql_filter.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.cql_filter.make_cql_filter">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.cql_filter.</span></span><span class="sig-name descname"><span class="pre">make_cql_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#nvcl_kit.cql_filter.make_cql_filter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.cql_filter.make_cql_request">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.cql_filter.</span></span><span class="sig-name descname"><span class="pre">make_cql_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cql_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.cql_filter.make_cql_request" title="Link to this definition"></a></dt>
+<dd><p>Makes an OGC WFS GetFeature v1.1.0 request using GET and expecting a JSON response
+Caller can supply a CQL filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – OGC WFS URL</p></li>
+<li><p><strong>prov</strong> – provider e.g. ‘nsw’</p></li>
+<li><p><strong>cql_filter</strong> – CQL filter string e.g. filter by polygon</p></li>
+<li><p><strong>max_features</strong> – maximum number of features to return, if &lt; 1 then all boreholes are returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of features, each feature is a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="nvcl-kit-xml-filter-module">
+<h2>nvcl_kit.xml_filter module<a class="headerlink" href="#nvcl-kit-xml-filter-module" title="Link to this heading"></a></h2>
+<dl class="py data" id="module-nvcl_kit.xml_filter">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.xml_filter.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.make_poly_coords">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">make_poly_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#nvcl_kit.xml_filter.make_poly_coords" title="Link to this definition"></a></dt>
+<dd><p>Converts a bounding box dict to polygon coordinate string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.make_polygon_prop">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">make_polygon_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#nvcl_kit.xml_filter.make_polygon_prop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.make_xml_filter">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">make_xml_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#nvcl_kit.xml_filter.make_xml_filter" title="Link to this definition"></a></dt>
+<dd><p>Makes an XML filter with optional polygon or bbox constraints
+Used in OGC WFS v1.0.0 “FILTER” parameter</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.make_xml_request">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">make_xml_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#nvcl_kit.xml_filter.make_xml_request" title="Link to this definition"></a></dt>
+<dd><p>Makes an OGC WFS GetFeature v1.0.0 request using POST and expecting a JSON response
+This also implements local feature filtering for ‘nvclCollection’ attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – OGC WFS URL</p></li>
+<li><p><strong>prov</strong> – provider e.g. ‘nsw’</p></li>
+<li><p><strong>xml_filter</strong> – XML filter string e.g. filter by polygon</p></li>
+<li><p><strong>max_features</strong> – maximum number of features to return, if &lt; 1 then all boreholes are returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of features, each feature is a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_filter.pretty_print">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">pretty_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.xml_filter.pretty_print" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="nvcl-kit-xml-helpers-module">
+<h2>nvcl_kit.xml_helpers module<a class="headerlink" href="#nvcl-kit-xml-helpers-module" title="Link to this heading"></a></h2>
+<dl class="py function" id="module-nvcl_kit.xml_helpers">
+<dt class="sig sig-object py" id="nvcl_kit.xml_helpers.clean_xml_parse">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_helpers.</span></span><span class="sig-name descname"><span class="pre">clean_xml_parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.xml_helpers.clean_xml_parse" title="Link to this definition"></a></dt>
+<dd><p>Filters out badly-formatted XML</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xml_str</strong> – XML string to parse</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>XML ElementTree Element object, it will be empty if there was an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.xml_helpers.parse_dates">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_helpers.</span></span><span class="sig-name descname"><span class="pre">parse_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds_child</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.xml_helpers.parse_dates" title="Link to this definition"></a></dt>
+<dd><p>Parses dates from ‘&lt;Dataset&gt;’ element</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ds_child</strong> – XML children of ‘&lt;Dataset&gt;’ element</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict: keys are ‘modified_date’ and/or ‘created_date’, values are datetime objects
+if no dates were found then an empty dict is returned</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="nvcl-kit-wfs-helpers-module">
+<h2>nvcl_kit.wfs_helpers module<a class="headerlink" href="#nvcl-kit-wfs-helpers-module" title="Link to this heading"></a></h2>
+<dl class="py data" id="module-nvcl_kit.wfs_helpers">
+<dt class="sig sig-object py" id="nvcl_kit.wfs_helpers.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.wfs_helpers.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.wfs_helpers.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.wfs_helpers.get_borehole_list">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.wfs_helpers.</span></span><span class="sig-name descname"><span class="pre">get_borehole_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SimpleNamespace</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nvcl_kit.wfs_helpers.get_borehole_list" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-nvcl_kit.constants">
 <span id="nvcl-kit-constants-module"></span><h2>nvcl_kit.constants module<a class="headerlink" href="#module-nvcl_kit.constants" title="Link to this heading"></a></h2>
