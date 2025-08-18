@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.pardir, os.pardir, 'nvcl_kit'
 # -- Project information -----------------------------------------------------
 
 project = 'nvcl_kit'
-copyright = 'AuScope, CSIRO 2021'
+copyright = 'AuScope, CSIRO 2021-2025'
 author = 'Vincent Fazio'
 
 
