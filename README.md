@@ -4,8 +4,7 @@
 
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 
-[![coverage report](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/badges/master/coverage.svg)](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/commits/master)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/csiro-geoanalytics%2Fpython-shared%2Fnvcl_kit/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AuScope/nvcl_kit/HEAD)
 
 
 
