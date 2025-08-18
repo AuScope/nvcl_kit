@@ -1,0 +1,87 @@
+name: csiro-geoanalytics/python-shared/nvcl_kit
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: python -V
+    - run: pip install pdm
+    - run: pdm install
+    - run: pdm build
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: dist/*.whl
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 50
+        lfs: true
+    - uses: actions/download-artifact@v4.1.0
+    - run: python -V
+    - run: pip install pdm
+    - run: pip install tox flake8
+    - run: pdm run flake8 ./nvcl_kit --count --select=E9,F63,F7,F82 --show-source --statistics
+    - run: pdm run flake8 ./nvcl_kit --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
+    - run: pdm run tox
+#     # 'coverage' was not transformed because there is no suitable equivalent in GitHub Actions.
+  pages:
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    if: github.ref == 'refs/heads/master'
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/download-artifact@v4.1.0
+    - run: python -V
+    - run: pip install pdm
+    - run: pip install sphinx sphinx-rtd-theme owslib shapely geojson
+    - run: cd doc ; make html
+    - run: mv _build/html/ ../public/
+    - uses: actions/upload-artifact@v4.1.0
+      if: success()
+      with:
+        name: "${{ github.job }}"
+        path: public
+    - uses: JamesIves/github-pages-deploy-action@v4.5.0
+      with:
+        branch: gh-pages
+        folder: public
+  deploy:
+    needs: pages
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9
+    if: startsWith(github.ref, 'refs/tags')
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 50
+        lfs: true
+    - uses: actions/download-artifact@v4.1.0
+    - run: python -V
+    - run: pip install pdm
+    - run: pip install twine
+    - run: echo "$PYPI_CONFIG" > "/root/.pypirc"
+    - run: pdm install
+    - run: pdm build
+    - run: pdm run twine upload --repository pypi dist/*
