@@ -1,9 +1,12 @@
 # nvcl_kit: Access AuScope National Virtual Core Library (NVCL) data services
 
-[![pipeline status](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/badges/master/pipeline.svg)](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/commits/master)
+[![nvcl_kit build, test, pages](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml/badge.svg)](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml)
+
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+
 [![coverage report](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/badges/master/coverage.svg)](https://gitlab.com/csiro-geoanalytics/python-shared/nvcl_kit/commits/master)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/csiro-geoanalytics%2Fpython-shared%2Fnvcl_kit/HEAD)
-[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+
 
 
 ## Introduction
