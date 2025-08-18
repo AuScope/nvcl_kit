@@ -51,8 +51,7 @@ jobs:
     - run: python -V
     - run: pip install pdm
     - run: pip install sphinx sphinx-rtd-theme owslib shapely geojson
-    - run: cd doc ; make html
-    - run: mv _build/html/ ../public/
+    - run: cd doc ; make html; mv _build/html/ ../public/
     - uses: actions/upload-artifact@v4.1.0
       if: success()
       with:
