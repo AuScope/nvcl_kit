@@ -1,4 +1,4 @@
-name: csiro-geoanalytics/python-shared/nvcl_kit
+name: nvcl_kit
 on:
   push:
   workflow_dispatch:
