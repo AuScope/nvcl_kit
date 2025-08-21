@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:3.9
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || (startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.'))
     timeout-minutes: 60
     steps:
     - uses: actions/checkout@v4.1.0
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:3.9
-    if: startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
     timeout-minutes: 60
     steps:
     - uses: actions/checkout@v4.1.0
