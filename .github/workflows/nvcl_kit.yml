@@ -21,7 +21,7 @@ jobs:
       if: success()
       with:
         name: "${{ github.job }}"
-        path: dist/*.whl
+        path: dist/
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -63,19 +63,21 @@ jobs:
         branch: gh-pages
         folder: public
   deploy:
+    name: Publish distribution to pypi
+    if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
     needs: pages
     runs-on: ubuntu-latest
-    container:
-      image: python:3.9
-    if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
     timeout-minutes: 60
+    environment:
+      name: pypi
+      url: https://pypi.org/p/nvcl_kit
+    permissions:
+      id-token: write
     steps:
-    - uses: actions/checkout@v4.1.0
-    - uses: actions/download-artifact@v4.1.0
-    - run: python -V
-    - run: pip install pdm
-    - run: pip install twine
-    - run: echo "$PYPI_CONFIG" > "/root/.pypirc"
-    - run: pdm install
-    - run: pdm build
-    - run: pdm run twine upload --repository pypi dist/*
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
