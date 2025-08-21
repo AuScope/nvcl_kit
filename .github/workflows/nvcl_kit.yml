@@ -20,7 +20,7 @@ jobs:
     - uses: actions/upload-artifact@v4.1.0
       if: success()
       with:
-        name: "${{ github.job }}"
+        name: python-package-distributions
         path: dist/
   test:
     needs: build
@@ -77,7 +77,7 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4
       with:
-        name: "${{ github.job }}"
+        name: python-package-distributions
         path: dist/
     - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
