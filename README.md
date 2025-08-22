@@ -2,6 +2,8 @@
 
 [![nvcl_kit build, test, pages](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml/badge.svg)](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml)
 
+[![Coverage Status](./test/badge/coverage-badge.svg?dummy=8484744)]()
+
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AuScope/nvcl_kit/HEAD)
