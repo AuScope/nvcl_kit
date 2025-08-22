@@ -31,12 +31,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4.3.0
     - uses: actions/download-artifact@v5
-    - run: python -V
-    - run: pip install pdm
-    - run: pip install tox flake8
-    - run: pdm run flake8 ./nvcl_kit --count --select=E9,F63,F7,F82 --show-source --statistics
-    - run: pdm run flake8 ./nvcl_kit --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
-    - run: pdm run tox
+    - run: |
+      python -V
+      pip install pdm
+      pip install tox flake8
+      pdm run flake8 ./nvcl_kit --count --select=E9,F63,F7,F82 --show-source --statistics
+      pdm run flake8 ./nvcl_kit --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
+      pdm run tox
+    - name: Install rsync for deploy action
+      run: |
+        apt-get update && apt-get install -y rsync
     - name: Deploy test badge to master
       uses: JamesIves/github-pages-deploy-action@v4
       with:
