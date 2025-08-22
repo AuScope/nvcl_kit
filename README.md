@@ -2,7 +2,7 @@
 
 [![nvcl_kit build, test, pages](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml/badge.svg)](https://github.com/AuScope/nvcl_kit/actions/workflows/nvcl_kit.yml)
 
-[![Coverage Status](./test/badge/coverage-badge.svg?dummy=8484744)]()
+[![Coverage Status](https://raw.githubusercontent.com/AuScope/nvcl_kit/refs/heads/master/test/badge/coverage-badge.svg)]()
 
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 
