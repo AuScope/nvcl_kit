@@ -37,7 +37,12 @@ jobs:
     - run: pdm run flake8 ./nvcl_kit --count --select=E9,F63,F7,F82 --show-source --statistics
     - run: pdm run flake8 ./nvcl_kit --count --exit-zero --max-complexity=20 --max-line-length=127 --statistics
     - run: pdm run tox
-    # TODO: 'coverage' 
+    - name: Deploy test badge to master
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+          folder: test/badge
+          target-folder: test/badge
+          branch: master
   pages:
     needs: test
     runs-on: ubuntu-latest
