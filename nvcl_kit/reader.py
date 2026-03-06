@@ -21,6 +21,7 @@ from nvcl_kit.svc_interface import _ServiceInterface
 
 from nvcl_kit.wfs_helpers import get_borehole_list
 from nvcl_kit.xml_helpers import clean_xml_parse, parse_dates
+from urllib.parse import urlparse
 
 ENFORCE_IS_PUBLIC = True
 ''' Enforce the 'is_public' flag , i.e. any data with 'is_public' set to 'false'
@@ -75,7 +76,7 @@ class NVCLReader:
     ''' A class to extract NVCL borehole data (see README.md for details)
     '''
 
-    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False):
+    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False, use_nds=False):
         '''
         :param param_obj: SimpleNamespace() object with parameters.
           It is recommended to utilise the 'param_builder' function to create it.
@@ -111,7 +112,8 @@ class NVCLReader:
               param_obj.MAX_BOREHOLES = 20
               param_obj.PROV = 'blah'
 
-        :param wfs: DEPRECATED owslib 'WebFeatureService' object
+        :param wfs: DEPRECATED optional owslib 'WebFeatureService' object
+        :param use_nds: optional. If True, do not call WFS to get boreholes, instead use NVCLDataServices to gather boreholes
         :param log_lvl: optional logging level (see 'logging' package),
                         default is logging.INFO
         :param skip_bhlist: optional fast init NVCLReader without loading the bhlist
@@ -216,15 +218,40 @@ class NVCLReader:
             LOGGER.warning("'USE_CQL' parameter is not boolean")
             return
 
-        # If gathering boreholes
-        if not skip_bhlist:
-            self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
-
         # Initialise interface to NVCL service
         if (hasattr(self.param_obj, 'CACHE_PATH')):
             self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT, self.param_obj.CACHE_PATH)
         else:
             self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT)
+
+        # If gathering boreholes via NVCLDataServices
+        if use_nds:
+            self.borehole_list = []
+            for bhuri in self.get_bhuri_list():
+                f = SimpleNamespace()
+                # Get NVCL_ID
+                path = urlparse(bhuri).path
+                f.nvcl_id = path.rstrip("/").split("/")[-1] if path.rstrip("/") else ""
+                f.x = 0.0
+                f.y = 0.0
+                f.z = 0.0
+
+                # Get HREF
+                f.href = bhuri
+
+                # Loop over possible values (from GeoSciML BoreholeView v4.1) and 'tenement' + 'project'
+                for to_attr in ('identifier', 'name', 'description', 'purpose', 'status', 'drillingMethod', 'operator', 'driller', 'drillStartDate', 'drillEndDate', 'startPoint', 'inclinationType', 'boreholeMaterialCustodian', 'boreholeLength_m', 'elevation_m', 'elevation_srs', 'positionalAccuracy', 'source', 'parentBorehole_uri', 'metadata_uri', 'genericSymbolizer', 'tenement', 'project'):
+                    setattr(f, to_attr, '')
+                if f.nvcl_id != "":
+                    self.borehole_list.append(f)
+            self.wfs_error = False
+            self.wfs = True
+
+        # If gathering boreholes via WFS
+        elif not skip_bhlist:
+            self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
+
+
 
     def get_borehole_data(self, log_id, height_resol, class_name, top_n=1):
         ''' Retrieves borehole mineral data for a borehole, will only return mineral class data
@@ -252,7 +279,7 @@ class NVCLReader:
         meas_list = []
         depth_dict = OrderedDict()
         try:
-            meas_list = json.loads(json_data.decode('utf-8'))
+            meas_list = json.loads(json_data)
         except json.decoder.JSONDecodeError as jde:
             LOGGER.warning(f"Cannot parse response from server {jde}")
         else:
@@ -591,6 +618,22 @@ class NVCLReader:
             LOGGER.debug(f"get_algorithms() failed to parse response: {pe_exc}")
             return {}
         return algver_dict
+
+    def get_bhuri_list(self):
+        ''' Retrieves all borehole URIs
+
+        :returns: list of URIs as strings
+        '''
+        response_str = self.svc.get_dataset_collection('all', headersonly='yes')
+        if not response_str:
+            return []
+        root = clean_xml_parse(response_str)
+        bhuri_list = []
+        for ds_child in root.findall('./Dataset'):
+            bhuri = ds_child.findtext('boreholeURI', default='')
+            if bhuri != '':
+                bhuri_list.append(bhuri)
+        return bhuri_list
 
     def get_logs_data(self, nvcl_id):
         ''' Retrieves a set of generic log data for a particular borehole, given an nvcl id

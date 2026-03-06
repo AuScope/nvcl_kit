@@ -34,6 +34,14 @@ if not LOGGER.hasHandlers():
     LOGGER.addHandler(HANDLER)
 
 def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
+    '''
+    Call OCG WFS GetFeature to fetch NVCL boreholes data
+
+    :param param_obj: parameters for WFS request
+    :returns:borehole list, error flag, wfs
+             if wfs is None, request failed to fetch data
+             if error flag = True, there was an error
+    '''
     prov = param_obj.PROV
     if param_obj.USE_CQL:
         cql_filter = make_cql_filter(param_obj.BBOX, param_obj.POLYGON)
@@ -42,6 +50,7 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
         xml_filter = make_xml_filter(param_obj.BBOX, param_obj.POLYGON)
         features = make_xml_request(param_obj.WFS_URL, prov, xml_filter, param_obj.MAX_BOREHOLES)
 
+    # No features - return empty feature list, False error flag and None wfs obj
     if len(features) == 0:
         return [], False, None 
 
@@ -50,7 +59,6 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
         try:
             f = SimpleNamespace()
             props = feature['properties']
-
 
             # Get NVCL_ID
             f.nvcl_id = feature['id'].split('.')[-1:][0]
@@ -77,4 +85,6 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
             LOGGER.debug(f"Exception parsing JSON response from {prov}: {exc}")
             continue
         borehole_list.append(f)
-    return borehole_list, True, True
+
+    # Return feature list, False error flag and True wfs obj
+    return borehole_list, False, True
