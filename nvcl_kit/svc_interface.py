@@ -5,13 +5,13 @@ This forms the interface between the 'reader' class and the low-level web APIs.
 import hashlib
 import os
 import time
-import urllib
 import urllib.parse
-import urllib.request
 from http.client import HTTPException
 from socket import timeout
 import sys
 import logging
+
+import requests
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -290,21 +290,19 @@ class _ServiceInterface:
         params.update(options)
         return self._get_response_str(url, params)
 
-    def _get_response_str(self, url, params=None):
+    def _get_response_str(self, url, params={}):
         ''' Performs a GET request with URL and parameters and returns the response as a string
 
         :param url: URL of request, string
         :param params: parameters, in dictionary form
         :return: response, string; returns an empty string upon error
         '''
-        enc_params = None
-        if params is not None:
-            enc_params = urllib.parse.urlencode(params).encode('ascii')
-        req = urllib.request.Request(url, data=enc_params)
-        LOGGER.debug(f"Sending: {url}, {enc_params}")
-        response_str = b''
+        response_str = ''
         fileCachePath = None
         if (self.CACHE_PATH is not None):
+            enc_params = None
+            if params != {}:
+                enc_params = urllib.parse.urlencode(params).encode('ascii')
             fileCachePath = self.CACHE_PATH + urllib.parse.quote(f'{url}?{enc_params.decode("utf-8")}', '')+'.txt'
             if len(fileCachePath) > 256:
                 param = hashlib.sha1(enc_params).hexdigest()
@@ -314,24 +312,26 @@ class _ServiceInterface:
                     response_str = cacheFile.read()
                     LOGGER.debug(f'read cache:{fileCachePath}')
                     return response_str
-        for cc in range(5):
+
+        MAX_ATTEMPTS = 5
+        BACKOFF_SECONDS = 1  # Pause between attempts
+
+        for attempt in range(MAX_ATTEMPTS):
             try:
-                # TODO: Upgrade to requests & urllib3 timeout and error management
-                with urllib.request.urlopen(req, timeout=self.TIMEOUT*2**cc) as response:
-                    response_str = response.read()
-                    break
-            except HTTPException as he_exc:
-                LOGGER.warning(f"HTTP Error with {url}: {he_exc}")
-                return ""
-            except OSError as os_exc:
-                # Catch and retry timeouts
-                if isinstance(os_exc, timeout):
-                    LOGGER.debug(f"Timeout with {url} retry: #{cc+1}")
-                    if cc < 5:
-                        time.sleep(1)
-                        continue
-                LOGGER.warning(f"OS Error with {url}: {os_exc}")
-                return ""
+                LOGGER.debug(f"Sending: {url=}, {params=}")
+                resp = requests.get(url, params=params, timeout=self.TIMEOUT*2**attempt)
+                resp.raise_for_status()  # Raise HTTPError if get a 4xx/5xx error code
+                LOGGER.debug(f"Success on attempt #{attempt+1}: {resp.status_code}")
+                response_str = resp.text
+                break
+            except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
+                LOGGER.warning(f"Attempt {attempt} failed: {exc}")
+                if attempt < MAX_ATTEMPTS:
+                    time.sleep(BACKOFF_SECONDS*2**attempt)
+                else:
+                    # runs only if all attempts failed
+                    LOGGER.warning(f"HTTP Error with {url}: {exc}")
+                    return ""
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")
 
         if (self.CACHE_PATH is not None and not os.path.exists(fileCachePath)):
