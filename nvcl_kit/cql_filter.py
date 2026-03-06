@@ -79,6 +79,7 @@ def make_cql_request(url: str, prov: str, cql_filter: str, max_features: int):
             s.mount('https://', HTTPAdapter(max_retries=retries))
 
             # Sending the request
+            LOGGER.debug(f"Sending {url=} {params=}")
             response = s.get(url, params=params)
     except (HTTPError, requests.RequestException) as e:
         LOGGER.error(f"{prov} returned error sending WFS GetFeature: {e}")
