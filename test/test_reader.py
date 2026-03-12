@@ -488,6 +488,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         self.requests_exception_tester(HTTPError("Test Exception"), rdr.get_imagelog_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
+        self.requests_exception_tester(RequestException("Test Exception"), rdr.get_imagelog_data, 'HTTP Error with', {'nvcl_id':'dummy-id'})
 
 
     def requests_exception_tester(self, exc: Exception, fn, msg: str, params: dict):
@@ -501,7 +502,7 @@ class TestNVCLReader(unittest.TestCase):
         '''
 
         # Patch over requests 'get' function call
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             # Set up exception
             mock_request.side_effect = exc
             with self.assertLogs('nvcl_kit.svc_interface', level='WARN') as nvcl_log:
@@ -603,11 +604,12 @@ class TestNVCLReader(unittest.TestCase):
         ''' Tests get_scalar_logs() with an empty response
         '''
         rdr = setup_reader()
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             with open('logcoll_empty.txt') as fp:
                 resp_obj.text = fp.read()
-
+                resp_obj.status_code = 200
+                # Trigger the patch by calling 'get_scalar_logs()'
                 log_list = rdr.get_scalar_logs("blah")
                 self.assertEqual(len(log_list), 0)
 
@@ -635,12 +637,14 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         # Patch over requests 'get' function call
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             # Read file and set up so that the contents of file is in the response to 'get()'
             with open('logcoll_empty.txt') as fp:
                 resp_obj.text = fp.read()
                 resp_obj.raise_for_status = raise_for_status
+                resp_obj.status_code = 200
+
                 # Trigger patch by calling 'get_mosaic_imglogs'
                 log_list = rdr.get_mosaic_imglogs("blah")
                 # Check results
@@ -667,12 +671,13 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         # Patch over requests 'get' function call
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             # Read file and set up so that the contents of file is in the response to 'get()'
             with open('dataset_coll_empty.txt') as fp:
                 resp_obj.text = fp.read()
                 resp_obj.raise_for_status = raise_for_status
+                resp_obj.status_code = 200
                 # Trigger calling the patch by calling 'get_datasetid_list'
                 dataset_id_list = rdr.get_datasetid_list("blah")
                 # Check results
@@ -705,13 +710,14 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         # Patch over requests 'get()'
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             # Read response from file
             with open('dataset_coll_empty.txt') as fp:
                 # Assign to 'text' so it can be read by caller
                 resp_obj.text = fp.read()
                 resp_obj.raise_for_status = raise_for_status
+                resp_obj.status_code = 200
                 # Call the reader to trigger calling the patch
                 dataset_list = rdr.get_dataset_list("blah")
                 # Check results
@@ -723,12 +729,13 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         # Patch over requests 'get' function call
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             # Read file and set up so that the contents of file is in the response to 'get()'
             with open('dataset_coll_time.txt') as fp:
                 resp_obj.text = fp.read()
                 resp_obj.raise_for_status = raise_for_status
+                resp_obj.status_code = 200
                 # Call the 'get_dataset_list' function, triggers call to patch
                 dataset_list = rdr.get_dataset_list("blah")
                 # Check the results
@@ -742,12 +749,13 @@ class TestNVCLReader(unittest.TestCase):
         '''
         rdr = setup_reader()
         # Patch over requests 'get' function call
-        with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        with unittest.mock.patch('nvcl_kit.svc_interface.requests.Session.get', autospec=True) as mock_request:
             resp_obj = mock_request.return_value
             # Read file and set up so that the contents of file is in the response to 'get()'
             with open('dataset_coll_time_bad.txt') as fp:
                 resp_obj.text = fp.read()
                 resp_obj.raise_for_status = raise_for_status
+                resp_obj.status_code = 200
                 # Call the reader function, triggers call to patch
                 dataset_list = rdr.get_dataset_list("blah")
                 # Check the results

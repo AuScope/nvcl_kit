@@ -61,11 +61,12 @@ def patch_requests_get(fn, params: dict, src_file: str, binary: bool = False, rd
     if rdr is None:
         rdr = setup_reader()
     ret_list = []
-    with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+    with unittest.mock.patch('requests.Session.get') as mock_request:
         resp_obj = mock_request.return_value
         def raise_for_status():
             pass
         resp_obj.raise_for_status = raise_for_status
+        resp_obj.status_code = 200
         if not binary:
             with open(src_file) as fp:
                 resp_obj.text = bytes(fp.read(), 'ascii')

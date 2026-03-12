@@ -10,8 +10,13 @@ from http.client import HTTPException
 from socket import timeout
 import sys
 import logging
+from urllib3.exceptions import HTTPError
+from urllib3.util import Retry
 
 import requests
+from requests.adapters import HTTPAdapter
+
+from nvcl_kit.constants import HTTP_RETRY_CODES, NUM_RETRIES, BACKOFF_FACTOR
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -313,28 +318,33 @@ class _ServiceInterface:
                     LOGGER.debug(f'read cache:{fileCachePath}')
                     return response_str
 
-        MAX_ATTEMPTS = 5
-        BACKOFF_SECONDS = 1  # Pause between attempts
+        try:
+            with requests.Session() as s:
 
-        for attempt in range(MAX_ATTEMPTS):
-            try:
-                LOGGER.debug(f"Sending: {url=}, {params=}")
-                resp = requests.get(url, params=params, timeout=self.TIMEOUT*2**attempt)
-                resp.raise_for_status()  # Raise HTTPError if get a 4xx/5xx error code
-                LOGGER.debug(f"Success on attempt #{attempt+1}: {resp.status_code}")
-                response_str = resp.text
-                break
-            except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
-                LOGGER.warning(f"Attempt {attempt} failed: {exc}")
+                # Retry with backoff
+                retries = Retry(total=NUM_RETRIES,
+                                backoff_factor=BACKOFF_FACTOR,
+                                status_forcelist=HTTP_RETRY_CODES,
+                                allowed_methods=["GET"]
+                               )
+                s.mount('https://', HTTPAdapter(max_retries=retries))
 
-                if attempt < MAX_ATTEMPTS-1:
-                    time.sleep(BACKOFF_SECONDS*2**attempt)
-                else:
-                    # runs only if all attempts failed
-                    LOGGER.warning(f"HTTP Error with {url}: {exc}")
-                    return ""
+                # Sending the request
+                LOGGER.debug(f"Sending {url=} {params=}")
+                response = s.get(url, params=params)
+                response_str = response.text
+        except (HTTPError, requests.RequestException) as e:
+            LOGGER.error(f"HTTP Error with {url}: {e}")
+            return ""
+
+        # If there's an error code
+        if response.status_code != 200:
+            LOGGER.error(f"HTTP Error with {url}: HTTP Status Code {response.status_code}: {response.reason}")
+            return ""
+
         LOGGER.debug(f"Response[:100]: {response_str[:100]}")
 
+        # Save to cache
         if (self.CACHE_PATH is not None and not os.path.exists(fileCachePath)):
             with open(fileCachePath, 'wb') as cacheFile:
                 cacheFile.write(response_str)

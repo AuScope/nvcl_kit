@@ -1,8 +1,15 @@
 """
-This module contains a class of scalar constants
+This module contains shared constants
 """
 from enum import Enum
 from typing import Union
+
+# Network code will retry the request if the response contains one of these codes
+HTTP_RETRY_CODES = [429, 502, 503, 504, 509]
+# Number of retries
+NUM_RETRIES = 5
+# Exponential backoff e.g. for 0.5 it will retry at  0.0, 1.0, 2.0, 4.0 seconds
+BACKOFF_FACTOR = 0.5
 
 class Scalar(str, Enum):  # pragma: no cover
     """

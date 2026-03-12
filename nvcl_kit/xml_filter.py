@@ -10,6 +10,8 @@ import requests
 from requests import Session
 from requests.adapters import HTTPAdapter
 
+from nvcl_kit.constants import HTTP_RETRY_CODES, NUM_RETRIES, BACKOFF_FACTOR
+
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
 '''
@@ -101,9 +103,10 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
             with requests.Session() as s:
 
                 # Retry with backoff
-                retries = Retry(total=5,
-                                backoff_factor=0.5,
-                                status_forcelist=[429, 502, 503, 504]
+                retries = Retry(total=NUM_RETRIES,
+                                backoff_factor=BACKOFF_FACTOR,
+                                status_forcelist=HTTP_RETRY_CODES,
+                                allowed_methods=["POST"]
                             )
                 s.mount('https://', HTTPAdapter(max_retries=retries))
 
