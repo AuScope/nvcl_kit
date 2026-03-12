@@ -367,7 +367,7 @@ class TestNVCLReader(unittest.TestCase):
             self.assertEqual(ids[0:3], ['MIN_007619', 'MIN_007633', 'MIN_007637'])
 
 
-    @unittest.mock.patch('nvcl_kit.cql_filter.requests.Session.get')
+    @unittest.mock.patch('nvcl_kit.xml_filter.requests.Session.post')
     def test_all_bh_wfs_xml(self, mock_get):
         ''' Test minimal WFS response, XML FILTER response, unlimited number of boreholes
         '''
@@ -376,11 +376,12 @@ class TestNVCLReader(unittest.TestCase):
             reqs_obj, json_obj = setup_reqs_obj(fp, reqs_obj)
             feat_len = len(json_obj["features"])
 
-            param_obj = setup_param_obj(use_cql=False)
+            MAX_BOREHOLES = 100
+            param_obj = setup_param_obj(use_cql=False, max_boreholes=MAX_BOREHOLES)
             rdr = NVCLReader(param_obj)
             bhs = rdr.get_boreholes_list()
             # Check that number passed in == number fetched
-            self.assertEqual(len(bhs), feat_len)
+            self.assertEqual(len(bhs), MAX_BOREHOLES)
             # Test with minimal fields having values
             should_be = SimpleNamespace(**{
                 "identifier":"http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/1113668_ECD12",
@@ -417,7 +418,7 @@ class TestNVCLReader(unittest.TestCase):
 
             # Test fetching borehole ids
             ids = rdr.get_nvcl_id_list()
-            self.assertEqual(len(ids), 141)
+            self.assertEqual(len(ids), MAX_BOREHOLES)
             self.assertEqual(ids[:3], ['1108848_DD95RC128', '1113632_DD85GL5', '1113636_DD85GL6'])
 
 

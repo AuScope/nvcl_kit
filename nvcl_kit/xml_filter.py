@@ -75,11 +75,11 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
     :param max_features: maximum number of features to return, if < 1 then all boreholes are returned
     :returns: list of features, each feature is a dict
     """
-    BATCH_SIZE = 10000
     batch_count = 0
     done = False
     feat_list = []
     feat_ids = set()
+    LOOP_MAX = 10000000
 
     # This is designed for the NTGS WFS borehole service which does not respond to CQL filter requests
 
@@ -123,19 +123,25 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
                 LOGGER.error(f"Error parsing JSON from {prov} WFS GetFeature response: {e}")
                 return feat_list
             
-            # If no more features left we can exit loop
+            # If no more features left we can exit
             if len(resp['features']) == 0:
-                done = True
+                return feat_list
+
             # Collect the NVCL features
             for f in resp['features']:
                 if f['properties']['nvclCollection'] == 'true':
                     feat_list.append(f)
                     feat_ids.add(f['id'])
+
                 # Exit when we reach maximum features limit
                 if max_features > 0 and len(feat_list) == max_features:
-                    done = True
-                    break
+                    return feat_list
+
             batch_count += len(resp['features'])
+
+            # Emergency exit
+            if batch_count > LOOP_MAX:
+                return feat_list
 
         else:
             LOGGER.error(f"{prov} returned error {response.status_code} in WFS GetFeature response: {response.text}")

@@ -104,7 +104,7 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
         param_obj.BOREHOLE_CRS = borehole_crs
     if cache_path:
         param_obj.CACHE_PATH = cache_path
-    if use_cql:
+    if use_cql is not None:
         param_obj.USE_CQL = use_cql
     param_obj.PROV = 'blah'
     return param_obj
