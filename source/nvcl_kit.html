@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nvcl_kit package &mdash; nvcl_kit  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -273,7 +273,18 @@ if no dates were found then an empty dict is returned</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="nvcl_kit.wfs_helpers.get_borehole_list">
 <span class="sig-prename descclassname"><span class="pre">nvcl_kit.wfs_helpers.</span></span><span class="sig-name descname"><span class="pre">get_borehole_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SimpleNamespace</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nvcl_kit.wfs_helpers.get_borehole_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Call OCG WFS GetFeature to fetch NVCL boreholes data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param_obj</strong> – parameters for WFS request</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:returns:borehole list, error flag, wfs</dt><dd><p>if wfs is None, request failed to fetch data
+if error flag = True, there was an error</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-nvcl_kit.constants">
@@ -1097,7 +1108,7 @@ will be ignored</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class to extract NVCL borehole data (see README.md for details)</p>
 <dl class="field-list simple">
@@ -1136,7 +1147,8 @@ It is recommended to utilise the ‘param_builder’ function to create it.</p>
 </pre></div>
 </div>
 </p></li>
-<li><p><strong>wfs</strong> – DEPRECATED owslib ‘WebFeatureService’ object</p></li>
+<li><p><strong>wfs</strong> – DEPRECATED optional owslib ‘WebFeatureService’ object</p></li>
+<li><p><strong>use_nds</strong> – optional. If True, do not call WFS to get boreholes, instead use NVCLDataServices to gather boreholes</p></li>
 <li><p><strong>log_lvl</strong> – optional logging level (see ‘logging’ package),
 default is logging.INFO</p></li>
 <li><p><strong>skip_bhlist</strong> – optional fast init NVCLReader without loading the bhlist</p></li>
@@ -1189,6 +1201,17 @@ default is logging.INFO</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a list of SimpleNamespace() objects, attributes are: log_id, log_name, sample_count. On error returns empty list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_bhuri_list">
+<span class="sig-name descname"><span class="pre">get_bhuri_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_bhuri_list" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all borehole URIs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of URIs as strings</p>
 </dd>
 </dl>
 </dd></dl>
