@@ -326,7 +326,8 @@ class _ServiceInterface:
                 break
             except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
                 LOGGER.warning(f"Attempt {attempt} failed: {exc}")
-                if attempt < MAX_ATTEMPTS:
+
+                if attempt < MAX_ATTEMPTS-1:
                     time.sleep(BACKOFF_SECONDS*2**attempt)
                 else:
                     # runs only if all attempts failed
