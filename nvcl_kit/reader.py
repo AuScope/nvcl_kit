@@ -5,15 +5,11 @@ This module is the main interface used to NVCL borehole data from the NVCL servi
 import sys
 
 import xml.etree.ElementTree as ET
-import json
 from collections import OrderedDict
 import itertools
 import logging
+import json
 from types import SimpleNamespace
-
-from requests.exceptions import RequestException
-
-from http.client import HTTPException
 
 from shapely import Polygon, LinearRing
 

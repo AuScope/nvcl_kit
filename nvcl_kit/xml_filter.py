@@ -7,7 +7,6 @@ from urllib3.util import Retry
 
 from shapely import Polygon
 import requests
-from requests import Session
 from requests.adapters import HTTPAdapter
 
 from nvcl_kit.constants import HTTP_RETRY_CODES, NUM_RETRIES, BACKOFF_FACTOR

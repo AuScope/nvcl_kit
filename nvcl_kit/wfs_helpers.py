@@ -2,12 +2,6 @@ import logging
 import sys
 from types import SimpleNamespace
 
-from shapely import Point, LinearRing, Polygon
-from requests.exceptions import RequestException
-from http.client import HTTPException
-import xml.etree.ElementTree as ET
-
-from nvcl_kit.xml_helpers import clean_xml_parse
 from nvcl_kit.cql_filter import make_cql_filter, make_cql_request
 from nvcl_kit.xml_filter import make_xml_filter, make_xml_request
 

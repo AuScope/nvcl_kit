@@ -4,10 +4,7 @@ This forms the interface between the 'reader' class and the low-level web APIs.
 """
 import hashlib
 import os
-import time
 import urllib.parse
-from http.client import HTTPException
-from socket import timeout
 import sys
 import logging
 from urllib3.exceptions import HTTPError

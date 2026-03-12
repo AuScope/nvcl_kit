@@ -1,11 +1,9 @@
 import sys
 import logging
-import json
 from urllib3.util import Retry
 
 from shapely import Polygon
 import requests
-from requests import Session
 from requests.adapters import HTTPAdapter
 from urllib3.exceptions import HTTPError
 
