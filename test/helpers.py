@@ -48,8 +48,8 @@ def setup_reader() -> NVCLReader:
     return rdr
 
 
-def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False, rdr: NVCLReader = None) -> list:
-    ''' Patches over 'urlopen()' call and calls a function with parameters
+def patch_requests_get(fn, params: dict, src_file: str, binary: bool = False, rdr: NVCLReader = None) -> list:
+    ''' Patches over requests 'get()' call and calls a function with parameters
 
     :param fn: function to call
     :param params: function's parameters as a dict
@@ -61,14 +61,17 @@ def setup_urlopen(fn, params: dict, src_file: str, binary: bool = False, rdr: NV
     if rdr is None:
         rdr = setup_reader()
     ret_list = []
-    with unittest.mock.patch('urllib.request.urlopen', autospec=True) as mock_request:
-        open_obj = mock_request.return_value
+    with unittest.mock.patch('requests.get', autospec=True) as mock_request:
+        resp_obj = mock_request.return_value
+        def raise_for_status():
+            pass
+        resp_obj.raise_for_status = raise_for_status
         if not binary:
             with open(src_file) as fp:
-                open_obj.__enter__.return_value.read.return_value = bytes(fp.read(), 'ascii')
+                resp_obj.text = bytes(fp.read(), 'ascii')
         else:
             with open(src_file, 'rb') as fp:
-                open_obj.__enter__.return_value.read.return_value = fp.read()
+                resp_obj.text = fp.read()
         ret_list = getattr(rdr, fn)(**params)
     return ret_list
 
