@@ -72,7 +72,7 @@ def patch_requests_get(fn, params: dict, src_file: str, binary: bool = False, rd
                 resp_obj.text = bytes(fp.read(), 'ascii')
         else:
             with open(src_file, 'rb') as fp:
-                resp_obj.text = fp.read()
+                resp_obj.content = fp.read()
         ret_list = getattr(rdr, fn)(**params)
     return ret_list
 

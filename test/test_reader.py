@@ -942,7 +942,28 @@ class TestNVCLReader(unittest.TestCase):
         self.assertEqual(alg_dict['82'],'703')
         self.assertEqual(alg_dict['6'],'500')
         self.assertEqual(alg_dict['149'],'708')
-        
+
+    def test_get_tray_thumb_jpg(self):
+        ''' Tests 'get_tray_thumb_jpg'
+        '''
+        jpg_bytes = patch_requests_get('get_tray_thumb_jpg', {'log_id':'12345'}, 'MAC23.jpg', binary=True)
+        # Check JPEG header
+        self.assertEqual(jpg_bytes[0], 255)
+        self.assertEqual(jpg_bytes[1], 216)
+        self.assertEqual(jpg_bytes[2], 255)
+        self.assertEqual(jpg_bytes[3], 224)
+        self.assertEqual(len(jpg_bytes), 175270)
+
+    def test_plot_scalar_png(self):
+        ''' Tests 'plot_scalar_png()
+        '''
+        png_bytes = patch_requests_get('plot_scalar_png', {'log_id':'12345'}, 'scalar_plot.png', binary=True)
+        self.assertEqual(png_bytes[0], 137)
+        self.assertEqual(png_bytes[1], 80)
+        self.assertEqual(png_bytes[2], 78)
+        self.assertEqual(png_bytes[3], 71)
+        self.assertEqual(len(png_bytes), 44703)
+
     def test_get_algorithms_exception(self):
         ''' Tests exception handling in get_algorithms()
         '''
@@ -982,3 +1003,6 @@ class TestNVCLReader(unittest.TestCase):
         id_list = rdr.filter_feat_list(nvcl_ids_only=True, name='Mundarlo: MURC004')
         assert(len(id_list) == 1)
         assert(id_list[0] == 'MIN_305246')
+
+
+

@@ -20,7 +20,7 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple('nvcl_kit.reader.NVCLReader', get_nvcl_id_list=MagicMock(return_value=['nid8']),
                                                   get_datasetid_list=MagicMock(return_value=['dsid4']),
                                                   get_tray_thumb_imglogs=MagicMock(return_value=[SimpleNamespace(log_id=70)]),
-                                                  get_tray_thumb_jpg=MagicMock(return_value='jpg55'),
+                                                  get_tray_thumb_jpg=MagicMock(return_value=b'jpg55'),
                                                   get_tray_depths=MagicMock(return_value=[99.0]) )
 
     def test_gen_tray_thumb_imgs(self):
@@ -32,7 +32,7 @@ class TestGenerators(unittest.TestCase):
             self.assertEqual(dsid, 'dsid4')
             self.assertEqual(ilog.log_id, 70)
             self.assertEqual(depth_list, [99.0])
-            self.assertEqual(jpg, 'jpg55')
+            self.assertEqual(jpg, b'jpg55')
 
  
     @patch.multiple('nvcl_kit.reader.NVCLReader', get_nvcl_id_list=MagicMock(return_value=['nid1']),
