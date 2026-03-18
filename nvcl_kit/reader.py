@@ -215,10 +215,21 @@ class NVCLReader:
             return
 
         # Initialise interface to NVCL service
-        if (hasattr(self.param_obj, 'CACHE_PATH')):
-            self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT, self.param_obj.CACHE_PATH)
+        if hasattr(self.param_obj, "CACHE_PATH"):
+            self.svc = _ServiceInterface(
+                self.param_obj.NVCL_URL,
+                TIMEOUT,
+                self.param_obj.CACHE_PATH,
+                retries=retries,
+                backoff_factor=backoff_factor,
+            )
         else:
-            self.svc = _ServiceInterface(self.param_obj.NVCL_URL, TIMEOUT)
+            self.svc = _ServiceInterface(
+                self.param_obj.NVCL_URL,
+                TIMEOUT,
+                retries=retries,
+                backoff_factor=backoff_factor,
+            )
 
         # If gathering boreholes via NVCLDataServices
         if use_nds:
@@ -248,16 +259,17 @@ class NVCLReader:
             self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
 
 
-
-    def get_borehole_data(self, log_id, height_resol, class_name, top_n=1):
-        ''' Retrieves borehole mineral data for a borehole, will only return mineral class data
+    def get_borehole_data(
+        self, log_id, height_resol, class_name, top_n=1, remove_invalid=True
+    ):
+        """Retrieves borehole mineral data for a borehole, will only return mineral class data
 
         :param log_id: borehole log identifier, string e.g. 'ce2df1aa-d3e7-4c37-97d5-5115fc3c33d' This is the first id from the list of triplets [log id, log type, log name] fetched from API calls such as 'get_logs_data()'
         :param height_resol: height resolution, float
         :param class_name: name of scalar class, returned in output for informational purposes
         :param top_n: optional number
         :returns: dict: key - depth, float; value - if top_n=1 then  SimpleNamespace( 'colour'= RGBA float tuple, 'className'= class name, 'classText'= mineral name ) & if top_n>1 then [ SimpleNamespace(..) .. ]
-        '''
+        """
         LOGGER.debug(f"get_borehole_data({log_id}, {height_resol}, {class_name}, {top_n}")
         # Check top_n parameter
         if top_n < 1:
@@ -265,9 +277,13 @@ class NVCLReader:
             top_n = 1
 
         # Send HTTP request, get response
-        json_data = self.svc.get_downsampled_data(log_id,
-                                                  interval=height_resol, outputformat='json',
-                                                  startdepth=self.min_depth, enddepth=self.max_depth)
+        json_data = self.svc.get_downsampled_data(
+            log_id,
+            interval=height_resol,
+            outputformat="json",
+            startdepth=self.min_depth,
+            enddepth=self.max_depth,
+        )
         if not json_data:
             LOGGER.debug(f"no json_data = {json_data}")
             return OrderedDict()
@@ -285,9 +301,14 @@ class NVCLReader:
                 sorted_meas_list = sorted(meas_list, key=lambda x: x['roundedDepth'])
                 for depth, group in itertools.groupby(sorted_meas_list, lambda x: x['roundedDepth']):
                     # Filter out invalid and non-mineral class values
-                    clean_group = itertools.filterfalse(
-                                 lambda x: x.get('classText', 'INVALID').upper() in ['INVALID', 'NOTAROK'],
-                                 group)
+                    if remove_invalid:
+                        clean_group = itertools.filterfalse(
+                            lambda x: x.get("classText", "INVALID").upper()
+                            in ["INVALID", "NOTAROK"],
+                            group,
+                        )
+                    else:
+                        clean_group = group
 
                     # Make a dict keyed on depth, value is element with largest count
                     try:
@@ -350,13 +371,17 @@ class NVCLReader:
             if not dataset_id or not dataset_name:
                 continue
             # Optional
-            dataset_obj = SimpleNamespace(dataset_id=dataset_id,
-                                          dataset_name=dataset_name)
-            for label, key in [('borehole_uri', './boreholeURI'),
-                               ('tray_id', './trayID'),
-                               ('section_id', './sectionID'),
-                               ('domain_id', './domainID')]:
-                val = child.findtext(key, default='')
+            dataset_obj = SimpleNamespace(
+                dataset_id=dataset_id, dataset_name=dataset_name
+            )
+            for label, key in [
+                ("borehole_uri", "./boreholeURI"),
+                ("tray_id", "./trayID"),
+                ("section_id", "./sectionID"),
+                ("domain_id", "./domainID"),
+                ("description", "./description"),
+            ]:
+                val = child.findtext(key, default="")
                 if val:
                     setattr(dataset_obj, label, val)
             # Look for created & modified dates
@@ -596,6 +621,38 @@ class NVCLReader:
         # NB: Service only plots the first 6 log ids
         return self.svc.get_plot_multi_scalar(log_id_list[:6], **options)
 
+    def get_classifications(self, log_id=None, algorithm_id=None):
+        """generate a list of classifications available for a standard algorithm or free classification type scalar.
+
+        :param log_id: a list of log ids obtained through calling 'get_scalar_logs()'
+        :param algorithm_id: obtained from the getAlgorithms service
+
+        :returns: scalar data in CSV format
+        """
+
+        if log_id is not None:
+            class_str = self.svc.get_classifications(log_id=log_id)
+        elif algorithm_id is not None:
+            class_str = self.svc.get_classifications(
+                algorithm_id=algorithm_id
+            )
+        else:
+            LOGGER.warning("Either 'log_id' or 'algorithm_id' must be supplied")
+            return {}
+        
+        try:
+            xml_tree = ET.fromstring(class_str)
+            class_dict = {}
+            for class_elem in xml_tree:
+                class_dict[class_elem.find("classText").text] = {
+                    "colour": bgr2rgba(int(class_elem.find("colour").text)),
+                    "index": class_elem.find("index").text,
+                }
+        except ET.ParseError as pe_exc:
+            LOGGER.debug(f"get_classifications() failed to parse response: {pe_exc}")
+            return {}
+        return class_dict
+    
     def get_algorithms(self):
         ''' Gets a dict of algorithm output ids and their versions
 
@@ -631,8 +688,8 @@ class NVCLReader:
                 bhuri_list.append(bhuri)
         return bhuri_list
 
-    def get_logs_data(self, nvcl_id):
-        ''' Retrieves a set of generic log data for a particular borehole, given an nvcl id
+    def get_logs_data(self, nvcl_id, last_only=False):
+        """Retrieves a set of generic log data for a particular borehole, given an nvcl id
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
@@ -640,26 +697,34 @@ class NVCLReader:
         :returns: a list of SimpleNamespace() objects with attributes:
                   log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
                      created_date, modified_date (optional datetime objects not supported by all services)
-                  NB: 'mask_log_id' is not supported by all services and may be an empty string'''
+                  NB: 'mask_log_id' is not supported by all services and may be an empty string"""
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
             return []
         root = clean_xml_parse(response_str)
         log_list = []
-        for ds_child in root.findall('./Dataset'):
+        for ds_child in root.findall("./Dataset"):
+            if last_only:
+                log_list = []
             # Get the dates from the 'Dataset' elements
             date_dict = parse_dates(ds_child)
             # Get the log data from the 'Logs' elements
-            for log_child in ds_child.findall('./Logs/Log'):
-                log_id = log_child.findtext('LogID', default='')
-                log_name = log_child.findtext('logName', default='')
-                is_public = log_child.findtext('ispublic', default='')
-                log_type = log_child.findtext('logType', default='')
-                algorithm_id = log_child.findtext('algorithmoutID', default='')
-                mask_log_id = log_child.findtext('maskLogId', default='')
-                if log_name != '' and log_id != '':
-                    log_obj = SimpleNamespace(log_id=log_id, log_name=log_name, is_public=is_public, log_type=log_type,
-                                              algorithm_id=algorithm_id, mask_log_id=mask_log_id)
+            for log_child in ds_child.findall("./Logs/Log"):
+                log_id = log_child.findtext("LogID", default="")
+                log_name = log_child.findtext("logName", default="")
+                is_public = log_child.findtext("ispublic", default="")
+                log_type = log_child.findtext("logType", default="")
+                algorithm_id = log_child.findtext("algorithmoutID", default="")
+                mask_log_id = log_child.findtext("maskLogId", default="")
+                if log_name != "" and log_id != "":
+                    log_obj = SimpleNamespace(
+                        log_id=log_id,
+                        log_name=log_name,
+                        is_public=is_public,
+                        log_type=log_type,
+                        algorithm_id=algorithm_id,
+                        mask_log_id=mask_log_id,
+                    )
                     # Set dates, if they were found
                     for key, val in date_dict.items():
                         setattr(log_obj, key, val)
