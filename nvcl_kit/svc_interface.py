@@ -24,7 +24,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LVL)
 
 if not LOGGER.hasHandlers():
-
     # Create logging console handler
     HANDLER = logging.StreamHandler(sys.stdout)
 
@@ -49,10 +48,14 @@ class _ServiceInterface:
         :param nvcl_url: URL of the NVCL service
         :param timeout: initial timeout value for connection to NVCL service, doubles at each attempt, 5 attempts in total (seconds)
         :param cache_path: optional folder path for cache files
-        '''
+        :param retries: number of retries to allow for failed HTTP calls
+        :param retry_backoff: A backoff factor to apply between attempts
+        """
         self.NVCL_URL = nvcl_url
         self.CACHE_PATH = cache_path
         self.TIMEOUT = timeout
+        self.RETRIES = retries
+        self.BACKOFF_FACTOR = backoff_factor
 
     def get_algorithms(self):
         ''' Retrieves a list of algorithms and their output ids
@@ -177,6 +180,24 @@ class _ServiceInterface:
         url = self.NVCL_URL + '/downloadscalars.html'
         params = self._make_multi_logids(log_id_list)
         return self._get_response_str(url, params=params)
+
+    def get_classifications(self, log_id=None, algorithm_id=None):
+        """generate a list of classifications available for a standard algorithm or free classification type scalar. 
+        It requires an algorithmoutputid or logid.
+
+        :param log_id: obtained through calling the getLogCollection service
+        :param algorithm_id: obtained from the getAlgorithms service
+        """
+        if log_id is None and algorithm_id is None:
+            raise KeyError("Either log_id or algorithm_id must be provided!")
+        
+        if log_id is not None:
+            params = {"logid": log_id}
+        else:
+            params = {"algorithmoutputid": algorithm_id}
+
+        url = self.NVCL_URL + "/getClassifications.html"
+        return self._get_response_str(url, params)
 
     def download_tsg(self, email, dataset_id, **options):
         ''' When triggered, the TSG download Service will prepare TSG files from NVCL database datasets and make them available for download.
