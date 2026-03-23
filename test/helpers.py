@@ -4,6 +4,7 @@ from io import IOBase
 import json
 
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import shapely
 
@@ -44,7 +45,7 @@ def setup_reader() -> NVCLReader:
         with open('full_wfs_cql.json') as fp:
             reqs_obj = setup_reqs_obj(fp, reqs_obj)
             param_obj = setup_param_obj()
-            rdr = NVCLReader(param_obj)
+            rdr = NVCLReader(param_obj, retries=1)
     return rdr
 
 
@@ -108,3 +109,16 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
         param_obj.USE_CQL = use_cql
     param_obj.PROV = 'blah'
     return param_obj
+
+def setup_scalar_data(data_file: str) -> bytes:
+    """
+    Return example scalar data as bytes as would be expected from a sucessful call of get_scalar_data(...)
+
+    Returns:
+        bytes: Scalar data
+    """
+
+    with open(data_file, 'rb') as f:
+        data = f.read()
+    
+    return data

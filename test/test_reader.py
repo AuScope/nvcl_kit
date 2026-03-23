@@ -15,6 +15,15 @@ from dateutil.tz import tzoffset
 from shapely import Polygon, LinearRing
 
 from types import SimpleNamespace
+from unittest.mock import Mock
+
+from dateutil.tz import tzoffset
+try:
+    from helpers import setup_param_obj, setup_reader, setup_urlopen
+except ImportError:
+    from .helpers import setup_param_obj, setup_reader, setup_urlopen
+from owslib.util import ServiceException
+from requests.exceptions import RequestException, Timeout
 
 from nvcl_kit.reader import NVCLReader
 
