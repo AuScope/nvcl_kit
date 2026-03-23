@@ -88,7 +88,7 @@ def gen_summary_dataframe(
     include_snr=False,
     continue_on_error=False,
     continue_on_missing=False,
-) -> Iterator[pd.DataFrame]:
+) -> Iterator[dict|pd.DataFrame]:
     """
     Yields summary data for a given scalar for each borehole as `pd.DataFrame`s
 
@@ -102,7 +102,7 @@ def gen_summary_dataframe(
 
     Example:
     ```
-    df = next(gen_summary_dataframe(reader=reader, nvcl_id_list=["MIN_027902"]))
+    meta, df = next(gen_summary_dataframe(reader=reader, nvcl_id_list=["MIN_027902"]))
     ```
 
     Args:
@@ -124,7 +124,7 @@ def gen_summary_dataframe(
         continue_on_missing (bool, optional): Skip scalars if they're missing. Defaults to False.
 
     Yields:
-        Iterator[pd.DataFrame]: dataframe containing summary data for selected scalar
+        Iterator[dict|pd.DataFrame]: dataframe containing summary data for selected scalar
     """
     if nvcl_id_list is None:
         nvcl_id_list = reader.get_nvcl_id_list()
@@ -145,7 +145,7 @@ def gen_summary_dataframe(
         if not logs_data_list:
             continue
 
-        # FIXME: If we want raw counts then how do we handle the same value appearing in multiple mixture levels?
+        # Note: If we want raw counts the same value may appear in multiple mixture levels.
         # Build list of scalar data to download
         scalar_names = list_scalar_names(
             scalar_set=scalar_set, scalar_level=scalar_level
