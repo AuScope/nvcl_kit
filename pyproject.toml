@@ -11,6 +11,7 @@ dependencies = [
     "pyyaml>=6.0.1",
     "pyproj>=3.5.0",
     "python-dateutil>=2.9.0.post0",
+    "pandas>=2.1.4",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -34,3 +35,9 @@ Homepage = "https://github.com/AuScope/nvcl_kit"
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
+[tool.pdm.dev-dependencies]
+dev = [
+    "ipykernel>=6.27.1",
+    "matplotlib>=3.8.2",
+    "colorcet>=3.1.0",
+]
