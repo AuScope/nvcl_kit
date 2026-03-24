@@ -50,20 +50,19 @@ def to_summary(
     to 2 places ('round'), or to start from the first depth ('min' or None). Has no effect if
     `resolution` is None.
 
-    Args:
-        df (pd.DataFrame): DataFrame containing scalar data (from reader.get_scalar_data(...))
-        scalar_cols (List[str]): List of column names containing the scalars.
-        wt_cols (Optional[List[str]]): List of column names containing weights.
-        nvcl_id (Optional[str]): The borehole identifier to include in the returned dataframe.
-        start_depth (str, optional): Can be 'floor', 'round', 'min' or `None`. Defaults to "floor".
-        resolution (Union[float, None], optional): Depth for binning data, set to None to skip. Defaults to 1.0.
-        percent (bool, optional): Convert columns to percentage. Defaults to True.
-        min_item_wt (Union[float, None], optional): Only includes scalars > min weight. Defaults to None.
-        min_item_pct (Union[float, None], optional): Only includes scalars > min %. Defaults to None.
-        max_item_pct (Union[float, None], optional): Only includes scalars < max %. Defaults to None.
+    :param pd.DataFrame df: DataFrame containing scalar data (from reader.get_scalar_data(...))
+    :param List[str] scalar_cols: List of column names containing the scalars.
+    :param wt_cols (Optional[List[str]]): List of column names containing weights.
+    :param nvcl_id (Optional[str]): The borehole identifier to include in the returned dataframe.
+    :param str start_depth: Can be 'floor', 'round', 'min' or `None`. Defaults to "floor". (Optional)
+    :param Union[float, None] resolution: Depth for binning data, set to None to skip. Defaults to 1.0. (Optional)
+    :param bool percent: Convert columns to percentage. Defaults to True. (Optional)
+    :param Union[float, None] min_item_wt: Only includes scalars > min weight. Defaults to None. (Optional)
+    :param Union[float, None] min_item_pct: Only includes scalars > min %. Defaults to None. (Optional)
+    :param Union[float, None] max_item_pct: Only includes scalars < max %. Defaults to None. (Optional)
 
-    Returns:
-        pd.DataFrame: dataframe containing summary of scalar data
+    :return: dataframe containing summary of scalar data
+    :rtype: pd.DataFrame
     """
     # Convert scalar column names to match those in dataframe and sort
     # them to match the sorted scalar columns

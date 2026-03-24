@@ -116,8 +116,9 @@ class NVCLReader:
         :param retries: optional. Override the number of retries for HTTP requests to NVCL services.
         :param retry_backoff: optional. Override the backoff factor for retries.
 
-        **NOTE: Check if 'wfs' is not 'None' to see if any boreholes were found
-                Check if 'wfs_error' is 'True' when there is a provider error**
+        **NOTE:**
+            * **Check if 'wfs' is not 'None' to see if any boreholes were found**
+            * **Check if 'wfs_error' is 'True' when there is a provider error**
         '''
         # Set log level
         if log_lvl and isinstance(log_lvl, int):
@@ -708,9 +709,10 @@ class NVCLReader:
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
 
         :returns: a list of SimpleNamespace() objects with attributes:
-                  log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
-                     created_date, modified_date (optional datetime objects not supported by all services)
-                  NB: 'mask_log_id' is not supported by all services and may be an empty string"""
+                    log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
+                    created_date, modified_date (optional datetime objects not supported by all services)
+                    NB: 'mask_log_id' is not supported by all services and may be an empty string
+        """
         response_str = self.svc.get_dataset_collection(nvcl_id)
         if not response_str:
             return []

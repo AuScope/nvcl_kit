@@ -39,12 +39,11 @@ def list_scalar_names(scalar_set="sTSAS", scalar_level="Group") -> List[str]:
 
     e.g. ["Grp1 sTSAS", "Grp2 sTSAS", "Grp3 sTSAS"]
 
-    Args:
-        scala_set (str, optional): e.g. "sTSAS", "sjCLST", "uTSAT", etc. Defaults to "sTSAS".
-        scalar_level (str, optional): "group" or "mineral". Defaults to "Group".
+    :param str scalar_set: e.g. "sTSAS", "sjCLST", "uTSAT", etc. Defaults to "sTSAS". (optional)
+    :param str scalar_level: "group" or "mineral". Defaults to "Group". (optional)
 
-    Returns:
-        List[str]: List of scalar names
+    :return: List of scalar names
+    :rtype: List[str]
     """
     if scalar_level.lower() in ("group", "grp"):
         scalar_levels = ["Grp1", "Grp2", "Grp3"]
@@ -61,11 +60,10 @@ def list_scalar_weights(scalar_set="sTSAS") -> List[str]:
 
     e.g. ["Wt1 sTSAS", "Wt2 sTSAS", "Wt3 sTSAS"]
 
-    Args:
-        scala_set (str, optional): e.g. "sTSAS", "sjCLST", "uTSAT", etc. Defaults to "sTSAS".
+    :param str scala_set: e.g. "sTSAS", "sjCLST", "uTSAT", etc. Defaults to "sTSAS". (Optional)
 
-    Returns:
-        List[str]: List of scalar names
+    :return: List of scalar names
+    :rtype: List[str]
     """
     return [" ".join([p, scalar_set]) for p in ["Wt1", "Wt2", "Wt3"]]
 
@@ -90,41 +88,40 @@ def gen_summary_dataframe(
     continue_on_missing=False,
 ) -> Iterator[dict|pd.DataFrame]:
     """
-    Yields summary data for a given scalar for each borehole as `pd.DataFrame`s
+    Yields summary data for a given scalar for each borehole as ``pd.DataFrame``
 
     The start_depth values can be configured to start at a whole number ('floor'), rounded
     to 2 places ('round'), or to start from the first depth ('min' or None). Has no effect if
-    `resolution` is None.
+    ``resolution`` is None.
 
-    The `continue_on_missing` flag allows you to try and download a scalar set/level without
+    The ``continue_on_missing`` flag allows you to try and download a scalar set/level without
     knowing if it actually exists. Useful in batch download scenarios where not all holes contain
     all the scalars.
 
-    Example:
-    ```
-    meta, df = next(gen_summary_dataframe(reader=reader, nvcl_id_list=["MIN_027902"]))
-    ```
+    **Example:**
+    
+    >>> meta, df = next(gen_summary_dataframe(reader=reader, nvcl_id_list=["MIN_027902"]))
+    
 
-    Args:
-        reader (NVCLReader): NVCLReader client
-        nvcl_id_list (List[str], optional): List of NVCL IDs. Defaults to None.
-        resolution (Union[float, None], optional): Depth for binning data, set to None to skip. Defaults to 1.0.
-        start_depth (str, optional): Can be 'floor', 'round', 'min' or `None`. Defaults to "floor".
-        scalar_set (str, optional):  'sTSAS', 'sTSAT', 'uTSAS', etc. Defaults to "sTSAS".
-        scalar_level (str, optional): "Group" or "Mineral". Defaults to "Group".
-        weighted (bool, optional): Bin by relative weight when True, else Sample count. Defaults to True.
-        percent (bool, optional): Convert columns to percentage. Defaults to True.
-        min_item_wt (Union[float, None], optional): Only includes scalars > min weight. Defaults to None.
-        min_item_pct (Union[float, None], optional): Only includes scalars > min %. Defaults to None.
-        max_item_pct (Union[float, None], optional): Only includes scalars < max %. Defaults to None.
-        concat_data (bool, optional): Combine holes into single dataframe otherwise one per hole. Defaults to False.
-        include_srss (bool, optional): Include the Standardised residual sum of squares (TSA's measure of mineral identification error). Defaults to False.
-        include_snr (bool, optional): Include signal-to-noise ratio. Defaults to False.
-        continue_on_error (bool, optional): Ignore errors and charge forth. Defaults to False.
-        continue_on_missing (bool, optional): Skip scalars if they're missing. Defaults to False.
+    :param NVCLReader reader: NVCLReader client
+    :param List[str] nvcl_id_list: List of NVCL IDs. Defaults to None. (optional)
+    :param Union[float, None] resolution: Depth for binning data, set to None to skip. Defaults to 1.0. (optional)
+    :param str start_depth: Can be 'floor', 'round', 'min' or `None`. Defaults to "floor". (optional)
+    :param str scalar_set:  'sTSAS', 'sTSAT', 'uTSAS', etc. Defaults to "sTSAS". (optional)
+    :param str scalar_level: "Group" or "Mineral". Defaults to "Group". (optional)
+    :param bool weighted: Bin by relative weight when True, else Sample count. Defaults to True. (optional)
+    :param bool percent: Convert columns to percentage. Defaults to True. (optional)
+    :param Union[float, None] min_item_wt: Only includes scalars > min weight. Defaults to None. (optional)
+    :param Union[float, None] min_item_pct: Only includes scalars > min %. Defaults to None. (optional)
+    :param Union[float, None] max_item_pct: Only includes scalars < max %. Defaults to None. (optional)
+    :param bool concat_data: Combine holes into single dataframe otherwise one per hole. Defaults to False. (optional)
+    :param bool include_srss: Include the Standardised residual sum of squares (TSA's measure of mineral identification error). Defaults to False. (optional)
+    :param bool include_snr: Include signal-to-noise ratio. Defaults to False. (optional)
+    :param bool continue_on_error: Ignore errors and charge forth. Defaults to False. (optional)
+    :param bool continue_on_missing: Skip scalars if they're missing. Defaults to False. (optional)
 
-    Yields:
-        Iterator[dict|pd.DataFrame]: dataframe containing summary data for selected scalar
+    :return: dataframe containing summary data for selected scalar
+    :rtype: Iterator[dict|pd.DataFrame]
     """
     if nvcl_id_list is None:
         nvcl_id_list = reader.get_nvcl_id_list()

@@ -3,3 +3,4 @@ __pycache__
 .ipynb_checkpoints
 .pdm-python
 notebooks/standard-export
+doc/_build

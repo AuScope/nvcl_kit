@@ -32,9 +32,9 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
     Call OCG WFS GetFeature to fetch NVCL boreholes data
 
     :param param_obj: parameters for WFS request
-    :returns:borehole list, error flag, wfs
-             if wfs is None, request failed to fetch data
-             if error flag = True, there was an error
+    :returns: borehole list, error flag, wfs. If ``wfs`` is ``None``, request failed to 
+        fetch data. If ``error flag = True``, there was an error.
+    :rtype: tuple[list, bool, bool]
     '''
     prov = param_obj.PROV
     if param_obj.USE_CQL:
