@@ -43,14 +43,14 @@ class _ServiceInterface:
         NB: 'ServiceInterface' should only be called from within the 'reader' class.
     '''
 
-    def __init__(self, nvcl_url, timeout, cache_path = None):
+    def __init__(self, nvcl_url, timeout, cache_path = None, retries=NUM_RETRIES, backoff_factor=BACKOFF_FACTOR):
         '''
         :param nvcl_url: URL of the NVCL service
         :param timeout: initial timeout value for connection to NVCL service, doubles at each attempt, 5 attempts in total (seconds)
         :param cache_path: optional folder path for cache files
-        :param retries: number of retries to allow for failed HTTP calls
-        :param retry_backoff: A backoff factor to apply between attempts
-        """
+        :param retries: number of retry attempts for HTTP requests
+        :param backoff_factor: backoff factor for retry attempts, e.g. for 0.5 it will retry at  0.0, 1.0, 2.0, 4.0 seconds
+        '''
         self.NVCL_URL = nvcl_url
         self.CACHE_PATH = cache_path
         self.TIMEOUT = timeout
@@ -280,7 +280,6 @@ class _ServiceInterface:
         url = self.NVCL_URL + '/getspectraldata.html'
         params = {'speclogid': spec_log_id}
         params.update(options)
-        print(f"{params=}")
         return self._get_response_str(url, params=params, binary=True)
 
     def get_downsampled_data(self, log_id, **options):
@@ -345,8 +344,8 @@ class _ServiceInterface:
             with requests.Session() as s:
 
                 # Retry with backoff
-                retries = Retry(total=NUM_RETRIES,
-                                backoff_factor=BACKOFF_FACTOR,
+                retries = Retry(total=self.RETRIES,
+                                backoff_factor=self.BACKOFF_FACTOR,
                                 status_forcelist=HTTP_RETRY_CODES,
                                 allowed_methods=["GET"]
                                )

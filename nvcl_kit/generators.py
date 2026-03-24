@@ -212,8 +212,8 @@ def gen_summary_dataframe(
 
         # Fetch scalars and load into pandas
         bh_data = reader.get_scalar_data(scalar_ids)
-        if isinstance(bh_data, bytes) and len(bh_data) > 0:
-            bh_data = bh_data.decode("utf-8")
+        if (isinstance(bh_data, str) and len(bh_data) > 0):
+            pass
         elif continue_on_error:
             continue
         else:

@@ -72,7 +72,7 @@ class NVCLReader:
     ''' A class to extract NVCL borehole data (see README.md for details)
     '''
 
-    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False, use_nds=False):
+    def __init__(self, param_obj, wfs=None, log_lvl=None, skip_bhlist=False, use_nds=False, retries=None, retry_backoff=None):
         '''
         :param param_obj: SimpleNamespace() object with parameters.
           It is recommended to utilise the 'param_builder' function to create it.
@@ -113,6 +113,8 @@ class NVCLReader:
         :param log_lvl: optional logging level (see 'logging' package),
                         default is logging.INFO
         :param skip_bhlist: optional fast init NVCLReader without loading the bhlist
+        :param retries: optional. Override the number of retries for HTTP requests to NVCL services.
+        :param retry_backoff: optional. Override the backoff factor for retries.
 
         **NOTE: Check if 'wfs' is not 'None' to see if any boreholes were found
                 Check if 'wfs_error' is 'True' when there is a provider error**
@@ -214,21 +216,32 @@ class NVCLReader:
             LOGGER.warning("'USE_CQL' parameter is not boolean")
             return
 
+        # If retries/backoff is supplied override the defaults in _ServiceInterface
+        retry_kwargs = {}
+        if retries is not None:
+            if not isinstance(retries, int) or retries < 0:
+                LOGGER.warning("'retries' parameter is not a non-negative integer")
+                return
+            retry_kwargs['retries'] = retries
+        if retry_backoff is not None:
+            if not isinstance(retry_backoff, (int, float)) or retry_backoff < 0:
+                LOGGER.warning("'retry_backoff' parameter is not a non-negative number")
+                return
+            retry_kwargs['backoff_factor'] = retry_backoff
+        
         # Initialise interface to NVCL service
         if hasattr(self.param_obj, "CACHE_PATH"):
             self.svc = _ServiceInterface(
                 self.param_obj.NVCL_URL,
                 TIMEOUT,
                 self.param_obj.CACHE_PATH,
-                retries=retries,
-                backoff_factor=backoff_factor,
+                **retry_kwargs
             )
         else:
             self.svc = _ServiceInterface(
                 self.param_obj.NVCL_URL,
                 TIMEOUT,
-                retries=retries,
-                backoff_factor=backoff_factor,
+                **retry_kwargs
             )
 
         # If gathering boreholes via NVCLDataServices
