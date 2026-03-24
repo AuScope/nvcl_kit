@@ -5,7 +5,7 @@ Submodules
 ----------
 
 nvcl\_kit.cql_filter module
----------------------
+---------------------------
 
 .. automodule:: nvcl_kit.cql_filter
    :members:
@@ -14,7 +14,7 @@ nvcl\_kit.cql_filter module
 
 
 nvcl\_kit.xml_filter module
----------------------
+---------------------------
 
 .. automodule:: nvcl_kit.xml_filter
    :members:
@@ -23,7 +23,7 @@ nvcl\_kit.xml_filter module
 
 
 nvcl\_kit.xml_helpers module
----------------------
+----------------------------
 
 .. automodule:: nvcl_kit.xml_helpers
    :members:
@@ -32,7 +32,7 @@ nvcl\_kit.xml_helpers module
 
 
 nvcl\_kit.wfs_helpers module
----------------------
+----------------------------
 
 .. automodule:: nvcl_kit.wfs_helpers
    :members:
@@ -53,6 +53,14 @@ nvcl\_kit.generators module
 ---------------------------
 
 .. automodule:: nvcl_kit.generators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+nvcl\_kit.df module
+---------------------------
+
+.. automodule:: nvcl_kit.df
    :members:
    :undoc-members:
    :show-inheritance:
