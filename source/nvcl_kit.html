@@ -81,13 +81,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_tsa"><code class="docutils literal notranslate"><span class="pre">has_tsa()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.generators">nvcl_kit.generators module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.generators.gen_core_images"><code class="docutils literal notranslate"><span class="pre">gen_core_images()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.generators.gen_downhole_scalar_plots"><code class="docutils literal notranslate"><span class="pre">gen_downhole_scalar_plots()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.generators.gen_scalar_by_depth"><code class="docutils literal notranslate"><span class="pre">gen_scalar_by_depth()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.generators.gen_tray_thumb_imgs"><code class="docutils literal notranslate"><span class="pre">gen_tray_thumb_imgs()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-generators-module">nvcl_kit.generators module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.param_builder">nvcl_kit.param_builder module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.param_builder.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.param_builder.param_builder"><code class="docutils literal notranslate"><span class="pre">param_builder()</span></code></a></li>
@@ -973,75 +967,8 @@ Australian Journal of Earth Sciences, v. 63, no. 8, p. 929-940, doi:10.1080/0812
 </dd></dl>
 
 </section>
-<section id="module-nvcl_kit.generators">
-<span id="nvcl-kit-generators-module"></span><h2>nvcl_kit.generators module<a class="headerlink" href="#module-nvcl_kit.generators" title="Link to this heading"></a></h2>
-<p>A collection of generator functions to make it easy to create scalar datasets, core images and plots</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.generators.gen_core_images">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.generators.</span></span><span class="sig-name descname"><span class="pre">gen_core_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nvcl_id_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startsampleno</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endsampleno</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_magnify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.generators.gen_core_images" title="Link to this definition"></a></dt>
-<dd><p>Returns core images given filter parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nvcl_id_list</strong> – optional list of nvcl ids</p></li>
-<li><p><strong>startsampleno</strong> – optional start sample number, default is 0</p></li>
-<li><p><strong>endsampleno</strong> – optional end sample number, default is 10</p></li>
-<li><p><strong>max_magnify</strong> – optional, when True it will return close up images of core, default is False</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>yields a tuple of (nvcl id, dataset id, image log object, tray depth list, image html)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.generators.gen_downhole_scalar_plots">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.generators.</span></span><span class="sig-name descname"><span class="pre">gen_downhole_scalar_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nvcl_id_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.generators.gen_downhole_scalar_plots" title="Link to this definition"></a></dt>
-<dd><p>Returns scalar downhole plots</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id_list</strong> – optional list of nvcl ids</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>yields a tuple of (nvcl id, dataset id, scalar data object, PNG image byte array)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.generators.gen_scalar_by_depth">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.generators.</span></span><span class="sig-name descname"><span class="pre">gen_scalar_by_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nvcl_id_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Scalar.ANY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.generators.gen_scalar_by_depth" title="Link to this definition"></a></dt>
-<dd><p>Returns scalar borehole data ordered by depth given filter parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nvcl_id_list</strong> – optional list of nvcl ids</p></li>
-<li><p><strong>resolution</strong> – optional nvcl_kit.constants.Scalar class object, default Scalar.ANY</p></li>
-<li><p><strong>log_type</strong> – optional log type e.g. ‘1’ or ‘2’</p></li>
-<li><p><strong>top_n</strong> – optional, only retrieve the first n scalara at each depth, default  value is 5</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>yields a tuple of (nvcl_id, logs object, scalar data object); logs object is retrieved from ‘get_logs_data()’</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.generators.gen_tray_thumb_imgs">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.generators.</span></span><span class="sig-name descname"><span class="pre">gen_tray_thumb_imgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nvcl_id_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.generators.gen_tray_thumb_imgs" title="Link to this definition"></a></dt>
-<dd><p>Returns core tray images</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id_list</strong> – optional list of nvcl ids</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>yields a tuple of (nvcl id, dataset id, image log object, tray depth list, JPEG image byte array)</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="nvcl-kit-generators-module">
+<h2>nvcl_kit.generators module<a class="headerlink" href="#nvcl-kit-generators-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-nvcl_kit.param_builder">
 <span id="nvcl-kit-param-builder-module"></span><h2>nvcl_kit.param_builder module<a class="headerlink" href="#module-nvcl_kit.param_builder" title="Link to this heading"></a></h2>
@@ -1108,7 +1035,7 @@ will be ignored</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_backoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class to extract NVCL borehole data (see README.md for details)</p>
 <dl class="field-list simple">
@@ -1152,6 +1079,8 @@ It is recommended to utilise the ‘param_builder’ function to create it.</p>
 <li><p><strong>log_lvl</strong> – optional logging level (see ‘logging’ package),
 default is logging.INFO</p></li>
 <li><p><strong>skip_bhlist</strong> – optional fast init NVCLReader without loading the bhlist</p></li>
+<li><p><strong>retries</strong> – optional. Override the number of retries for HTTP requests to NVCL services.</p></li>
+<li><p><strong>retry_backoff</strong> – optional. Override the backoff factor for retries.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1218,7 +1147,7 @@ default is logging.INFO</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_borehole_data">
-<span class="sig-name descname"><span class="pre">get_borehole_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_resol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_borehole_data" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_borehole_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_resol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_borehole_data" title="Link to this definition"></a></dt>
 <dd><p>Retrieves borehole mineral data for a borehole, will only return mineral class data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1253,6 +1182,23 @@ default is logging.INFO</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a list of SimpleNamespace whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_classifications">
+<span class="sig-name descname"><span class="pre">get_classifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_classifications" title="Link to this definition"></a></dt>
+<dd><p>generate a list of classifications available for a standard algorithm or free classification type scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – a list of log ids obtained through calling ‘get_scalar_logs()’</p></li>
+<li><p><strong>algorithm_id</strong> – obtained from the getAlgorithms service</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>scalar data in CSV format</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1338,7 +1284,7 @@ log_id, log_name, sample_count, modified_date (optional)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_logs_data">
-<span class="sig-name descname"><span class="pre">get_logs_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_logs_data" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_logs_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_logs_data" title="Link to this definition"></a></dt>
 <dd><p>Retrieves a set of generic log data for a particular borehole, given an nvcl id</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
