@@ -130,10 +130,9 @@ def to_summary(
 
     # Add any SNR/Error columns to the dataframe
     if len(snr_error_dfs) > 0:
+        LOGGER.debug("Adding SNR/Error column to summary:")
         snr_error_df = pd.concat(snr_error_dfs, axis="columns").reset_index()
         df = pd.merge(df, snr_error_df, on="StartDepth", how="left")
-    LOGGER.debug("Adding SNR/Error column to summary:")
-    LOGGER.debug(df)
     
     
     # Bin the data unless `resolution` is `None`
@@ -160,12 +159,25 @@ def to_summary(
         sum_cols = df.columns.difference(snr_error_cols)
         sum_grp = df[sum_cols].groupby("depth_bin", observed=True).sum().reset_index()
         mean_grp = df[["depth_bin"]+snr_error_cols].groupby("depth_bin", observed=True).mean().reset_index()
-        df = pd.merge(sum_grp, mean_grp, on="depth_bin", how="left")
+        
         # Convert depth_bin categories to floats for StartDepth/EndDepth
-        df["StartDepth"] = df["depth_bin"].apply(lambda x: x.left)
-        df["StartDepth"] = df["StartDepth"].astype(float)
-        df["EndDepth"] = df["depth_bin"].apply(lambda x: x.right)
-        df["EndDepth"] = df["EndDepth"].astype(float)
+        sum_grp["StartDepth"] = sum_grp["depth_bin"].apply(lambda x: x.left)
+        sum_grp["StartDepth"] = sum_grp["StartDepth"].astype(float)
+        sum_grp["EndDepth"] = sum_grp["depth_bin"].apply(lambda x: x.right)
+        sum_grp["EndDepth"] = sum_grp["EndDepth"].astype(float)
+
+        mean_grp["StartDepth"] = mean_grp["depth_bin"].apply(lambda x: x.left)
+        mean_grp["StartDepth"] = mean_grp["StartDepth"].astype(float)
+        mean_grp["EndDepth"] = mean_grp["depth_bin"].apply(lambda x: x.right)
+        mean_grp["EndDepth"] = mean_grp["EndDepth"].astype(float)
+
+        # drop the depth_bin column from both dataframes and merge them back together on StartDepth/EndDepth
+        # N.B. you could merge on depth_bin but and then create the StartDepth/EndDepth columns but you
+        #      will have pandas complain with "RuntimeWarning: invalid value encountered in cast"
+        sum_grp = sum_grp.drop(columns=["depth_bin"])
+        mean_grp = mean_grp.drop(columns=["depth_bin"])
+        df = pd.merge(sum_grp, mean_grp, on=["StartDepth", "EndDepth"], how="left")
+
     else:
         df["EndDepth"] = df["StartDepth"]
 
