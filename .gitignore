@@ -2,3 +2,4 @@ __pycache__
 .tox
 .ipynb_checkpoints
 .pdm-python
+notebooks/standard-export

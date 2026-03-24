@@ -24,7 +24,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LVL)
 
 if not LOGGER.hasHandlers():
-
     # Create logging console handler
     HANDLER = logging.StreamHandler(sys.stdout)
 
@@ -44,15 +43,19 @@ class _ServiceInterface:
         NB: 'ServiceInterface' should only be called from within the 'reader' class.
     '''
 
-    def __init__(self, nvcl_url, timeout, cache_path = None):
+    def __init__(self, nvcl_url, timeout, cache_path = None, retries=NUM_RETRIES, backoff_factor=BACKOFF_FACTOR):
         '''
         :param nvcl_url: URL of the NVCL service
         :param timeout: initial timeout value for connection to NVCL service, doubles at each attempt, 5 attempts in total (seconds)
         :param cache_path: optional folder path for cache files
+        :param retries: number of retry attempts for HTTP requests
+        :param backoff_factor: backoff factor for retry attempts, e.g. for 0.5 it will retry at  0.0, 1.0, 2.0, 4.0 seconds
         '''
         self.NVCL_URL = nvcl_url
         self.CACHE_PATH = cache_path
         self.TIMEOUT = timeout
+        self.RETRIES = retries
+        self.BACKOFF_FACTOR = backoff_factor
 
     def get_algorithms(self):
         ''' Retrieves a list of algorithms and their output ids
@@ -178,6 +181,24 @@ class _ServiceInterface:
         params = self._make_multi_logids(log_id_list)
         return self._get_response_str(url, params=params)
 
+    def get_classifications(self, log_id=None, algorithm_id=None):
+        """generate a list of classifications available for a standard algorithm or free classification type scalar. 
+        It requires an algorithmoutputid or logid.
+
+        :param log_id: obtained through calling the getLogCollection service
+        :param algorithm_id: obtained from the getAlgorithms service
+        """
+        if log_id is None and algorithm_id is None:
+            raise KeyError("Either log_id or algorithm_id must be provided!")
+        
+        if log_id is not None:
+            params = {"logid": log_id}
+        else:
+            params = {"algorithmoutputid": algorithm_id}
+
+        url = self.NVCL_URL + "/getClassifications.html"
+        return self._get_response_str(url, params)
+
     def download_tsg(self, email, dataset_id, **options):
         ''' When triggered, the TSG download Service will prepare TSG files from NVCL database datasets and make them available for download.
 
@@ -259,7 +280,6 @@ class _ServiceInterface:
         url = self.NVCL_URL + '/getspectraldata.html'
         params = {'speclogid': spec_log_id}
         params.update(options)
-        print(f"{params=}")
         return self._get_response_str(url, params=params, binary=True)
 
     def get_downsampled_data(self, log_id, **options):
@@ -324,8 +344,8 @@ class _ServiceInterface:
             with requests.Session() as s:
 
                 # Retry with backoff
-                retries = Retry(total=NUM_RETRIES,
-                                backoff_factor=BACKOFF_FACTOR,
+                retries = Retry(total=self.RETRIES,
+                                backoff_factor=self.BACKOFF_FACTOR,
                                 status_forcelist=HTTP_RETRY_CODES,
                                 allowed_methods=["GET"]
                                )

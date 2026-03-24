@@ -15,10 +15,15 @@ from dateutil.tz import tzoffset
 from shapely import Polygon, LinearRing
 
 from types import SimpleNamespace
+from unittest.mock import Mock
+
+from dateutil.tz import tzoffset
+try:
+    from helpers import setup_param_obj, setup_reader, patch_requests_get, setup_reqs_obj
+except ImportError:
+    from .helpers import setup_param_obj, setup_reader, patch_requests_get, setup_reqs_obj
 
 from nvcl_kit.reader import NVCLReader
-
-from helpers import setup_param_obj, setup_reader, patch_requests_get, setup_reqs_obj
 
 MAX_BOREHOLES = 6
 
