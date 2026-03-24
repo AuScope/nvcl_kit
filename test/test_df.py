@@ -5,9 +5,9 @@ from io import StringIO
 import numpy as np
 import pandas as pd
 try:
-    from helpers import setup_scalar_data
+    from helpers import read_test_data
 except ImportError:
-    from .helpers import setup_scalar_data
+    from .helpers import read_test_data
 
 from nvcl_kit.df import to_summary
 from nvcl_kit.generators import (
@@ -25,7 +25,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns correct columns in a sensible order"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names)
         self.assertCountEqual(
@@ -54,7 +54,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns correct columns incl. NVCL identifier"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, nvcl_id="MyBorehole0001")
         self.assertCountEqual(
@@ -84,7 +84,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns unbinned group classes"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, resolution=None)
         # Check the unbinned data is the expected shape, with correct columns
@@ -114,7 +114,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns group classes binned @ 1m"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, resolution=1.0)
         self.assertEqual(df.shape, (157, 15))
@@ -125,7 +125,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns group classes binned @ 1m starting at floor(min_depth)"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, start_depth="floor")
         self.assertEqual(df["StartDepth"].iloc[0], 12.0)
@@ -134,7 +134,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns group classes binned @ 1m starting at min(min_depth)"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, start_depth="min")
         self.assertEqual(df["StartDepth"].iloc[0], 12.20974999999999966)
@@ -143,7 +143,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator returns group classes binned @ 1m starting at round(round, 2)"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = to_summary(df, scalar_cols=scalar_names, start_depth="round")
         self.assertEqual(df["StartDepth"].iloc[0], 12.21)
@@ -152,7 +152,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         """Tests summary dataframe generator raises an exception if start_depth is invalid"""
         scalar_names = list_scalar_names("sTSAS", "group")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         with self.assertRaisesRegex(
             ValueError, "start_depth must be 'floor', 'min', or 'round'"
@@ -164,7 +164,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         scalar_names = list_scalar_names("sTSAS", "group")
         wt_names = list_scalar_weights("sTSAS")
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df = df.drop(columns=["Wt3_sTSAS"])
         with self.assertRaisesRegex(KeyError, "Unable to find weights for Grp3_sTSAS"):
@@ -175,7 +175,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         scalar_names = list_scalar_names("sTSAS", "group")
         wt_names = list_scalar_weights("sTSAS")[:2]
         df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         with self.assertRaisesRegex(
             ValueError, "Number of weight columns does not match number of scalars"
@@ -187,7 +187,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         scalar_names = list_scalar_names("sTSAS", "group")
         wt_names = list_scalar_weights("sTSAS")
         src_df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         
         # Manually zero out weights below 0.5 and create summary
@@ -221,7 +221,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         scalar_names = list_scalar_names("sTSAS", "group")
         wt_names = list_scalar_weights("sTSAS")
         src_df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df_all = to_summary(
             src_df,
@@ -258,7 +258,7 @@ class TestDataFrameFunctions(unittest.TestCase):
         scalar_names = list_scalar_names("sTSAS", "group")
         wt_names = list_scalar_weights("sTSAS")
         src_df = pd.read_csv(
-            StringIO(setup_scalar_data("scalardata-groups").decode("utf-8"))
+            StringIO(read_test_data("scalardata-groups"))
         )
         df_all = to_summary(
             src_df,
@@ -284,11 +284,6 @@ class TestDataFrameFunctions(unittest.TestCase):
 
         # Count values > zero and compare with first count
         df_output = df[scalar_cols] > 0
-        print(f"{df_comparator=}")
-        print(f"{df_output=}")
-
-        print(f"{df_all.iloc[0]=}")
-        print(f"{df.iloc[0]=}")
         self.assertEqual(
             df_output[scalar_cols].compare(df_comparator).shape,
             (0, 0),

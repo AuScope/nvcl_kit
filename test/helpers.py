@@ -110,15 +110,18 @@ def setup_param_obj(max_boreholes: int = None, bbox: dict = None, polygon: shape
     param_obj.PROV = 'blah'
     return param_obj
 
-def setup_scalar_data(data_file: str) -> bytes:
+def read_test_data(data_file: str, return_bytes: bool = False) -> str|bytes:
     """
-    Return example scalar data as bytes as would be expected from a sucessful call of get_scalar_data(...)
+    Return example data as bytes or a string from a local file
 
     Returns:
-        bytes: Scalar data
+        bytes|str: Scalar data
     """
-
-    with open(data_file, 'rb') as f:
-        data = f.read()
+    if return_bytes:
+        with open(data_file, 'rb') as f:
+            data = f.read()
+    else:
+        with open(data_file, 'r') as f:
+            data = f.read()
     
     return data

@@ -6,9 +6,9 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 try:
-    from helpers import setup_reader, setup_scalar_data
+    from helpers import setup_reader, read_test_data, patch_requests_get
 except ImportError:
-    from .helpers import setup_reader, setup_scalar_data
+    from .helpers import setup_reader, read_test_data, patch_requests_get
 
 from nvcl_kit.constants import Scalar
 
@@ -150,6 +150,8 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
@@ -167,6 +169,8 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
@@ -183,11 +187,13 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1", "nid2"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp3 sTSAS', log_id=8, log_type='3', algorithm_id='109')]),
-        get_scalar_data=MagicMock(side_effect=["", setup_scalar_data("scalardata-groups")]),
+        get_scalar_data=MagicMock(side_effect=["", read_test_data("scalardata-groups")]),
     )
     def test_gen_summary_dataframe_continue_on_error_multi(self):
         """Tests summary dataframe generator continues on failed scalar downloads (multi hole)"""
@@ -214,11 +220,13 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp3 sTSAS', log_id=8, log_type='3', algorithm_id='109')]),
-        get_scalar_data=MagicMock(return_value=setup_scalar_data("scalardata-groups")),
+        get_scalar_data=MagicMock(return_value=read_test_data("scalardata-groups")),
     )
     def test_gen_summary_dataframe_grp(self):
         """Tests summary dataframe generator returns group scalars"""
@@ -251,12 +259,14 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Min1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Min2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
                                 SimpleNamespace(log_name='Min3 sTSAS', log_id=8, log_type='3', algorithm_id='109')]),
         get_scalar_data=MagicMock(
-            return_value=setup_scalar_data("scalardata-minerals")
+            return_value=read_test_data("scalardata-minerals")
         ),
     )
     def test_gen_summary_dataframe_min(self):
@@ -317,11 +327,13 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1", "nid2"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp3 sTSAS', log_id=8, log_type='3', algorithm_id='109')]),
-        get_scalar_data=MagicMock(return_value=setup_scalar_data("scalardata-groups")),
+        get_scalar_data=MagicMock(return_value=read_test_data("scalardata-groups")),
     )
     def test_gen_summary_dataframe_multi_hole(self):
         """Tests summary dataframe generator returns group scalars for multiple boreholes"""
@@ -356,11 +368,13 @@ class TestGenerators(unittest.TestCase):
     @patch.multiple(
         "nvcl_kit.reader.NVCLReader",
         get_nvcl_id_list=MagicMock(return_value=["nid1", "nid2"]),
+        get_classifications=MagicMock(return_value=[patch_requests_get('get_classifications', {'log_id':"blah"}, 'getclassifications.json')]),
+        get_algorithms=MagicMock(return_value=patch_requests_get('get_algorithms', {}, 'algorithms.txt')),
         get_logs_data=MagicMock(return_value=[
                                 SimpleNamespace(log_name='Grp1 sTSAS', log_id=6, log_type='1', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp2 sTSAS', log_id=7, log_type='2', algorithm_id='109'),
                                 SimpleNamespace(log_name='Grp3 sTSAS', log_id=8, log_type='3', algorithm_id='109')]),
-        get_scalar_data=MagicMock(return_value=setup_scalar_data("scalardata-groups")),
+        get_scalar_data=MagicMock(return_value=read_test_data("scalardata-groups")),
     )
     def test_gen_summary_dataframe_concat(self):
         """Tests summary dataframe generator returns group scalars for multiple boreholes"""
