@@ -1,5 +1,17 @@
-Introduction: How to Extract Australian NVCL Borehole Data
-----------------------------------------------------------
+Getting Started
+===============
+
+Installing nvcl-kit
+-------------------
+
+nvcl-kit is available on `PyPi <https://pypi.org/project/nvcl-kit/>`_, and can be downloaded with pip:
+
+.. code-block:: bash
+
+   pip install nvcl-kit
+
+How to Extract Australian NVCL Borehole Data
+--------------------------------------------
 
 **1. Call the 'param_builder' function, fill it with parameters**
 

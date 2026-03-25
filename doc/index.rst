@@ -38,6 +38,7 @@ products.
 
    installation
    introduction
+   source/examples/examples
    citation
 
 .. toctree::
