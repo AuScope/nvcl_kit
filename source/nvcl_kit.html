@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nvcl_kit package &mdash; nvcl_kit  documentation</title>
+  <title>nvcl_kit API &mdash; nvcl_kit  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="nvcl_kit" href="modules.html" /> 
+    <link rel="prev" title="Citation" href="../citation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,68 +41,220 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction: How to Extract Australian NVCL Borehole Data</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">nvcl_kit</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">nvcl_kit package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.cql_filter">nvcl_kit.cql_filter module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_filter"><code class="docutils literal notranslate"><span class="pre">make_cql_filter()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_request"><code class="docutils literal notranslate"><span class="pre">make_cql_request()</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nvcl_kit API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.param_builder">nvcl_kit.param_builder</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.param_builder.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.param_builder.param_builder"><code class="docutils literal notranslate"><span class="pre">param_builder()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.xml_filter">nvcl_kit.xml_filter module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_poly_coords"><code class="docutils literal notranslate"><span class="pre">make_poly_coords()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_polygon_prop"><code class="docutils literal notranslate"><span class="pre">make_polygon_prop()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_filter"><code class="docutils literal notranslate"><span class="pre">make_xml_filter()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_request"><code class="docutils literal notranslate"><span class="pre">make_xml_request()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_filter.pretty_print"><code class="docutils literal notranslate"><span class="pre">pretty_print()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.reader">nvcl_kit.reader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.ENFORCE_IS_PUBLIC"><code class="docutils literal notranslate"><span class="pre">ENFORCE_IS_PUBLIC</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.MAX_DEPTH"><code class="docutils literal notranslate"><span class="pre">MAX_DEPTH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.MIN_DEPTH"><code class="docutils literal notranslate"><span class="pre">MIN_DEPTH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader"><code class="docutils literal notranslate"><span class="pre">NVCLReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.filter_feat_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.filter_feat_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_algorithms"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_algorithms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_all_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_all_imglogs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_bhuri_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_bhuri_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_borehole_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_borehole_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_boreholes_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_boreholes_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_classifications"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_classifications()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_dataset_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_dataset_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_datasetid_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_datasetid_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_feature_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_feature_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_imagelog_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_imagelog_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_imagery_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_imagery_imglogs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_logs_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_logs_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_mosaic_image"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_mosaic_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_mosaic_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_mosaic_imglogs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_nvcl_id_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_nvcl_id_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_profilometer_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_profilometer_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_profilometer_datasets"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_profilometer_datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_sampled_scalar_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_sampled_scalar_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_scalar_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_scalar_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_scalar_logs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_scalar_logs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_spectrallog_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_datasets"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_spectrallog_datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_tray_depths"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_tray_depths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_tray_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_tray_imglogs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_html"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_tray_thumb_html()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_tray_thumb_imglogs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_jpg"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_tray_thumb_jpg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.plot_scalar_png"><code class="docutils literal notranslate"><span class="pre">NVCLReader.plot_scalar_png()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.plot_scalars_html"><code class="docutils literal notranslate"><span class="pre">NVCLReader.plot_scalars_html()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.xml_helpers">nvcl_kit.xml_helpers module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_helpers.clean_xml_parse"><code class="docutils literal notranslate"><span class="pre">clean_xml_parse()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.xml_helpers.parse_dates"><code class="docutils literal notranslate"><span class="pre">parse_dates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.reader.bgr2rgba"><code class="docutils literal notranslate"><span class="pre">bgr2rgba()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.wfs_helpers">nvcl_kit.wfs_helpers module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.wfs_helpers.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.wfs_helpers.get_borehole_list"><code class="docutils literal notranslate"><span class="pre">get_borehole_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nvcl-kit-generators">nvcl_kit.generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.cql_filter">nvcl_kit.cql_filter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.cql_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_filter"><code class="docutils literal notranslate"><span class="pre">make_cql_filter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.cql_filter.make_cql_request"><code class="docutils literal notranslate"><span class="pre">make_cql_request()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.constants">nvcl_kit.constants module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_SWIR"><code class="docutils literal notranslate"><span class="pre">has_SWIR()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_TIR"><code class="docutils literal notranslate"><span class="pre">has_TIR()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_VNIR"><code class="docutils literal notranslate"><span class="pre">has_VNIR()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_cls"><code class="docutils literal notranslate"><span class="pre">has_cls()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.has_tsa"><code class="docutils literal notranslate"><span class="pre">has_tsa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.xml_filter">nvcl_kit.xml_filter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.make_poly_coords"><code class="docutils literal notranslate"><span class="pre">make_poly_coords()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.make_polygon_prop"><code class="docutils literal notranslate"><span class="pre">make_polygon_prop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_filter"><code class="docutils literal notranslate"><span class="pre">make_xml_filter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.make_xml_request"><code class="docutils literal notranslate"><span class="pre">make_xml_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_filter.pretty_print"><code class="docutils literal notranslate"><span class="pre">pretty_print()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-generators-module">nvcl_kit.generators module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nvcl-kit-df-module">nvcl_kit.df module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.param_builder">nvcl_kit.param_builder module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.param_builder.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.param_builder.param_builder"><code class="docutils literal notranslate"><span class="pre">param_builder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.xml_helpers">nvcl_kit.xml_helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_helpers.clean_xml_parse"><code class="docutils literal notranslate"><span class="pre">clean_xml_parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.xml_helpers.parse_dates"><code class="docutils literal notranslate"><span class="pre">parse_dates()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.reader">nvcl_kit.reader module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.ENFORCE_IS_PUBLIC"><code class="docutils literal notranslate"><span class="pre">ENFORCE_IS_PUBLIC</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.MAX_DEPTH"><code class="docutils literal notranslate"><span class="pre">MAX_DEPTH</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.MIN_DEPTH"><code class="docutils literal notranslate"><span class="pre">MIN_DEPTH</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader"><code class="docutils literal notranslate"><span class="pre">NVCLReader</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.bgr2rgba"><code class="docutils literal notranslate"><span class="pre">bgr2rgba()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.wfs_helpers">nvcl_kit.wfs_helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.wfs_helpers.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.wfs_helpers.get_borehole_list"><code class="docutils literal notranslate"><span class="pre">get_borehole_list()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit.svc_interface">nvcl_kit.svc_interface module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.svc_interface.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.constants">nvcl_kit.constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.Scalar"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.ANY"><code class="docutils literal notranslate"><span class="pre">Scalar.ANY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Bound_Water_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Bound_Water_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Bound_Water_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Bound_Water_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Bound_Water_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Bound_Water_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Error_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Error_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp1_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp1_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp2_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp2_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp3_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp3_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp3_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp3_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp3_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp3_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp3_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp3_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Grp3_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Grp3_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min1_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min1_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min2_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min2_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min3_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min3_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min3_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min3_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min3_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min3_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min3_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Min3_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Min3_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Min3_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.NIL_Stat_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.NIL_Stat_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.SNR_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.SNR_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.TIR_Results"><code class="docutils literal notranslate"><span class="pre">Scalar.TIR_Results</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.TSA_S_Water"><code class="docutils literal notranslate"><span class="pre">Scalar.TSA_S_Water</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.TSA_V_Water"><code class="docutils literal notranslate"><span class="pre">Scalar.TSA_V_Water</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.TirBkgOffset"><code class="docutils literal notranslate"><span class="pre">Scalar.TirBkgOffset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.TirDeltaTemp"><code class="docutils literal notranslate"><span class="pre">Scalar.TirDeltaTemp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Unbound_Water_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Unbound_Water_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Unbound_Water_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Unbound_Water_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Unbound_Water_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Unbound_Water_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt1_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt1_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_dTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_dTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_dTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_dTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_sTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_sTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_sTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_sTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_uTSAS"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_uTSAS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_uTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_uTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_uTSAV"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_uTSAV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt2_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt2_ujCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt3_dTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt3_dTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt3_sTSAT"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt3_sTSAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt3_sjCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt3_sjCLST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.constants.Scalar.Wt3_ujCLST"><code class="docutils literal notranslate"><span class="pre">Scalar.Wt3_ujCLST</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nvcl_kit">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.has_SWIR"><code class="docutils literal notranslate"><span class="pre">has_SWIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.has_TIR"><code class="docutils literal notranslate"><span class="pre">has_TIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.has_VNIR"><code class="docutils literal notranslate"><span class="pre">has_VNIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.has_cls"><code class="docutils literal notranslate"><span class="pre">has_cls()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.constants.has_tsa"><code class="docutils literal notranslate"><span class="pre">has_tsa()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nvcl-kit-df">nvcl_kit.df</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nvcl_kit.svc_interface">nvcl_kit.svc_interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nvcl_kit.svc_interface.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -123,8 +275,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">nvcl_kit</a></li>
-      <li class="breadcrumb-item active">nvcl_kit package</li>
+      <li class="breadcrumb-item active">nvcl_kit API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/nvcl_kit.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -134,13 +285,672 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nvcl-kit-package">
-<h1>nvcl_kit package<a class="headerlink" href="#nvcl-kit-package" title="Link to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+  <section id="nvcl-kit-api">
+<h1>nvcl_kit API<a class="headerlink" href="#nvcl-kit-api" title="Link to this heading"></a></h1>
+<section id="module-nvcl_kit.param_builder">
+<span id="nvcl-kit-param-builder"></span><h2>nvcl_kit.param_builder<a class="headerlink" href="#module-nvcl_kit.param_builder" title="Link to this heading"></a></h2>
+<p>This module contains functions used to build a set of NVCL service connection parameters</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.param_builder.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.param_builder.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.param_builder.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.param_builder.param_builder">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.param_builder.</span></span><span class="sig-name descname"><span class="pre">param_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SimpleNamespace</span></span></span><a class="headerlink" href="#nvcl_kit.param_builder.param_builder" title="Link to this definition"></a></dt>
+<dd><p>Builds a set of parameters which can be passed to ‘NVCLReader’ for connecting to an NVCL service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>provider</strong> – state or territory name, one of: ‘nsw’, ‘tas’, ‘vic’, ‘qld’, ‘nt’, ‘sa’, ‘wa’, ‘csiro’</p></li>
+<li><p><strong>options</strong> – optional keyword parameters
+bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {“west”: -180.0,”south”: -90.0,”east”: 180.0,”north”: 0.0})
+polygon: 2D ‘shapely.Polygon’ y/x axis order, EPSG:4326, limit to boreholes within this polygon
+depths: Tuple of range of depths (min,max) [metres]
+wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
+nvcl_url: URL of NVCL service
+max_boreholes: Maximum number of boreholes to retrieve. If &lt; 1 then all boreholes are loaded, default 0
+use_cql: use “CQL_FILTER” in WFS GetFeature requests. Geoserver only.
+cache_path: the folder path for cache files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a SimpleNamespace object containing required connection parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nvcl_kit.reader">
+<span id="nvcl-kit-reader"></span><h2>nvcl_kit.reader<a class="headerlink" href="#module-nvcl_kit.reader" title="Link to this heading"></a></h2>
+<p>This module is the main interface used to NVCL borehole data from the NVCL services.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.reader.ENFORCE_IS_PUBLIC">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">ENFORCE_IS_PUBLIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#nvcl_kit.reader.ENFORCE_IS_PUBLIC" title="Link to this definition"></a></dt>
+<dd><p>Enforce the ‘is_public’ flag , i.e. any data with ‘is_public’ set to ‘false’
+will be ignored</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.reader.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.reader.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.reader.MAX_DEPTH">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">MAX_DEPTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000.0</span></em><a class="headerlink" href="#nvcl_kit.reader.MAX_DEPTH" title="Link to this definition"></a></dt>
+<dd><p>Default maximum depth to search for boreholes</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.reader.MIN_DEPTH">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">MIN_DEPTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#nvcl_kit.reader.MIN_DEPTH" title="Link to this definition"></a></dt>
+<dd><p>Default minimum depth to search for boreholes</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_backoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to extract NVCL borehole data (see README.md for details)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_obj</strong> – <p>SimpleNamespace() object with parameters.
+It is recommended to utilise the ‘param_builder’ function to create it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">param_obj</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">&#39;sa&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But if you want to create your own then here are the details:</p>
+<p>param_obj fields are:</p>
+<blockquote>
+<div><ul>
+<li><p>NVCL_URL - URL of NVCL service</p></li>
+<li><p>WFS_URL - URL of WFS service, GeoSciML V4.1 BoreholeView</p></li>
+<li><p>PROV - provider e.g. ‘nt’ ‘wa’ etc.</p></li>
+<li><p>DEPTHS - (optional) Tuple of range of depths (min,max) [metres]</p></li>
+<li><p>POLYGON - (optional) 2D ‘shapely.Polygon’ y/x axis order EPSG:4326, limit to boreholes inside this polygon</p></li>
+<li><p>BBOX - (optional) 2D bounding box in EPSG:4326, only boreholes within box are retrieved</p></li>
+<li><p>MAX_BOREHOLES - (optional) Maximum number of boreholes to retrieve. If &lt; 1 then all boreholes are loaded</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
+<span class="n">param_obj</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">()</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">BBOX</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;west&quot;</span><span class="p">:</span> <span class="mf">132.76</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">:</span> <span class="mf">134.39</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">26.87</span> <span class="p">}</span>
+<span class="c1"># Or use a POLYGON instead of a BBOX - Note the y/x axis ordering</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">POLYGON</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span> <span class="p">((</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">))</span> <span class="p">)</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">DEPTHS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">900.0</span><span class="p">)</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">WFS_URL</span> <span class="o">=</span> <span class="s2">&quot;http://blah.blah.blah/geoserver/wfs&quot;</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">NVCL_URL</span> <span class="o">=</span> <span class="s2">&quot;https://blah.blah.blah/nvcl/NVCLDataServices&quot;</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">MAX_BOREHOLES</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">PROV</span> <span class="o">=</span> <span class="s1">&#39;blah&#39;</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>wfs</strong> – DEPRECATED optional owslib ‘WebFeatureService’ object</p></li>
+<li><p><strong>use_nds</strong> – optional. If True, do not call WFS to get boreholes, instead use NVCLDataServices to gather boreholes</p></li>
+<li><p><strong>log_lvl</strong> – optional logging level (see ‘logging’ package),
+default is logging.INFO</p></li>
+<li><p><strong>skip_bhlist</strong> – optional fast init NVCLReader without loading the bhlist</p></li>
+<li><p><strong>retries</strong> – optional. Override the number of retries for HTTP requests to NVCL services.</p></li>
+<li><p><strong>retry_backoff</strong> – optional. Override the backoff factor for retries.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><strong>NOTE:</strong></dt><dd><ul class="simple">
+<li><p><strong>Check if ‘wfs’ is not ‘None’ to see if any boreholes were found</strong></p></li>
+<li><p><strong>Check if ‘wfs_error’ is ‘True’ when there is a provider error</strong></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.filter_feat_list">
+<span class="sig-name descname"><span class="pre">filter_feat_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_ids_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.filter_feat_list" title="Link to this definition"></a></dt>
+<dd><dl>
+<dt>Returns a list of borehole features given a filter parameter</dt><dd><p>Filter parameters can be one of those returned by ‘get_feature_list’ e.g.</p>
+<p>new_list = filter_feat_list(name=’ML006’)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kwargs</strong> – keyword arguments key is name searched for, val is a list of possible values or a single value</p></li>
+<li><p><strong>nvcl_ids_only</strong> – if True will return a list of nvcl_id</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of borehole features or empty list if unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_algorithms">
+<span class="sig-name descname"><span class="pre">get_algorithms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_algorithms" title="Link to this definition"></a></dt>
+<dd><p>Gets a dict of algorithm output ids and their versions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dict of { ‘algorithmOutputId1’: ‘version1’, ‘algorithmOutputId2’: ‘version2’, … }</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_all_imglogs">
+<span class="sig-name descname"><span class="pre">get_all_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_all_imglogs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of all log objects from mosaic service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects, attributes are: log_id, log_name, sample_count. On error returns empty list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_bhuri_list">
+<span class="sig-name descname"><span class="pre">get_bhuri_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_bhuri_list" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all borehole URIs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of URIs as strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_borehole_data">
+<span class="sig-name descname"><span class="pre">get_borehole_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_resol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_borehole_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieves borehole mineral data for a borehole, will only return mineral class data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – borehole log identifier, string e.g. ‘ce2df1aa-d3e7-4c37-97d5-5115fc3c33d’ This is the first id from the list of triplets [log id, log type, log name] fetched from API calls such as ‘get_logs_data()’</p></li>
+<li><p><strong>height_resol</strong> – height resolution, float</p></li>
+<li><p><strong>class_name</strong> – name of scalar class, returned in output for informational purposes</p></li>
+<li><p><strong>top_n</strong> – optional number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict: key - depth, float; value - if top_n=1 then  SimpleNamespace( ‘colour’= RGBA float tuple, ‘className’= class name, ‘classText’= mineral name ) &amp; if top_n&gt;1 then [ SimpleNamespace(..) .. ]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_boreholes_list">
+<span class="sig-name descname"><span class="pre">get_boreholes_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_boreholes_list" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:</p>
+<p>‘nvcl_id’, ‘identifier’, ‘name’, ‘description’, ‘purpose’, ‘status’, ‘drillingMethod’, ‘operator’, ‘driller’, ‘drillStartDate’, ‘drillEndDate’, ‘startPoint’, ‘inclinationType’, ‘href’, ‘boreholeMaterialCustodian’, ‘boreholeLength_m’, ‘elevation_m’, ‘elevation_srs’, ‘positionalAccuracy’, ‘source’, ‘x’, ‘y, ‘z’, ‘parentBorehole_uri’, ‘metadata_uri’, ‘genericSymbolizer’</p>
+<dl class="simple">
+<dt>NB:</dt><dd><ol class="arabic simple">
+<li><p>Depending on the WFS, not all fields will have values</p></li>
+<li><p>‘href’ corresponds to ‘gsmlp:identifier’</p></li>
+<li><p>‘x’, ‘y’, ‘z’ are x-coordinate, y-coordinate and elevation</p></li>
+<li><p>‘nvcl_id’ is the GML ‘id’, used as an id in the NVCL services</p></li>
+<li><p>Use ‘vars()’ function to convert SimpleNamespace to a dict</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of SimpleNamespace whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_classifications">
+<span class="sig-name descname"><span class="pre">get_classifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_classifications" title="Link to this definition"></a></dt>
+<dd><p>generate a list of classifications available for a standard algorithm or free classification type scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – a list of log ids obtained through calling ‘get_scalar_logs()’</p></li>
+<li><p><strong>algorithm_id</strong> – obtained from the getAlgorithms service</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>scalar data in CSV format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_dataset_list">
+<span class="sig-name descname"><span class="pre">get_dataset_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_dataset_list" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of dataset objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter, the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id, created_date, (optional datetime object), modified_date (optional datetime object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_datasetid_list">
+<span class="sig-name descname"><span class="pre">get_datasetid_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_datasetid_list" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of dataset ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter, the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of dataset ids</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_feature_list">
+<span class="sig-name descname"><span class="pre">get_feature_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_feature_list" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:</p>
+<p>‘nvcl_id’, ‘identifier’, ‘name’, ‘description’, ‘purpose’, ‘status’, ‘drillingMethod’, ‘operator’, ‘driller’, ‘drillStartDate’, ‘drillEndDate’, ‘startPoint’, ‘inclinationType’, ‘href’, ‘boreholeMaterialCustodian’, ‘boreholeLength_m’, ‘elevation_m’, ‘elevation_srs’, ‘positionalAccuracy’, ‘source’, ‘x’, ‘y, ‘z’, ‘parentBorehole_uri’, ‘metadata_uri’, ‘genericSymbolizer’</p>
+<dl class="simple">
+<dt>NB:</dt><dd><ol class="arabic simple">
+<li><p>Depending on the WFS, not all fields will have values</p></li>
+<li><p>‘href’ corresponds to ‘gsmlp:identifier’</p></li>
+<li><p>‘x’, ‘y’, ‘z’ are x-coordinate, y-coordinate and elevation</p></li>
+<li><p>‘nvcl_id’ is the GML ‘id’, used as an id in the NVCL services</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_imagelog_data">
+<span class="sig-name descname"><span class="pre">get_imagelog_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_imagelog_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a set of image log data for a particular borehole</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
+the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
+log_id, log_name, sample_count, modified_date (optional)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_imagery_imglogs">
+<span class="sig-name descname"><span class="pre">get_imagery_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_imagery_imglogs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves ‘Imagery’ log objects from mosaic service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_logs_data">
+<span class="sig-name descname"><span class="pre">get_logs_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_logs_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a set of generic log data for a particular borehole, given an nvcl id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
+the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
+log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
+created_date, modified_date (optional datetime objects not supported by all services)
+NB: ‘mask_log_id’ is not supported by all services and may be an empty string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_mosaic_image">
+<span class="sig-name descname"><span class="pre">get_mosaic_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_mosaic_image" title="Link to this definition"></a></dt>
+<dd><p>Retrieves images of NVCL core trays</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_mosaic_imglogs()’ or ‘get_tray_thumb_imglogs()’ or ‘get_tray_image_imglogs()’ or ‘get_imagery_imglogs()’</p></li>
+<li><p><strong>options</strong> – optional parameters:
+width: number of column the images are to be displayed, default value=3 (set width to 1 for full size images)
+startsampleno: the first sample image to be displayed, default value=0
+endsampleno: the last sample image to be displayed, default value=99999</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>NVCL core tray images</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_mosaic_imglogs">
+<span class="sig-name descname"><span class="pre">get_mosaic_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_mosaic_imglogs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of ‘Mosaic’ log objects from mosaic service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_nvcl_id_list">
+<span class="sig-name descname"><span class="pre">get_nvcl_id_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_nvcl_id_list" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of NVCL ids, can be used as input to other ‘nvcl_kit’ API
+calls e.g. get_spectrallog_data()</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of NVCL id strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_profilometer_data">
+<span class="sig-name descname"><span class="pre">get_profilometer_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_profilometer_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a set of profilometer logs for a particular borehole</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
+the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
+log_id, log_name, sample_count, floats_per_sample,
+min_val, max_val</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_profilometer_datasets">
+<span class="sig-name descname"><span class="pre">get_profilometer_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proflog_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_profilometer_datasets" title="Link to this definition"></a></dt>
+<dd><p>Gets profilometer datasets in JSON format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>proflog_id</strong> – profilometer log id, retrieved using ‘get_profilometer_data’ API</p></li>
+<li><p><strong>start_sample_no</strong> – retrieve sample numbers starting from this string e.g. ‘0’</p></li>
+<li><p><strong>end_sample_no</strong> – retrieve sample numbers ending with this string e.g. ‘2’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>raw profilometer data as a list of ‘SimpleNamespace’ objects; keys are:  “sampleNo” &amp; “floatprofdata”
+returns an empty list upon error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_sampled_scalar_data">
+<span class="sig-name descname"><span class="pre">get_sampled_scalar_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_sampled_scalar_data" title="Link to this definition"></a></dt>
+<dd><p>Returns data in downsampled format, to a certain height resolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_scalar_logs()’</p></li>
+<li><p><strong>outputformat</strong> – (optional) string ‘csv’ or ‘json’</p></li>
+<li><p><strong>startdepth</strong> – (optional) start of depth range, in metres from borehole
+collar</p></li>
+<li><p><strong>enddepth</strong> – (optional) end of depth range, in metres from borehole
+collar</p></li>
+<li><p><strong>interval</strong> – (optional) resolution to bin or average over</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_scalar_data">
+<span class="sig-name descname"><span class="pre">get_scalar_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_scalar_data" title="Link to this definition"></a></dt>
+<dd><p>Downloads scalar data in CSV format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_id_list</strong> – a list of log ids obtained through calling ‘get_scalar_logs()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>scalar data in CSV format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_scalar_logs">
+<span class="sig-name descname"><span class="pre">get_scalar_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_scalar_logs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of log objects for scalar plot service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset_id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects, attributes are: log_id, log_name, is_public, log_type, algorithm_id, mask_log_id. ‘mask_log_id’ is not supported by all services and may be an empty string. On error returns empty list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_spectrallog_data">
+<span class="sig-name descname"><span class="pre">get_spectrallog_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a set of spectral log data for a particular borehole</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
+the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
+log_id, log_name, wavelength_units, sample_count, script,
+wavelengths</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_spectrallog_datasets">
+<span class="sig-name descname"><span class="pre">get_spectrallog_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_datasets" title="Link to this definition"></a></dt>
+<dd><p>Retrieves spectral log datasets as a binary string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_spectrallog_data()’</p></li>
+<li><p><strong>start_sample_no</strong> – retrieve sample numbers starting from this string e.g. ‘0’</p></li>
+<li><p><strong>end_sample_no</strong> – retrieve sample numbers ending with this string e.g. ‘2’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a binary text string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_depths">
+<span class="sig-name descname"><span class="pre">get_tray_depths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_depths" title="Link to this definition"></a></dt>
+<dd><p>Gets tray depths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’ or ‘get_tray_imglogs()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects, with attributes: ‘sample_no’, ‘start_value’ and ‘end_value’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_imglogs">
+<span class="sig-name descname"><span class="pre">get_tray_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_imglogs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves ‘Tray Image’ log objects from mosaic service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_html">
+<span class="sig-name descname"><span class="pre">get_tray_thumb_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_html" title="Link to this definition"></a></dt>
+<dd><p>Gets core tray thumbnail images as HTML</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_id</strong> – obtained through calling ‘get_datasetid_list()’</p></li>
+<li><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’</p></li>
+<li><p><strong>width</strong> – specify the number of column the images are to be displayed, default value=3</p></li>
+<li><p><strong>startsampleno</strong> – the first sample image to be displayed, default value=0</p></li>
+<li><p><strong>endsampleno</strong> – the last sample image to be displayed, default value=99999</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>thumbnail image in HTML format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_imglogs">
+<span class="sig-name descname"><span class="pre">get_tray_thumb_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_imglogs" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a list of ‘Tray Thumbnail Images’ log objects from mosaic service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_jpg">
+<span class="sig-name descname"><span class="pre">get_tray_thumb_jpg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_no</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_jpg" title="Link to this definition"></a></dt>
+<dd><p>Gets core tray thumbnail images as JPEG</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’</p></li>
+<li><p><strong>sample_no</strong> – sample number, string e.g. ‘0’,’1’,’2’…  optional, default is ‘0’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>thumbnail image in JPEG format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.plot_scalar_png">
+<span class="sig-name descname"><span class="pre">plot_scalar_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.plot_scalar_png" title="Link to this definition"></a></dt>
+<dd><p>Draws a plot as an image in PNG format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_scalar_logs()’</p></li>
+<li><p><strong>startdepth</strong> – (optional) the start depth of a borehole collar,
+default value=0</p></li>
+<li><p><strong>enddepth</strong> – (optional) the end depth of a borehole collar,
+default value=99999</p></li>
+<li><p><strong>samplinginterval</strong> – (optional) the interval of the sampling,
+default value=1</p></li>
+<li><p><strong>width</strong> – (optional) the width of the image in pixel, default value=300</p></li>
+<li><p><strong>height</strong> – (optional) the height of the image in pixel,
+default value=600</p></li>
+<li><p><strong>graphtype</strong> – (optional) an integer range from 1 to 3,
+1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1</p></li>
+<li><p><strong>legend</strong> – (optional) value=1 or 0, 1 - indicates to show the legend,
+0 to hide it, optional, default to 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2d plot as a PNG image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.plot_scalars_html">
+<span class="sig-name descname"><span class="pre">plot_scalars_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.plot_scalars_html" title="Link to this definition"></a></dt>
+<dd><p>Draws multiple plots, returned in HTML format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id_list</strong> – a list of up to 6 log ids, obtained through calling
+‘get_scalar_logs()’</p></li>
+<li><p><strong>startdepth</strong> – (optional) the start depth of a borehole collar,
+default value=0</p></li>
+<li><p><strong>enddepth</strong> – (optional) the end depth of a borehole collar,
+default value=99999</p></li>
+<li><p><strong>samplinginterval</strong> – (optional) the interval of the sampling,
+default value=1</p></li>
+<li><p><strong>width</strong> – (optional) the width of the image in pixel,
+default value=300</p></li>
+<li><p><strong>height</strong> – (optional) the height of the image in pixel,
+default value=600</p></li>
+<li><p><strong>graphtype</strong> – (optional) an integer range from 1 to 3,
+1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1</p></li>
+<li><p><strong>legend</strong> – (optional) value=yes or no, if yes - indicate to show the
+legend, default to yes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>one or more 2d plots as HTML</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="nvcl_kit.reader.TIMEOUT">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">TIMEOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#nvcl_kit.reader.TIMEOUT" title="Link to this definition"></a></dt>
+<dd><p>Timeout for querying WFS and NVCL services (seconds)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nvcl_kit.reader.bgr2rgba">
+<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">bgr2rgba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bgr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.bgr2rgba" title="Link to this definition"></a></dt>
+<dd><p>Converts BGR colour integer into an RGB tuple</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bgr</strong> – BGR colour integer</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>RGBA float tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="nvcl-kit-generators">
+<h2>nvcl_kit.generators<a class="headerlink" href="#nvcl-kit-generators" title="Link to this heading"></a></h2>
 </section>
 <section id="module-nvcl_kit.cql_filter">
-<span id="nvcl-kit-cql-filter-module"></span><h2>nvcl_kit.cql_filter module<a class="headerlink" href="#module-nvcl_kit.cql_filter" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-cql-filter"></span><h2>nvcl_kit.cql_filter<a class="headerlink" href="#module-nvcl_kit.cql_filter" title="Link to this heading"></a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="nvcl_kit.cql_filter.LOG_LVL">
 <span class="sig-prename descclassname"><span class="pre">nvcl_kit.cql_filter.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.cql_filter.LOG_LVL" title="Link to this definition"></a></dt>
@@ -174,7 +984,7 @@ Caller can supply a CQL filter</p>
 
 </section>
 <section id="module-nvcl_kit.xml_filter">
-<span id="nvcl-kit-xml-filter-module"></span><h2>nvcl_kit.xml_filter module<a class="headerlink" href="#module-nvcl_kit.xml_filter" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-xml-filter"></span><h2>nvcl_kit.xml_filter<a class="headerlink" href="#module-nvcl_kit.xml_filter" title="Link to this heading"></a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="nvcl_kit.xml_filter.LOG_LVL">
 <span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_filter.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.xml_filter.LOG_LVL" title="Link to this definition"></a></dt>
@@ -226,7 +1036,7 @@ This also implements local feature filtering for ‘nvclCollection’ attribute<
 
 </section>
 <section id="module-nvcl_kit.xml_helpers">
-<span id="nvcl-kit-xml-helpers-module"></span><h2>nvcl_kit.xml_helpers module<a class="headerlink" href="#module-nvcl_kit.xml_helpers" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-xml-helpers"></span><h2>nvcl_kit.xml_helpers<a class="headerlink" href="#module-nvcl_kit.xml_helpers" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="nvcl_kit.xml_helpers.clean_xml_parse">
 <span class="sig-prename descclassname"><span class="pre">nvcl_kit.xml_helpers.</span></span><span class="sig-name descname"><span class="pre">clean_xml_parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.xml_helpers.clean_xml_parse" title="Link to this definition"></a></dt>
@@ -258,7 +1068,7 @@ if no dates were found then an empty dict is returned</p>
 
 </section>
 <section id="module-nvcl_kit.wfs_helpers">
-<span id="nvcl-kit-wfs-helpers-module"></span><h2>nvcl_kit.wfs_helpers module<a class="headerlink" href="#module-nvcl_kit.wfs_helpers" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-wfs-helpers"></span><h2>nvcl_kit.wfs_helpers<a class="headerlink" href="#module-nvcl_kit.wfs_helpers" title="Link to this heading"></a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="nvcl_kit.wfs_helpers.LOG_LVL">
 <span class="sig-prename descclassname"><span class="pre">nvcl_kit.wfs_helpers.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.wfs_helpers.LOG_LVL" title="Link to this definition"></a></dt>
@@ -285,7 +1095,7 @@ fetch data. If <code class="docutils literal notranslate"><span class="pre">erro
 
 </section>
 <section id="module-nvcl_kit.constants">
-<span id="nvcl-kit-constants-module"></span><h2>nvcl_kit.constants module<a class="headerlink" href="#module-nvcl_kit.constants" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-constants"></span><h2>nvcl_kit.constants<a class="headerlink" href="#module-nvcl_kit.constants" title="Link to this heading"></a></h2>
 <p>This module contains shared constants</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="nvcl_kit.constants.Scalar">
@@ -970,673 +1780,11 @@ Australian Journal of Earth Sciences, v. 63, no. 8, p. 929-940, doi:10.1080/0812
 </dd></dl>
 
 </section>
-<section id="nvcl-kit-generators-module">
-<h2>nvcl_kit.generators module<a class="headerlink" href="#nvcl-kit-generators-module" title="Link to this heading"></a></h2>
-</section>
-<section id="nvcl-kit-df-module">
-<h2>nvcl_kit.df module<a class="headerlink" href="#nvcl-kit-df-module" title="Link to this heading"></a></h2>
-</section>
-<section id="module-nvcl_kit.param_builder">
-<span id="nvcl-kit-param-builder-module"></span><h2>nvcl_kit.param_builder module<a class="headerlink" href="#module-nvcl_kit.param_builder" title="Link to this heading"></a></h2>
-<p>This module contains functions used to build a set of NVCL service connection parameters</p>
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.param_builder.LOG_LVL">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.param_builder.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.param_builder.LOG_LVL" title="Link to this definition"></a></dt>
-<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.param_builder.param_builder">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.param_builder.</span></span><span class="sig-name descname"><span class="pre">param_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SimpleNamespace</span></span></span><a class="headerlink" href="#nvcl_kit.param_builder.param_builder" title="Link to this definition"></a></dt>
-<dd><p>Builds a set of parameters which can be passed to ‘NVCLReader’ for connecting to an NVCL service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>provider</strong> – state or territory name, one of: ‘nsw’, ‘tas’, ‘vic’, ‘qld’, ‘nt’, ‘sa’, ‘wa’, ‘csiro’</p></li>
-<li><p><strong>options</strong> – optional keyword parameters
-bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {“west”: -180.0,”south”: -90.0,”east”: 180.0,”north”: 0.0})
-polygon: 2D ‘shapely.Polygon’ y/x axis order, EPSG:4326, limit to boreholes within this polygon
-depths: Tuple of range of depths (min,max) [metres]
-wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
-nvcl_url: URL of NVCL service
-max_boreholes: Maximum number of boreholes to retrieve. If &lt; 1 then all boreholes are loaded, default 0
-use_cql: use “CQL_FILTER” in WFS GetFeature requests. Geoserver only.
-cache_path: the folder path for cache files</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a SimpleNamespace object containing required connection parameters</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="module-nvcl_kit.reader">
-<span id="nvcl-kit-reader-module"></span><h2>nvcl_kit.reader module<a class="headerlink" href="#module-nvcl_kit.reader" title="Link to this heading"></a></h2>
-<p>This module is the main interface used to NVCL borehole data from the NVCL services..</p>
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.reader.ENFORCE_IS_PUBLIC">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">ENFORCE_IS_PUBLIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#nvcl_kit.reader.ENFORCE_IS_PUBLIC" title="Link to this definition"></a></dt>
-<dd><p>Enforce the ‘is_public’ flag , i.e. any data with ‘is_public’ set to ‘false’
-will be ignored</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.reader.LOG_LVL">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#nvcl_kit.reader.LOG_LVL" title="Link to this definition"></a></dt>
-<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.reader.MAX_DEPTH">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">MAX_DEPTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000.0</span></em><a class="headerlink" href="#nvcl_kit.reader.MAX_DEPTH" title="Link to this definition"></a></dt>
-<dd><p>Default maximum depth to search for boreholes</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.reader.MIN_DEPTH">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">MIN_DEPTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#nvcl_kit.reader.MIN_DEPTH" title="Link to this definition"></a></dt>
-<dd><p>Default minimum depth to search for boreholes</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">NVCLReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_lvl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_bhlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_backoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A class to extract NVCL borehole data (see README.md for details)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>param_obj</strong> – <p>SimpleNamespace() object with parameters.
-It is recommended to utilise the ‘param_builder’ function to create it.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">param_obj</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">&#39;sa&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>But if you want to create your own then here are the details:</p>
-<p>param_obj fields are:</p>
-<blockquote>
-<div><ul>
-<li><p>NVCL_URL - URL of NVCL service</p></li>
-<li><p>WFS_URL - URL of WFS service, GeoSciML V4.1 BoreholeView</p></li>
-<li><p>PROV - provider e.g. ‘nt’ ‘wa’ etc.</p></li>
-<li><p>DEPTHS - (optional) Tuple of range of depths (min,max) [metres]</p></li>
-<li><p>POLYGON - (optional) 2D ‘shapely.Polygon’ y/x axis order EPSG:4326, limit to boreholes inside this polygon</p></li>
-<li><p>BBOX - (optional) 2D bounding box in EPSG:4326, only boreholes within box are retrieved</p></li>
-<li><p>MAX_BOREHOLES - (optional) Maximum number of boreholes to retrieve. If &lt; 1 then all boreholes are loaded</p></li>
-</ul>
-</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
-<span class="n">param_obj</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">()</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">BBOX</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;west&quot;</span><span class="p">:</span> <span class="mf">132.76</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">:</span> <span class="mf">134.39</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">26.87</span> <span class="p">}</span>
-<span class="c1"># Or use a POLYGON instead of a BBOX - Note the y/x axis ordering</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">POLYGON</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span> <span class="p">((</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">))</span> <span class="p">)</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">DEPTHS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">900.0</span><span class="p">)</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">WFS_URL</span> <span class="o">=</span> <span class="s2">&quot;http://blah.blah.blah/geoserver/wfs&quot;</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">NVCL_URL</span> <span class="o">=</span> <span class="s2">&quot;https://blah.blah.blah/nvcl/NVCLDataServices&quot;</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">MAX_BOREHOLES</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">PROV</span> <span class="o">=</span> <span class="s1">&#39;blah&#39;</span>
-</pre></div>
-</div>
-</p></li>
-<li><p><strong>wfs</strong> – DEPRECATED optional owslib ‘WebFeatureService’ object</p></li>
-<li><p><strong>use_nds</strong> – optional. If True, do not call WFS to get boreholes, instead use NVCLDataServices to gather boreholes</p></li>
-<li><p><strong>log_lvl</strong> – optional logging level (see ‘logging’ package),
-default is logging.INFO</p></li>
-<li><p><strong>skip_bhlist</strong> – optional fast init NVCLReader without loading the bhlist</p></li>
-<li><p><strong>retries</strong> – optional. Override the number of retries for HTTP requests to NVCL services.</p></li>
-<li><p><strong>retry_backoff</strong> – optional. Override the backoff factor for retries.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt><strong>NOTE:</strong></dt><dd><ul class="simple">
-<li><p><strong>Check if ‘wfs’ is not ‘None’ to see if any boreholes were found</strong></p></li>
-<li><p><strong>Check if ‘wfs_error’ is ‘True’ when there is a provider error</strong></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.filter_feat_list">
-<span class="sig-name descname"><span class="pre">filter_feat_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_ids_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.filter_feat_list" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>Returns a list of borehole features given a filter parameter</dt><dd><p>Filter parameters can be one of those returned by ‘get_feature_list’ e.g.</p>
-<p>new_list = filter_feat_list(name=’ML006’)</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>kwargs</strong> – keyword arguments key is name searched for, val is a list of possible values or a single value</p></li>
-<li><p><strong>nvcl_ids_only</strong> – if True will return a list of nvcl_id</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of borehole features or empty list if unsuccessful</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_algorithms">
-<span class="sig-name descname"><span class="pre">get_algorithms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_algorithms" title="Link to this definition"></a></dt>
-<dd><p>Gets a dict of algorithm output ids and their versions</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a dict of { ‘algorithmOutputId1’: ‘version1’, ‘algorithmOutputId2’: ‘version2’, … }</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_all_imglogs">
-<span class="sig-name descname"><span class="pre">get_all_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_all_imglogs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of all log objects from mosaic service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects, attributes are: log_id, log_name, sample_count. On error returns empty list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_bhuri_list">
-<span class="sig-name descname"><span class="pre">get_bhuri_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_bhuri_list" title="Link to this definition"></a></dt>
-<dd><p>Retrieves all borehole URIs</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of URIs as strings</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_borehole_data">
-<span class="sig-name descname"><span class="pre">get_borehole_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_resol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_borehole_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieves borehole mineral data for a borehole, will only return mineral class data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – borehole log identifier, string e.g. ‘ce2df1aa-d3e7-4c37-97d5-5115fc3c33d’ This is the first id from the list of triplets [log id, log type, log name] fetched from API calls such as ‘get_logs_data()’</p></li>
-<li><p><strong>height_resol</strong> – height resolution, float</p></li>
-<li><p><strong>class_name</strong> – name of scalar class, returned in output for informational purposes</p></li>
-<li><p><strong>top_n</strong> – optional number</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict: key - depth, float; value - if top_n=1 then  SimpleNamespace( ‘colour’= RGBA float tuple, ‘className’= class name, ‘classText’= mineral name ) &amp; if top_n&gt;1 then [ SimpleNamespace(..) .. ]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_boreholes_list">
-<span class="sig-name descname"><span class="pre">get_boreholes_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_boreholes_list" title="Link to this definition"></a></dt>
-<dd><p>Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:</p>
-<p>‘nvcl_id’, ‘identifier’, ‘name’, ‘description’, ‘purpose’, ‘status’, ‘drillingMethod’, ‘operator’, ‘driller’, ‘drillStartDate’, ‘drillEndDate’, ‘startPoint’, ‘inclinationType’, ‘href’, ‘boreholeMaterialCustodian’, ‘boreholeLength_m’, ‘elevation_m’, ‘elevation_srs’, ‘positionalAccuracy’, ‘source’, ‘x’, ‘y, ‘z’, ‘parentBorehole_uri’, ‘metadata_uri’, ‘genericSymbolizer’</p>
-<dl class="simple">
-<dt>NB:</dt><dd><ol class="arabic simple">
-<li><p>Depending on the WFS, not all fields will have values</p></li>
-<li><p>‘href’ corresponds to ‘gsmlp:identifier’</p></li>
-<li><p>‘x’, ‘y’, ‘z’ are x-coordinate, y-coordinate and elevation</p></li>
-<li><p>‘nvcl_id’ is the GML ‘id’, used as an id in the NVCL services</p></li>
-<li><p>Use ‘vars()’ function to convert SimpleNamespace to a dict</p></li>
-</ol>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a list of SimpleNamespace whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_classifications">
-<span class="sig-name descname"><span class="pre">get_classifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_classifications" title="Link to this definition"></a></dt>
-<dd><p>generate a list of classifications available for a standard algorithm or free classification type scalar.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – a list of log ids obtained through calling ‘get_scalar_logs()’</p></li>
-<li><p><strong>algorithm_id</strong> – obtained from the getAlgorithms service</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>scalar data in CSV format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_dataset_list">
-<span class="sig-name descname"><span class="pre">get_dataset_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_dataset_list" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of dataset objects</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter, the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects, attributes are: dataset_id, dataset_name, borehole_uri, tray_id, section_id, domain_id, created_date, (optional datetime object), modified_date (optional datetime object)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_datasetid_list">
-<span class="sig-name descname"><span class="pre">get_datasetid_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_datasetid_list" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of dataset ids</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter, the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of dataset ids</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_feature_list">
-<span class="sig-name descname"><span class="pre">get_feature_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_feature_list" title="Link to this definition"></a></dt>
-<dd><p>Returns a list of SimpleNamespace objects, extracted from WFS requests of boreholes. Fields are mostly taken from GeoSciML v4.1 Borehole View:</p>
-<p>‘nvcl_id’, ‘identifier’, ‘name’, ‘description’, ‘purpose’, ‘status’, ‘drillingMethod’, ‘operator’, ‘driller’, ‘drillStartDate’, ‘drillEndDate’, ‘startPoint’, ‘inclinationType’, ‘href’, ‘boreholeMaterialCustodian’, ‘boreholeLength_m’, ‘elevation_m’, ‘elevation_srs’, ‘positionalAccuracy’, ‘source’, ‘x’, ‘y, ‘z’, ‘parentBorehole_uri’, ‘metadata_uri’, ‘genericSymbolizer’</p>
-<dl class="simple">
-<dt>NB:</dt><dd><ol class="arabic simple">
-<li><p>Depending on the WFS, not all fields will have values</p></li>
-<li><p>‘href’ corresponds to ‘gsmlp:identifier’</p></li>
-<li><p>‘x’, ‘y’, ‘z’ are x-coordinate, y-coordinate and elevation</p></li>
-<li><p>‘nvcl_id’ is the GML ‘id’, used as an id in the NVCL services</p></li>
-</ol>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_imagelog_data">
-<span class="sig-name descname"><span class="pre">get_imagelog_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_imagelog_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a set of image log data for a particular borehole</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
-the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
-log_id, log_name, sample_count, modified_date (optional)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_imagery_imglogs">
-<span class="sig-name descname"><span class="pre">get_imagery_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_imagery_imglogs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves ‘Imagery’ log objects from mosaic service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_logs_data">
-<span class="sig-name descname"><span class="pre">get_logs_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_logs_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a set of generic log data for a particular borehole, given an nvcl id</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
-the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
-log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
-created_date, modified_date (optional datetime objects not supported by all services)
-NB: ‘mask_log_id’ is not supported by all services and may be an empty string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_mosaic_image">
-<span class="sig-name descname"><span class="pre">get_mosaic_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_mosaic_image" title="Link to this definition"></a></dt>
-<dd><p>Retrieves images of NVCL core trays</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – obtained through calling ‘get_mosaic_imglogs()’ or ‘get_tray_thumb_imglogs()’ or ‘get_tray_image_imglogs()’ or ‘get_imagery_imglogs()’</p></li>
-<li><p><strong>options</strong> – optional parameters:
-width: number of column the images are to be displayed, default value=3 (set width to 1 for full size images)
-startsampleno: the first sample image to be displayed, default value=0
-endsampleno: the last sample image to be displayed, default value=99999</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>NVCL core tray images</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_mosaic_imglogs">
-<span class="sig-name descname"><span class="pre">get_mosaic_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_mosaic_imglogs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of ‘Mosaic’ log objects from mosaic service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_nvcl_id_list">
-<span class="sig-name descname"><span class="pre">get_nvcl_id_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_nvcl_id_list" title="Link to this definition"></a></dt>
-<dd><p>Returns a list of NVCL ids, can be used as input to other ‘nvcl_kit’ API
-calls e.g. get_spectrallog_data()</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a list of NVCL id strings</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_profilometer_data">
-<span class="sig-name descname"><span class="pre">get_profilometer_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_profilometer_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a set of profilometer logs for a particular borehole</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
-the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
-log_id, log_name, sample_count, floats_per_sample,
-min_val, max_val</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_profilometer_datasets">
-<span class="sig-name descname"><span class="pre">get_profilometer_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proflog_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_profilometer_datasets" title="Link to this definition"></a></dt>
-<dd><p>Gets profilometer datasets in JSON format</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>proflog_id</strong> – profilometer log id, retrieved using ‘get_profilometer_data’ API</p></li>
-<li><p><strong>start_sample_no</strong> – retrieve sample numbers starting from this string e.g. ‘0’</p></li>
-<li><p><strong>end_sample_no</strong> – retrieve sample numbers ending with this string e.g. ‘2’</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>raw profilometer data as a list of ‘SimpleNamespace’ objects; keys are:  “sampleNo” &amp; “floatprofdata”
-returns an empty list upon error</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_sampled_scalar_data">
-<span class="sig-name descname"><span class="pre">get_sampled_scalar_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_sampled_scalar_data" title="Link to this definition"></a></dt>
-<dd><p>Returns data in downsampled format, to a certain height resolution</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – obtained through calling ‘get_scalar_logs()’</p></li>
-<li><p><strong>outputformat</strong> – (optional) string ‘csv’ or ‘json’</p></li>
-<li><p><strong>startdepth</strong> – (optional) start of depth range, in metres from borehole
-collar</p></li>
-<li><p><strong>enddepth</strong> – (optional) end of depth range, in metres from borehole
-collar</p></li>
-<li><p><strong>interval</strong> – (optional) resolution to bin or average over</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_scalar_data">
-<span class="sig-name descname"><span class="pre">get_scalar_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_scalar_data" title="Link to this definition"></a></dt>
-<dd><p>Downloads scalar data in CSV format</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_id_list</strong> – a list of log ids obtained through calling ‘get_scalar_logs()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>scalar data in CSV format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_scalar_logs">
-<span class="sig-name descname"><span class="pre">get_scalar_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_scalar_logs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of log objects for scalar plot service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset_id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects, attributes are: log_id, log_name, is_public, log_type, algorithm_id, mask_log_id. ‘mask_log_id’ is not supported by all services and may be an empty string. On error returns empty list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_spectrallog_data">
-<span class="sig-name descname"><span class="pre">get_spectrallog_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_data" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a set of spectral log data for a particular borehole</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
-the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace() objects with attributes:
-log_id, log_name, wavelength_units, sample_count, script,
-wavelengths</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_spectrallog_datasets">
-<span class="sig-name descname"><span class="pre">get_spectrallog_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_spectrallog_datasets" title="Link to this definition"></a></dt>
-<dd><p>Retrieves spectral log datasets as a binary string</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – obtained through calling ‘get_spectrallog_data()’</p></li>
-<li><p><strong>start_sample_no</strong> – retrieve sample numbers starting from this string e.g. ‘0’</p></li>
-<li><p><strong>end_sample_no</strong> – retrieve sample numbers ending with this string e.g. ‘2’</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a binary text string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_depths">
-<span class="sig-name descname"><span class="pre">get_tray_depths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_depths" title="Link to this definition"></a></dt>
-<dd><p>Gets tray depths</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’ or ‘get_tray_imglogs()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects, with attributes: ‘sample_no’, ‘start_value’ and ‘end_value’</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_imglogs">
-<span class="sig-name descname"><span class="pre">get_tray_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_imglogs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves ‘Tray Image’ log objects from mosaic service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_html">
-<span class="sig-name descname"><span class="pre">get_tray_thumb_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_html" title="Link to this definition"></a></dt>
-<dd><p>Gets core tray thumbnail images as HTML</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset_id</strong> – obtained through calling ‘get_datasetid_list()’</p></li>
-<li><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’</p></li>
-<li><p><strong>width</strong> – specify the number of column the images are to be displayed, default value=3</p></li>
-<li><p><strong>startsampleno</strong> – the first sample image to be displayed, default value=0</p></li>
-<li><p><strong>endsampleno</strong> – the last sample image to be displayed, default value=99999</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>thumbnail image in HTML format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_imglogs">
-<span class="sig-name descname"><span class="pre">get_tray_thumb_imglogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_imglogs" title="Link to this definition"></a></dt>
-<dd><p>Retrieves a list of ‘Tray Thumbnail Images’ log objects from mosaic service</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dataset_id</strong> – dataset id, taken from ‘get_datasetid_list()’ or ‘get_dataset_list()’</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of SimpleNamespace objects. Fields are: ‘log_id’, ‘log_name’, ‘sample_count’. On error returns an empty list.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_tray_thumb_jpg">
-<span class="sig-name descname"><span class="pre">get_tray_thumb_jpg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_no</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_tray_thumb_jpg" title="Link to this definition"></a></dt>
-<dd><p>Gets core tray thumbnail images as JPEG</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – obtained through calling ‘get_tray_thumb_imglogs()’</p></li>
-<li><p><strong>sample_no</strong> – sample number, string e.g. ‘0’,’1’,’2’…  optional, default is ‘0’</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>thumbnail image in JPEG format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.plot_scalar_png">
-<span class="sig-name descname"><span class="pre">plot_scalar_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.plot_scalar_png" title="Link to this definition"></a></dt>
-<dd><p>Draws a plot as an image in PNG format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id</strong> – obtained through calling ‘get_scalar_logs()’</p></li>
-<li><p><strong>startdepth</strong> – (optional) the start depth of a borehole collar,
-default value=0</p></li>
-<li><p><strong>enddepth</strong> – (optional) the end depth of a borehole collar,
-default value=99999</p></li>
-<li><p><strong>samplinginterval</strong> – (optional) the interval of the sampling,
-default value=1</p></li>
-<li><p><strong>width</strong> – (optional) the width of the image in pixel, default value=300</p></li>
-<li><p><strong>height</strong> – (optional) the height of the image in pixel,
-default value=600</p></li>
-<li><p><strong>graphtype</strong> – (optional) an integer range from 1 to 3,
-1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1</p></li>
-<li><p><strong>legend</strong> – (optional) value=1 or 0, 1 - indicates to show the legend,
-0 to hide it, optional, default to 1</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a 2d plot as a PNG image</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.plot_scalars_html">
-<span class="sig-name descname"><span class="pre">plot_scalars_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.plot_scalars_html" title="Link to this definition"></a></dt>
-<dd><p>Draws multiple plots, returned in HTML format</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_id_list</strong> – a list of up to 6 log ids, obtained through calling
-‘get_scalar_logs()’</p></li>
-<li><p><strong>startdepth</strong> – (optional) the start depth of a borehole collar,
-default value=0</p></li>
-<li><p><strong>enddepth</strong> – (optional) the end depth of a borehole collar,
-default value=99999</p></li>
-<li><p><strong>samplinginterval</strong> – (optional) the interval of the sampling,
-default value=1</p></li>
-<li><p><strong>width</strong> – (optional) the width of the image in pixel,
-default value=300</p></li>
-<li><p><strong>height</strong> – (optional) the height of the image in pixel,
-default value=600</p></li>
-<li><p><strong>graphtype</strong> – (optional) an integer range from 1 to 3,
-1=Stacked Bar Chart, 2=Scattered Chart, 3=Line Chart, default value=1</p></li>
-<li><p><strong>legend</strong> – (optional) value=yes or no, if yes - indicate to show the
-legend, default to yes</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>one or more 2d plots as HTML</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="nvcl_kit.reader.TIMEOUT">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">TIMEOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#nvcl_kit.reader.TIMEOUT" title="Link to this definition"></a></dt>
-<dd><p>Timeout for querying WFS and NVCL services (seconds)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="nvcl_kit.reader.bgr2rgba">
-<span class="sig-prename descclassname"><span class="pre">nvcl_kit.reader.</span></span><span class="sig-name descname"><span class="pre">bgr2rgba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bgr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.bgr2rgba" title="Link to this definition"></a></dt>
-<dd><p>Converts BGR colour integer into an RGB tuple</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>bgr</strong> – BGR colour integer</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>RGBA float tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="nvcl-kit-df">
+<h2>nvcl_kit.df<a class="headerlink" href="#nvcl-kit-df" title="Link to this heading"></a></h2>
 </section>
 <section id="module-nvcl_kit.svc_interface">
-<span id="nvcl-kit-svc-interface-module"></span><h2>nvcl_kit.svc_interface module<a class="headerlink" href="#module-nvcl_kit.svc_interface" title="Link to this heading"></a></h2>
+<span id="nvcl-kit-svc-interface"></span><h2>nvcl_kit.svc_interface<a class="headerlink" href="#module-nvcl_kit.svc_interface" title="Link to this heading"></a></h2>
 <p>This forms the interface between the ‘reader’ class and the low-level web APIs.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="nvcl_kit.svc_interface.LOG_LVL">
@@ -1645,16 +1793,13 @@ legend, default to yes</p></li>
 </dd></dl>
 
 </section>
-<section id="module-nvcl_kit">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nvcl_kit" title="Link to this heading"></a></h2>
-</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="nvcl_kit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../citation.html" class="btn btn-neutral float-left" title="Citation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

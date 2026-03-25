@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction: How to Extract Australian NVCL Borehole Data &mdash; nvcl_kit  documentation</title>
+  <title>Getting Started &mdash; nvcl_kit  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="nvcl_kit" href="source/modules.html" />
-    <link rel="prev" title="Welcome to nvcl_kit’s documentation!" href="index.html" /> 
+    <link rel="next" title="Examples" href="source/examples/examples.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,10 +42,20 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction: How to Extract Australian NVCL Borehole Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/modules.html">nvcl_kit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-nvcl-kit">Installing nvcl-kit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-extract-australian-nvcl-borehole-data">How to Extract Australian NVCL Borehole Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source/examples/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/nvcl_kit.html">nvcl_kit API</a></li>
 </ul>
 
         </div>
@@ -62,7 +72,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Introduction: How to Extract Australian NVCL Borehole Data</li>
+      <li class="breadcrumb-item active">Getting Started</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -72,8 +82,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="introduction-how-to-extract-australian-nvcl-borehole-data">
-<h1>Introduction: How to Extract Australian NVCL Borehole Data<a class="headerlink" href="#introduction-how-to-extract-australian-nvcl-borehole-data" title="Link to this heading"></a></h1>
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="installing-nvcl-kit">
+<h2>Installing nvcl-kit<a class="headerlink" href="#installing-nvcl-kit" title="Link to this heading"></a></h2>
+<p>nvcl-kit is available on <a class="reference external" href="https://pypi.org/project/nvcl-kit/">PyPi</a>, and can be downloaded with pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>nvcl-kit
+</pre></div>
+</div>
+</section>
+<section id="how-to-extract-australian-nvcl-borehole-data">
+<h2>How to Extract Australian NVCL Borehole Data<a class="headerlink" href="#how-to-extract-australian-nvcl-borehole-data" title="Link to this heading"></a></h2>
 <p><strong>1. Call the ‘param_builder’ function, fill it with parameters</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">nvcl_kit.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">NVCLReader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nvcl_kit.param_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">param_builder</span>
@@ -264,13 +283,14 @@ data</strong></p>
 </pre></div>
 </div>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to nvcl_kit’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="source/modules.html" class="btn btn-neutral float-right" title="nvcl_kit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="source/examples/examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
