@@ -1,5 +1,5 @@
 """
-This module is the main interface used to NVCL borehole data from the NVCL services..
+This module is the main interface used to NVCL borehole data from the NVCL services.
 """
 
 import sys
