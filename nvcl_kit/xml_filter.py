@@ -93,10 +93,13 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
              "resultType": "results",
              # NB: NT was misconfigured and returned no features if 'maxFeatures' is used
              "maxFeatures": "10000",
-             "startIndex": str(batch_count)
+             "startIndex": str(batch_count),
+             "sortBy": "gsmlp:nvclCollection+D"
            }
         if xml_filter is None or len(xml_filter) > 0:
             data["filter"] = xml_filter
+        else:
+            data["filter"] = "<ogc:Filter><PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:Filter>"
         # Send the POST request with the XML payload 
         try:
             with requests.Session() as s:
@@ -173,6 +176,6 @@ def make_xml_filter(bbox: dict, poly: Polygon) -> str:
         # Filter within bbox or polygon
         polygon = make_poly_coords(bbox, poly)
         poly_prop = make_polygon_prop(polygon)
-        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}</ogc:And></ogc:Filter>"""
+        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}<PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:And></ogc:Filter>"""
     return ""
 
