@@ -66,7 +66,7 @@ def make_polygon_prop(coords: str) -> str:
 
 def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) -> list:
     """
-    Makes an OGC WFS GetFeature v1.0.0 request using POST and expecting a JSON response
+    Makes an OGC WFS GetFeature v1.1.0 request using POST and expecting a JSON response
     This also implements local feature filtering for 'nvclCollection' attribute
 
     :param url: OGC WFS URL
@@ -85,18 +85,30 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
 
     # Loop which pages through all the WFS requests
     while not done:
-        data = { "service": "WFS",
-             "version": "1.0.0",
-             "request": "GetFeature",
-             "typeName": "gsmlp:BoreholeView",
-             "outputFormat": "json",
-             "resultType": "results",
-             # NB: NT was misconfigured and returned no features if 'maxFeatures' is used
-             "maxFeatures": "10000",
-             "startIndex": str(batch_count)
-           }
-        if xml_filter is None or len(xml_filter) > 0:
-            data["filter"] = xml_filter
+        # Check the filter is a non-empty string, otherwise use a default filter which just checks for 'nvclCollection' = true
+        if not isinstance(xml_filter, str):
+            xml_filter = ""
+        data = f"""
+            <GetFeature
+            xmlns:ogc="http://www.opengis.net/ogc"
+            service="WFS"
+            version="1.1.0"
+            maxFeatures="10000"
+            startIndex="{str(batch_count)}"
+            resultType="results"
+            outputFormat="json"
+            >
+                <Query typeName="gsmlp:BoreholeView">
+                    {xml_filter}
+                    <ogc:SortBy>
+                        <ogc:SortProperty>
+                            <ogc:PropertyName>nvclCollection</ogc:PropertyName>
+                            <ogc:SortOrder>DESC</ogc:SortOrder>
+                        </ogc:SortProperty>
+                    </ogc:SortBy>
+                </Query>
+            </GetFeature>
+            """
         # Send the POST request with the XML payload 
         try:
             with requests.Session() as s:
@@ -167,12 +179,12 @@ def make_poly_coords(bbox: dict, poly: Polygon) -> str:
 def make_xml_filter(bbox: dict, poly: Polygon) -> str:
     """
     Makes an XML filter with optional polygon or bbox constraints
-    Used in OGC WFS v1.0.0 "FILTER" parameter
+    Used in OGC WFS v1.1.0 "FILTER" parameter
     """
     if bbox is not None or poly is not None:
         # Filter within bbox or polygon
         polygon = make_poly_coords(bbox, poly)
         poly_prop = make_polygon_prop(polygon)
-        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}</ogc:And></ogc:Filter>"""
-    return ""
+        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}<PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:And></ogc:Filter>"""
+    return "<ogc:Filter><PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:Filter>"
 
