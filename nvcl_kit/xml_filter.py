@@ -66,7 +66,7 @@ def make_polygon_prop(coords: str) -> str:
 
 def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) -> list:
     """
-    Makes an OGC WFS GetFeature v1.0.0 request using POST and expecting a JSON response
+    Makes an OGC WFS GetFeature v1.1.0 request using POST and expecting a JSON response
     This also implements local feature filtering for 'nvclCollection' attribute
 
     :param url: OGC WFS URL
