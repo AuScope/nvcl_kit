@@ -22,7 +22,7 @@ PROVS = ['vic', 'Victoria', 'sa', 'South Australia', 'nsw', 'New South Wales', '
                      'Northern Territory', 'wa', 'Western Australia', 'tas', 'Tasmania', 'qld',
                      'Queensland']
 
-OPTS = ['bbox', 'polygon', 'depths', 'wfs_url', 'nvcl_url',
+OPTS = ['bbox', 'polygon', 'polygon_srid', 'remove_rings', 'depths', 'wfs_url', 'nvcl_url',
                    'max_boreholes', 'use_cql', 'cache_path']
 
 

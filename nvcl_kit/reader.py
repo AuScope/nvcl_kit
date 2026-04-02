@@ -11,7 +11,7 @@ import logging
 import json
 from types import SimpleNamespace
 
-from shapely import Polygon, LinearRing
+from shapely import MultiPolygon, Polygon, LinearRing
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
@@ -137,12 +137,12 @@ class NVCLReader:
             return
         self.param_obj = param_obj
 
-        # Check POLYGON value, it should be a shapely 'Polygon', but still support 'LinearRing' for
+        # Check POLYGON value, it should be a shapely 'Polygon' or 'MultiPolygon', but still support 'LinearRing' for
         # backwards compatibility
         if hasattr(self.param_obj, 'POLYGON'):
             self.param_obj.BBOX = None
-            if not isinstance(self.param_obj.POLYGON, Polygon) and not isinstance(self.param_obj.POLYGON, LinearRing):
-                LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon")
+            if not isinstance(self.param_obj.POLYGON, (Polygon, LinearRing, MultiPolygon)):
+                LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon or shapely.MultiPolygon")
                 return
 
         # Check BBOX value

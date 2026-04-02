@@ -38,7 +38,12 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
     '''
     prov = param_obj.PROV
     if param_obj.USE_CQL:
-        cql_filter = make_cql_filter(param_obj.BBOX, param_obj.POLYGON)
+        cql_kwargs = { 'bbox': param_obj.BBOX, 'poly': param_obj.POLYGON }
+        if hasattr(param_obj, 'POLYGON_SRID'):
+            cql_kwargs['poly_srid'] = param_obj.POLYGON_SRID
+        if hasattr(param_obj, 'REMOVE_RINGS'):
+            cql_kwargs['remove_rings'] = param_obj.REMOVE_RINGS
+        cql_filter = make_cql_filter(**cql_kwargs)
         features = make_cql_request(param_obj.WFS_URL, prov, cql_filter, param_obj.MAX_BOREHOLES)
     else:
         xml_filter = make_xml_filter(param_obj.BBOX, param_obj.POLYGON)

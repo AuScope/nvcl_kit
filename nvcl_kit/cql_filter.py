@@ -2,7 +2,7 @@ import sys
 import logging
 from urllib3.util import Retry
 
-from shapely import Polygon
+from shapely import LinearRing, MultiPolygon, Polygon
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.exceptions import HTTPError
@@ -31,15 +31,31 @@ if not LOGGER.hasHandlers():
     # Add handler to LOGGER and set level
     LOGGER.addHandler(HANDLER)
 
-def make_cql_filter(bbox: dict, poly: Polygon) -> str:
+def make_cql_filter(bbox: dict, poly: Polygon|MultiPolygon|LinearRing, poly_srid: int = 4326, remove_rings: bool = False) -> str:
+    """Generates a CQL filter string for filtering boreholes by bounding box or polygon. If both bbox and poly are provided, bbox will be used.
+
+    Args:
+        bbox (dict): Bounding box with keys 'west', 'south', 'east', 'north' in EPSG:4326
+        poly (Polygon | MultiPolygon | LinearRing): Shapely Polygon, MultiPolygon, or LinearRing geometry
+        poly_srid (int, optional): SRID for the polygon geometry. Defaults to 4326.
+        remove_rings (bool, optional): Whether to remove interior rings from the polygon. Defaults to False.
+
+    Returns:
+        str: CQL filter string
+    """
     if bbox is not None:
         return f"BBOX(shape, {bbox['west']}, {bbox['south']}, {bbox['east']}, {bbox['north']}) and nvclCollection = 'true'"
     elif poly is not None:
-        # Example: "Within(shape, POLYGON((-35.2438 147.8011, -35.0684 147.8011, -35.0684 147.9966, -35.2438 147.9966, -35.2438 147.8011))) and nvclCollection = 'true'"
-        poly_str = "Within(shape, POLYGON(("
-        for y,x in poly.exterior.coords:
-            poly_str += f"{y} {x},"
-        return poly_str.rstrip(",") + "))) and nvclCollection = 'true'"
+        if remove_rings and isinstance(poly, Polygon):
+            poly = Polygon(poly.exterior)
+        elif remove_rings and isinstance(poly, MultiPolygon):
+            poly = MultiPolygon([Polygon(p.exterior) for p in poly.geoms])
+        
+        if isinstance(poly, LinearRing):
+            poly = Polygon(poly)
+
+        srid = f"SRID={poly_srid};" if poly_srid else ""
+        return f"Within(shape, {srid}{poly.wkt}) and nvclCollection = 'true'"
     else:
         return "nvclCollection = 'true'"
 
