@@ -271,6 +271,12 @@ class NVCLReader:
         # If gathering boreholes via WFS
         elif not skip_bhlist:
             self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
+            # Filter out boreholes which NTGS says are NVCL but don't have any published data...
+            # N.B. NTGS has differences in case, and use of SPACE vs UNDERSCORE in their borehole URIs. They also may use '/' in the borehole ID!
+            if self.param_obj.PROV.upper() == "NT":
+                bhuri_list = self.get_bhuri_list()
+                bhuri_list = [urlparse(uri).path.replace('/resource/feature/ntgs/borehole/','').rstrip('/').upper().replace(' ', '_') for uri in bhuri_list]
+                self.borehole_list = [f for f in self.borehole_list if f.nvcl_id.upper().replace(" ", "_") in bhuri_list]
 
 
     def get_borehole_data(
