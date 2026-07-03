@@ -37,6 +37,8 @@ def param_builder(provider: str, **options: dict) -> SimpleNamespace:
     :param options: optional keyword parameters
                    bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved, default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})
                    polygon: 2D 'shapely.Polygon' y/x axis order, EPSG:4326, limit to boreholes within this polygon
+                   polygon_srid: SRID of the polygon geometry, default is 4326
+                   remove_rings: whether to remove interior rings from the polygon, default is False
                    depths: Tuple of range of depths (min,max) [metres]
                    wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView
                    nvcl_url: URL of NVCL service
@@ -46,7 +48,7 @@ def param_builder(provider: str, **options: dict) -> SimpleNamespace:
 
     :returns: a SimpleNamespace object containing required connection parameters
     """
-    OPTION_LIST = ['bbox', 'polygon', 'depths', 'wfs_url', 'nvcl_url',
+    OPTION_LIST = ['bbox', 'polygon', 'polygon_srid', 'remove_rings', 'depths', 'wfs_url', 'nvcl_url',
                    'max_boreholes', 'use_cql', 'cache_path']
     # Deprecated options
     OLD_OPTION_LIST = ['borehole_crs', 'wfs_version', 'use_local_filtering']
@@ -135,6 +137,8 @@ def param_builder(provider: str, **options: dict) -> SimpleNamespace:
         param_obj.BBOX = options['bbox']
     elif 'polygon' in options:
         param_obj.POLYGON = options['polygon']
+        if 'polygon_srid' in options:
+            param_obj.POLYGON_SRID = options['polygon_srid']
 
     # Set all remaining parameters
     for p in OPTION_LIST[2:]:

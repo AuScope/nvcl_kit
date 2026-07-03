@@ -37,12 +37,18 @@ def get_borehole_list(param_obj: SimpleNamespace) -> tuple[list, bool, bool]:
     :rtype: tuple[list, bool, bool]
     '''
     prov = param_obj.PROV
+    filter_kwargs = { 'bbox': param_obj.BBOX, 'poly': param_obj.POLYGON }
+    if hasattr(param_obj, 'POLYGON_SRID'):
+        filter_kwargs['poly_srid'] = param_obj.POLYGON_SRID
+    if hasattr(param_obj, 'REMOVE_RINGS'):
+        filter_kwargs['remove_rings'] = param_obj.REMOVE_RINGS
     if param_obj.USE_CQL:
-        cql_filter = make_cql_filter(param_obj.BBOX, param_obj.POLYGON)
+        cql_filter = make_cql_filter(**filter_kwargs)
         features = make_cql_request(param_obj.WFS_URL, prov, cql_filter, param_obj.MAX_BOREHOLES)
     else:
-        xml_filter = make_xml_filter(param_obj.BBOX, param_obj.POLYGON)
+        xml_filter = make_xml_filter(**filter_kwargs)
         features = make_xml_request(param_obj.WFS_URL, prov, xml_filter, param_obj.MAX_BOREHOLES)
+        LOGGER.debug(f"Received {len(features)} features from WFS request with XML filter")
 
     # No features - return empty feature list, False error flag and None wfs obj
     if len(features) == 0:

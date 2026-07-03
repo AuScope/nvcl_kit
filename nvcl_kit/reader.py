@@ -11,7 +11,7 @@ import logging
 import json
 from types import SimpleNamespace
 
-from shapely import Polygon, LinearRing
+from shapely import MultiPolygon, Polygon, LinearRing
 
 from nvcl_kit.svc_interface import _ServiceInterface
 
@@ -137,12 +137,12 @@ class NVCLReader:
             return
         self.param_obj = param_obj
 
-        # Check POLYGON value, it should be a shapely 'Polygon', but still support 'LinearRing' for
+        # Check POLYGON value, it should be a shapely 'Polygon' or 'MultiPolygon', but still support 'LinearRing' for
         # backwards compatibility
         if hasattr(self.param_obj, 'POLYGON'):
             self.param_obj.BBOX = None
-            if not isinstance(self.param_obj.POLYGON, Polygon) and not isinstance(self.param_obj.POLYGON, LinearRing):
-                LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon")
+            if not isinstance(self.param_obj.POLYGON, (Polygon, LinearRing, MultiPolygon)):
+                LOGGER.warning("'POLYGON' parameter is not a shapely.Polygon or shapely.MultiPolygon")
                 return
 
         # Check BBOX value
@@ -271,6 +271,12 @@ class NVCLReader:
         # If gathering boreholes via WFS
         elif not skip_bhlist:
             self.borehole_list, self.wfs_error, self.wfs = get_borehole_list(self.param_obj)
+            # Filter out boreholes which NTGS says are NVCL but don't have any published data...
+            # N.B. NTGS has differences in case, and use of SPACE vs UNDERSCORE in their borehole URIs. They also may use '/' in the borehole ID!
+            if self.param_obj.PROV.upper() == "NT":
+                bhuri_list = self.get_bhuri_list()
+                bhuri_list = [urlparse(uri).path.replace('/resource/feature/ntgs/borehole/','').rstrip('/').upper().replace(' ', '_') for uri in bhuri_list]
+                self.borehole_list = [f for f in self.borehole_list if f.nvcl_id.upper().replace(" ", "_") in bhuri_list]
 
 
     def get_borehole_data(

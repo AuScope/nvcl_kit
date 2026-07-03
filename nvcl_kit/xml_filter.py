@@ -5,7 +5,7 @@ from xml.dom import minidom
 from urllib3.exceptions import HTTPError
 from urllib3.util import Retry
 
-from shapely import Polygon
+from shapely import LinearRing, MultiPolygon, Polygon
 import requests
 from requests.adapters import HTTPAdapter
 
@@ -36,33 +36,6 @@ if not LOGGER.hasHandlers():
 def pretty_print(xml_str):
     print(minidom.parseString(xml_str).toprettyxml(indent="   "))
 
-def make_polygon_prop(coords: str) -> str:
-    intersects = ET.Element("ogc:Intersects")
-    intersects.set("xmlns:ogc","http://www.opengis.net/ogc")
-    intersects.set("xmlns:gml","http://www.opengis.net/gml")
-    intersects.set("xmlns:gsmlp","http://xmlns.geosciml.org/geosciml-portrayal/4.0")
-
-    propertyName = ET.SubElement(intersects, "ogc:PropertyName")
-    propertyName.text = "shape"
-    multiPolygon = ET.SubElement(intersects, "gml:MultiPolygon")
-    multiPolygon.set("srsName", "urn:ogc:def:crs:EPSG::4326")
-    polygonMember = ET.SubElement(multiPolygon, "gml:polygonMember")
-
-    polygon = ET.SubElement(polygonMember, "gml:Polygon")
-    polygon.set("srsName", "EPSG:4326")
-
-    outerBoundaryIs = ET.SubElement(polygon, "gml:outerBoundaryIs")
-    linearRing = ET.SubElement(outerBoundaryIs, "gml:LinearRing")
-
-    coordinates = ET.SubElement(linearRing, "gml:coordinates")
-    coordinates.set("xmlns:gml", "http://www.opengis.net/gml")
-    coordinates.set("decimal", ".")
-    coordinates.set("cs" ,",")
-    coordinates.set("ts", " ")
-    coordinates.text = coords
-
-    xml_str = ET.tostring(intersects, encoding='unicode')
-    return xml_str
 
 def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) -> list:
     """
@@ -88,27 +61,28 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
         # Check the filter is a non-empty string, otherwise use a default filter which just checks for 'nvclCollection' = true
         if not isinstance(xml_filter, str):
             xml_filter = ""
-        data = f"""
-            <GetFeature
-            xmlns:ogc="http://www.opengis.net/ogc"
+        data = f"""<?xml version="1.0" encoding="UTF-8"?>
+            <wfs:GetFeature
             service="WFS"
             version="1.1.0"
-            maxFeatures="10000"
+            xmlns:gsmlp="http://xmlns.geosciml.org/geosciml-portrayal/4.0"
+            xmlns:gml="http://www.opengis.net/gml"
+            xmlns:wfs="http://www.opengis.net/wfs"
+            xmlns:ogc="http://www.opengis.net/ogc"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+            maxFeatures="1000000"
             startIndex="{str(batch_count)}"
             resultType="results"
             outputFormat="json"
             >
-                <Query typeName="gsmlp:BoreholeView">
+                <wfs:Query typeName="gsmlp:BoreholeView">
                     {xml_filter}
-                    <ogc:SortBy>
-                        <ogc:SortProperty>
-                            <ogc:PropertyName>nvclCollection</ogc:PropertyName>
-                            <ogc:SortOrder>DESC</ogc:SortOrder>
-                        </ogc:SortProperty>
-                    </ogc:SortBy>
-                </Query>
-            </GetFeature>
+                </wfs:Query>
+            </wfs:GetFeature>
             """
+        
+        data = " ".join([line.strip() for line in data.splitlines()]).encode('utf-8')
         # Send the POST request with the XML payload 
         try:
             with requests.Session() as s:
@@ -161,30 +135,95 @@ def make_xml_request(url: str, prov: str, xml_filter: str, max_features: int) ->
     return feat_list
 
 
-def make_poly_coords(bbox: dict, poly: Polygon) -> str:
-    """
-    Converts a bounding box dict to polygon coordinate string
-    """
-    poly_str = ""
-    if bbox is not None:
-        # According to epsg.io's OCG WKT 2 definition, EPSG:4326 is lat,long order
-        poly_str = f"{bbox['south']},{bbox['west']} {bbox['north']},{bbox['west']} {bbox['north']},{bbox['east']} {bbox['south']},{bbox['east']} {bbox['south']},{bbox['west']}"
-    elif poly is not None:
-        poly_str = ""
-        for y,x in poly.exterior.coords:
-            poly_str += f"{y},{x} "
-        poly_str = poly_str.rstrip(' ')
-        return poly_str
+def encode_polygon_member(poly: Polygon, srid: int) -> str:
+    # Ensure exterior ring is CCW as per OGC standards
+    if poly.exterior.is_ccw:
+        e_coords = " ".join([f"{y} {x}" for y,x in poly.exterior.coords])
+    else:
+        e_coords = " ".join([f"{y} {x}" for y,x in poly.exterior.coords[::-1]])
 
-def make_xml_filter(bbox: dict, poly: Polygon) -> str:
+    exterior_ring = f"""
+        <exterior>
+            <LinearRing>
+                <posList>{e_coords}</posList>
+            </LinearRing>
+        </exterior>
+    """
+    interior_rings = []
+    for i in poly.interiors:
+        # Ensure interior rings are CW as per OGC standards
+        if LinearRing(i).is_ccw:
+            i_coords = " ".join([f"{y} {x}" for y, x in i.coords[::-1]])
+        else:
+            i_coords = " ".join([f"{y} {x}" for y, x in i.coords])
+
+        interior_rings.append(f"""
+            <gml:interior>
+                <gml:LinearRing>
+                    <gml:posList>{i_coords}</gml:posList>
+                </gml:LinearRing>
+            </gml:interior>
+        """)
+    
+    pgm_str = f"""
+            <Polygon xmlns="http://www.opengis.net/gml" srsName="EPSG:{srid}">
+                {exterior_ring}
+                {''.join(interior_rings)}
+            </Polygon>
+    """
+    pgm_str = "".join([line.strip() for line in pgm_str.splitlines()])
+    
+    return pgm_str
+
+
+def make_xml_filter(bbox: dict, poly: Polygon|MultiPolygon|LinearRing, poly_srid: int = 4326, remove_rings: bool = False) -> str:
     """
     Makes an XML filter with optional polygon or bbox constraints
     Used in OGC WFS v1.1.0 "FILTER" parameter
     """
-    if bbox is not None or poly is not None:
-        # Filter within bbox or polygon
-        polygon = make_poly_coords(bbox, poly)
-        poly_prop = make_polygon_prop(polygon)
-        return f"""<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:And>{poly_prop}<PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:And></ogc:Filter>"""
-    return "<ogc:Filter><PropertyIsEqualTo><PropertyName>gsmlp:nvclCollection</PropertyName><Literal>true</Literal></PropertyIsEqualTo></ogc:Filter>"
+
+    # If no bbox or polygon provided, return a filter which just checks for 'nvclCollection' = true
+    if bbox is None and poly is None:
+        return """<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc"><ogc:PropertyIsEqualTo><ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName><ogc:Literal>true</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter>"""
+
+    if bbox is not None:
+        north, south, east, west = bbox['north'], bbox['south'], bbox['east'], bbox['west']
+        spatial_filter = f"""
+            <ogc:BBOX>
+                <ogc:PropertyName>gsmlp:shape</ogc:PropertyName>
+                <gml:Envelope srsName="EPSG:{poly_srid}">
+                    <gml:lowerCorner>{west} {south}</gml:lowerCorner>
+                    <gml:upperCorner>{east} {north}</gml:upperCorner>
+                </gml:Envelope>
+            </ogc:BBOX>
+          """
+    elif poly is not None:
+        if remove_rings and isinstance(poly, Polygon):
+            poly = Polygon(poly.exterior)
+        elif remove_rings and isinstance(poly, MultiPolygon):
+            poly = MultiPolygon([Polygon(p.exterior) for p in poly.geoms])
+        
+        if isinstance(poly, LinearRing):
+            poly = Polygon(poly)
+
+        polygon_members = []
+        if isinstance(poly, MultiPolygon):
+            # iterate over each polygon and create a polygonMember for each
+            for p in poly.geoms:
+                polygon_members.append(encode_polygon_member(p, poly_srid))
+        else:
+            polygon_members.append(encode_polygon_member(poly, poly_srid))
+
+    # assemble and then strip whitespace and newlines for better readability in logs
+        spatial_filter = f"""
+            <Intersects
+            >
+                <ogc:PropertyName>gsmlp:shape</ogc:PropertyName>
+                {''.join(polygon_members)}
+            </Intersects>
+        """
+    spatial_filter = " ".join([line.strip() for line in spatial_filter.splitlines()])
+    
+    return f"""<ogc:Filter><ogc:And>{spatial_filter}<ogc:PropertyIsEqualTo><ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName><ogc:Literal>true</ogc:Literal></ogc:PropertyIsEqualTo></ogc:And></ogc:Filter>"""
+    
 
