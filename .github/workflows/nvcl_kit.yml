@@ -19,7 +19,7 @@ jobs:
         pip install pdm
         pdm install
         pdm build
-    - uses: actions/upload-artifact@v4.6.2
+    - uses: actions/upload-artifact@v7
       if: success()
       with:
         name: python-package-distributions
