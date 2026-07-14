@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 60
     steps:
     - uses: actions/checkout@v7
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v8
     - name: Run linting and tests
       run: |
         python -V
@@ -64,12 +64,12 @@ jobs:
     - run: pip install pdm
     - run: pip install sphinx sphinx-rtd-theme owslib shapely geojson
     - run: cd doc ; make html; mv _build/html/ ../public/
-    - uses: actions/upload-artifact@v4.6.2
+    - uses: actions/upload-artifact@v7
       if: success()
       with:
         name: "${{ github.job }}"
         path: public
-    - uses: JamesIves/github-pages-deploy-action@v4.5.0
+    - uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
         folder: public
@@ -86,7 +86,7 @@ jobs:
       id-token: write
     steps:
     - name: Download all the dists
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v8
       with:
         name: python-package-distributions
         path: dist/
