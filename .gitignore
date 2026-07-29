@@ -4,3 +4,4 @@ __pycache__
 .pdm-python
 notebooks/standard-export
 doc/_build
+dist
