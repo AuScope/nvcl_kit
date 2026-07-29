@@ -515,6 +515,18 @@ class NVCLReader:
         :returns: thumbnail image in JPEG format
         '''
         return self.svc.get_display_tray_thumb(log_id, sample_no)
+    
+    def get_image(self, log_id, sample_no, dataset_id=None,uncorrected=True):
+        ''' Retrieves an image (JPEG) of a single NVCL core sample
+
+        :param log_id: obtained through calling 'get_tray_imglogs()'
+        :param sample_no: sample number, string e.g. '0','1','2'...
+        :param dataset_id: optional, obtained through calling 'get_datasetid_list()' (may improve performance if specified)
+        :param uncorrected: optional, if True will return the raw uncorrected image, default value=False
+
+        :returns: image in JPEG format
+        '''
+        return self.svc.get_image(log_id, sample_no, dataset_id=dataset_id, uncorrected=uncorrected)
 
     def get_tray_depths(self, log_id):
         ''' Gets tray depths

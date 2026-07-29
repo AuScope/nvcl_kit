@@ -95,6 +95,22 @@ class _ServiceInterface:
         params.update(options)
         return self._get_response_str(url, params=params)
 
+    def get_image(self, log_id, sample_no, dataset_id=None, uncorrected=False):
+        ''' Retrieves an image (JPEG) of a single NVCL core sample 
+
+        :param log_id: obtained through calling the getLogCollection service with URL parameter mosaicsvc=yes, with LogName equal "Imagery"
+        :param sample_no: sample number of the image to retrieve from database
+        :param dataset_id: optional, obtained through calling the getDatasetCollection service and can improve perfoamance under certain conditions.
+        :param uncorrected: optional, if True will return the raw uncorrected image, default value=False
+        '''
+        url = self.NVCL_URL + '/getImage.html'
+        params = {'logid': log_id, 'sampleno': sample_no}
+        if dataset_id is not None:
+            params['datasetid'] = dataset_id
+        if uncorrected:
+            params['uncorrected'] = 'yes'
+        return self._get_response_str(url, params=params, binary=True)
+    
     def get_mosaic_tray_thumbnail(self, dataset_id, log_id, **options):
         ''' Retrieves thumbnail images of NVCL core trays
 
@@ -113,6 +129,8 @@ class _ServiceInterface:
 
     def get_display_tray_thumb(self, log_id, sample_no):
         ''' Gets thumbnail images of NVCL core trays
+
+        Note: this is a deprecated service, use `get_image()` instead
 
         :param log_id: obtained through calling the getLogCollection service by specifying URL Parameter mosaicsvc=yes
         :param sample_no: sample number of the image to retrieve from database
