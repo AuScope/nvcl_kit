@@ -16,11 +16,13 @@ import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
+import matplotlib.image as mpimg
 import matplotlib.lines as mlines
 from matplotlib.patches import Patch
 from matplotlib.ticker import MultipleLocator
 from matplotlib import colormaps as cm
 from matplotlib import pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 try:
     import colorcet as cc
@@ -177,29 +179,29 @@ def page_header(
         ax.text(0.1, 9.5, name, fontsize=18, fontweight="bold", ha="left", va="top")
 
     # Line 2 - ID, year drilled, longitude
-    ax.text(0.1, 7.5, f"Borehole ID: {boreholeid}", fontsize=10, ha="left", va="top")
+    ax.text(0.1, 7.5, f"Borehole ID: {boreholeid}", fontsize=9, ha="left", va="top")
     if year_drilled:
-        ax.text(5.5, 7.5, "Year Drilled: ", fontsize=10, ha="right", va="top")
-        ax.text(5.5, 7.5, year_drilled, fontsize=10, ha="left", va="top")
+        ax.text(5.5, 7.5, "Year Drilled: ", fontsize=9, ha="right", va="top")
+        ax.text(5.5, 7.5, year_drilled, fontsize=9, ha="left", va="top")
     if longitude is not None:
         long_str = "Longitude"
         if crs:
             long_str += f" ({crs})"
-        ax.text(9, 7.5, f"{long_str}: ", fontsize=10, ha="right", va="top")
-        ax.text(9, 7.5, f"{longitude:.2f}", fontsize=10, ha="left", va="top")
+        ax.text(9, 7.5, f"{long_str}: ", fontsize=9, ha="right", va="top")
+        ax.text(9, 7.5, f"{longitude:.2f}", fontsize=9, ha="left", va="top")
 
     # Line 3 - drill type, total depth, latitude
     if drill_type:
-        ax.text(0.1, 6.5, f"Drill type: {drill_type}", fontsize=10, ha="left", va="top")
+        ax.text(0.1, 6.5, f"Drill type: {drill_type}", fontsize=9, ha="left", va="top")
     if total_depth:
-        ax.text(5.5, 6.5, "Total Depth (m): ", fontsize=10, ha="right", va="top")
-        ax.text(5.5, 6.5, total_depth, fontsize=10, ha="left", va="top")
+        ax.text(5.5, 6.5, "Total Depth (m): ", fontsize=9, ha="right", va="top")
+        ax.text(5.5, 6.5, total_depth, fontsize=9, ha="left", va="top")
     if latitude is not None:
         lat_str = "Latitude"
         if crs:
             lat_str += f" ({crs})"
-        ax.text(9, 6.5, f"{lat_str}: ", fontsize=10, ha="right", va="top")
-        ax.text(9, 6.5, f"{latitude:.2f}", fontsize=10, ha="left", va="top")
+        ax.text(9, 6.5, f"{lat_str}: ", fontsize=9, ha="right", va="top")
+        ax.text(9, 6.5, f"{latitude:.2f}", fontsize=9, ha="left", va="top")
 
     # Separator
     ax.axhline(y=5.0, color="black", linewidth=1.0)
@@ -209,12 +211,11 @@ def page_header(
         5,
         3.5,
         "HyLogger\u2122 Hyperspectral Data",
-        fontsize=16,
+        fontsize=12,
         fontweight="bold",
         ha="center",
         va="center",
     )
-
 
 def plot_spectral_summary(
     ax: Axes,
@@ -271,7 +272,7 @@ def plot_spectral_summary(
         ax.set_ylim(ylim)
 
     xlabel_prefix = f"{xlabel}\n" if xlabel else ""
-    ax.set_xlabel(f"{xlabel_prefix}Spectral Contrib.", fontsize=10)
+    ax.set_xlabel(f"{xlabel_prefix}Spectral Contrib.", fontsize=8)
     ax.invert_yaxis()
 
     # Optional error/SNR panel
@@ -304,14 +305,14 @@ def plot_spectral_summary(
                 color="gray",
                 linewidth=0.8,
             )
-            ax2_twin.set_xlabel("SNR", fontsize=10)
+            ax2_twin.set_xlabel("SNR", fontsize=8)
             ax2_twin.tick_params(
-                axis="x", which="major", labelsize=8, labelrotation=90
+                axis="x", which="major", labelsize=6, labelrotation=90
             )
             ax2_twin.get_yaxis().set_visible(False)
 
-        ax2.set_xlabel("Error", fontsize=10)
-        ax2.tick_params(axis="x", which="major", labelsize=8, labelrotation=90)
+        ax2.set_xlabel("Error", fontsize=8)
+        ax2.tick_params(axis="x", which="major", labelsize=6, labelrotation=90)
         ax2.get_yaxis().set_visible(False)
 
     return handles
@@ -326,6 +327,7 @@ AAABCCCD
 AAABCCCD
 AAABCCCD
 AAABCCCD
+FFFFFFFF
 """
 
 # Default A4 page size in inches (portrait).
@@ -353,6 +355,7 @@ def create_summary_page(
     crs: Optional[str] = None,
     figsize: Tuple[float, float] = _A4_FIGSIZE,
     page_spec: Optional[str] = None,
+    logo: Optional[str] = None,
 ) -> Figure:
     """
     Create a single summary report page (matplotlib Figure) for a depth section.
@@ -383,6 +386,7 @@ def create_summary_page(
     :param Tuple[float, float] figsize: figure size in inches. Defaults to A4 portrait.
     :param Optional[str] page_spec: subplot mosaic specification string. If ``None``, the
         default layout is used.
+    :param Optional[str] logo: "NSW", "QLD", etc. If ``None``, no logo is shown.
 
     :return: the rendered matplotlib Figure
     :rtype: Figure
@@ -390,8 +394,11 @@ def create_summary_page(
     if page_spec is None:
         page_spec = _DEFAULT_PAGE_SPEC
 
-    fig, ax = plt.subplot_mosaic(page_spec, figsize=figsize)
+        if logo is not None:
+            # Add a logo panel to the left of the header
+            page_spec = page_spec.replace("HHHHHHHH", "LHHHHHHH")
 
+    fig, ax = plt.subplot_mosaic(page_spec, figsize=figsize, dpi=300)
     # Header
     page_header(
         ax["H"],
@@ -404,6 +411,28 @@ def create_summary_page(
         latitude=latitude,
         crs=crs,
     )
+
+    # Logo
+    if logo is not None:
+        # Shift the logo axes to the left a little
+        axl_bbox = ax['L'].get_position()
+        ax["L"].set_position([axl_bbox.x0-0.05, axl_bbox.y0+0.01, axl_bbox.width+0.05, axl_bbox.height])
+        ax["L"].axis("off")
+
+        _logo_path = os.path.join(os.path.dirname(__file__), "data", f"{logo.lower()}-logo.png")
+        if os.path.isfile(_logo_path):
+            _logo_img = mpimg.imread(_logo_path)
+            logo_height = _logo_img.shape[0]
+            logo_width = _logo_img.shape[1]
+            logo_aspect = logo_width / logo_height
+            x_min, x_max = 0, 1
+            y_height = (x_max - x_min) / logo_aspect
+            y_min, y_max = 1.0 - y_height, 1.0
+            logo_extent = [x_min, x_max, y_min, y_max]
+            ax["L"].imshow(_logo_img, aspect="equal", extent=logo_extent, origin="upper")
+            ax["L"].set_xlim((0, 1))
+            ax["L"].set_ylim((0, 1))
+    
 
     ylim = (section_start, section_end)
 
@@ -469,32 +498,54 @@ def create_summary_page(
     for panel_key in "AC":
         _tick_top(ax[panel_key])
 
-    # Build combined legend
+    # We put the legend in an empty axes at the bottom of the page but don't need the tick marks..
+    ax["F"].axis("off")
+
+    # SNR legend entry (bottom left of page)
+    snr_line = mlines.Line2D([], [], color="gray", label="Signal to Noise Ratio (SNR)")
+    snr_legend = ax["F"].legend(
+        handles=[snr_line],
+        frameon=False,
+        loc="upper left",
+        bbox_to_anchor=(-0.05, 0.80),
+        fontsize="small",
+    )
+    ax["F"].add_artist(snr_legend)
+
+    # Error colorbar legend (below SNR legend)
+    error_cmap = cm.get_cmap("rainbow")
+    error_norm = plt.Normalize(
+        vmin=0,
+        vmax=1000,
+    )
+    sm = plt.cm.ScalarMappable(cmap=error_cmap, norm=error_norm)
+    sm.set_array([])
+    cbar_ax = fig.add_axes([0.1, 0.16, 0.15, 0.012])
+    cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal")
+    cbar.set_label("Error", fontsize=9)
+    cbar.ax.tick_params(labelsize=7)
+
+    # HyLogger Spectral Groups legend (immediately to the right of SNR legend)
     all_handles: Dict[str, Patch] = {}
     all_handles.update(swir_handles)
     all_handles.update(tir_handles)
-    title_fontproperties = {"weight": "bold", "size": "large"}
-    fig.legend(
+    title_fontproperties = {"weight": "bold", "size": "medium"}
+    
+    ax["F"].legend(
         handles=list(all_handles.values()),
         title="HyLogger\u2122 Spectral Groups",
         frameon=False,
         title_fontproperties=title_fontproperties,
-        loc="lower left",
-        bbox_to_anchor=(0.05, -0.1),
+        loc="upper left",
+        bbox_to_anchor=(0.35, 0.80),
         ncol=4,
         fontsize="small",
-        columnspacing=2.0,
-        labelspacing=1.0,
+        columnspacing=1.75,
+        labelspacing=0.25,
         handleheight=1.5,
+        handlelength=1.5,
         handletextpad=0.5,
     )
-
-    # SNR legend entry on the error/SNR panel
-    snr_line = mlines.Line2D([], [], color="gray", label="Signal to Noise Ratio (SNR)")
-    snr_legend = ax["B"].legend(
-        handles=[snr_line], frameon=False, loc="lower left", bbox_to_anchor=(0.05, -0.1)
-    )
-    ax["B"].add_artist(snr_legend)
 
     return fig
 
@@ -523,6 +574,7 @@ def create_summary_report(
     page_spec: Optional[str] = None,
     pdf_metadata: Optional[Dict[str, str]] = None,
     close_figures: bool = True,
+    logo: Optional[str] = None,
 ) -> List[Figure]:
     """
     Generate a multi-page spectral summary report.
@@ -633,6 +685,7 @@ def create_summary_report(
                 crs=crs,
                 figsize=figsize,
                 page_spec=page_spec,
+                logo=logo,
             )
 
             figures.append(overview_fig)
@@ -670,6 +723,7 @@ def create_summary_report(
                 crs=crs,
                 figsize=figsize,
                 page_spec=page_spec,
+                logo=logo,
             )
 
             figures.append(fig)
