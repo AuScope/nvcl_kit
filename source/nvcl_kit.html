@@ -72,6 +72,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_dataset_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_dataset_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_datasetid_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_datasetid_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_feature_list"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_feature_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_image"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_imagelog_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_imagelog_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_imagery_imglogs"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_imagery_imglogs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nvcl_kit.reader.NVCLReader.get_logs_data"><code class="docutils literal notranslate"><span class="pre">NVCLReader.get_logs_data()</span></code></a></li>
@@ -569,6 +570,25 @@ default is logging.INFO</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a list of SimpleNamespace objects whose fields correspond to a response from a WFS request of GeoSciML v4.1 BoreholeView</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.get_image">
+<span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncorrected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.get_image" title="Link to this definition"></a></dt>
+<dd><p>Retrieves an image (JPEG) of a single NVCL core sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_id</strong> – obtained through calling ‘get_tray_imglogs()’</p></li>
+<li><p><strong>sample_no</strong> – sample number, string e.g. ‘0’,’1’,’2’…</p></li>
+<li><p><strong>dataset_id</strong> – optional, obtained through calling ‘get_datasetid_list()’ (may improve performance if specified)</p></li>
+<li><p><strong>uncorrected</strong> – optional, if True will return the raw uncorrected image, default value=False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>image in JPEG format</p>
 </dd>
 </dl>
 </dd></dl>
