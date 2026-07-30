@@ -738,7 +738,7 @@ def create_summary_report(
         if pdf_context is not None:
             pdf_context.close()
 
-    LOGGER.info(
+    LOGGER.debug(
         "Generated %d page(s) for borehole %s (%.0f–%.0f m)",
         len(figures),
         boreholeid,
