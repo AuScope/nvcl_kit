@@ -1,6 +1,6 @@
 [project]
 name = "nvcl_kit"
-version = "1.3.1"
+version = "1.3.2"
 description = "Downloads Australian National Virtual Core Library (NVCL) datasets"
 authors = [
     {name = "Vincent Fazio", email = "vincent.fazio@csiro.au"},
