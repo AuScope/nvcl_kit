@@ -3,6 +3,7 @@
 Unit tests for nvcl_kit.plots module.
 """
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -57,6 +58,24 @@ def _make_colours(cols):
         (0.0, 1.0, 1.0, 1.0),
     ]
     return {col: base_colours[i % len(base_colours)] for i, col in enumerate(cols)}
+
+
+class TestPlotModuleImport(unittest.TestCase):
+    """Tests for module-level plotting configuration."""
+
+    def test_import_forces_non_interactive_backend(self):
+        """Importing the plotting module should use a non-interactive backend."""
+        env = os.environ.copy()
+        env["MPLBACKEND"] = "svg"
+        result = subprocess.run(
+            [sys.executable, "-c", "import matplotlib; import nvcl_kit.plots; print(matplotlib.get_backend())"],
+            capture_output=True,
+            text=True,
+            check=True,
+            env=env,
+            cwd=os.path.dirname(os.path.dirname(__file__)),
+        )
+        self.assertEqual(result.stdout.strip(), "Agg")
 
 
 class TestTickTop(unittest.TestCase):

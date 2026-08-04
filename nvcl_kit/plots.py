@@ -13,6 +13,9 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
+import matplotlib
+matplotlib.use("Agg", force=True)
+
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
