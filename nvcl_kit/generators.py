@@ -72,6 +72,7 @@ def gen_summary_dataframe(
     reader: NVCLReader,
     *,
     nvcl_id_list: List[str] = None,
+    dataset_name: Union[str, None] = None,
     resolution: Union[float, None] = 1.0,
     start_depth="floor",
     scalar_set="sTSAS",
@@ -105,6 +106,7 @@ def gen_summary_dataframe(
 
     :param NVCLReader reader: NVCLReader client
     :param List[str] nvcl_id_list: List of NVCL IDs. Defaults to None. (optional)
+    :param Union[str, None] dataset_name: Name of the dataset to use for boreholes with multiple datasets. Defaults to None. (optional)
     :param Union[float, None] resolution: Depth for binning data, set to None to skip. Defaults to 1.0. (optional)
     :param str start_depth: Can be 'floor', 'round', 'min' or `None`. Defaults to "floor". (optional)
     :param str scalar_set:  'sTSAS', 'sTSAT', 'uTSAS', etc. Defaults to "sTSAS". (optional)
@@ -128,6 +130,12 @@ def gen_summary_dataframe(
         if not nvcl_id_list:
             raise StopIteration()
 
+    # Allow the user to specify a dataset name for boreholes with multiple datasets.
+    if dataset_name is not None and len(nvcl_id_list) > 1:
+        raise ValueError(
+            "You may only specify dataset_name when passing a single NVCL ID."
+        )
+
     # Retrieve the algorithm dictionary for reference
     algo_dict = reader.get_algorithms()
 
@@ -136,7 +144,10 @@ def gen_summary_dataframe(
     df_meta_list = []
 
     for n_id in nvcl_id_list:
-        logs_data_list = reader.get_logs_data(n_id, last_only=True)
+        if dataset_name is not None:
+            logs_data_list = reader.get_logs_data(n_id, dataset_name=dataset_name)
+        else:
+            logs_data_list = reader.get_logs_data(n_id, last_only=True)
         LOGGER.debug(f"NVCL ID: {n_id}, found {len(logs_data_list)} logs")
 
         if not logs_data_list:

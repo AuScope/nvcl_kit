@@ -720,11 +720,13 @@ class NVCLReader:
                 bhuri_list.append(bhuri)
         return bhuri_list
 
-    def get_logs_data(self, nvcl_id, last_only=False):
+    def get_logs_data(self, nvcl_id, dataset_name=None, last_only=False):
         """Retrieves a set of generic log data for a particular borehole, given an nvcl id
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
+        :param dataset_name: optional, if specified will only return logs for this dataset name
+        :param last_only: optional, if True will only return the last log for each dataset
 
         :returns: a list of SimpleNamespace() objects with attributes:
                     log_id, log_name, is_public, log_type, algorithm_id, mask_log_id,
@@ -737,6 +739,8 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         log_list = []
         for ds_child in root.findall("./Dataset"):
+            if dataset_name is not None and ds_child.findtext("DatasetName", default="") != dataset_name:
+                continue
             if last_only:
                 log_list = []
             # Get the dates from the 'Dataset' elements
