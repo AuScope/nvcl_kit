@@ -725,7 +725,7 @@ class NVCLReader:
 
         :param nvcl_id: NVCL 'holeidentifier' parameter,
                         the 'nvcl_id' from each item retrieved from 'get_feature_list()' or 'get_nvcl_id_list()'
-        :param dataset_name: optional, if specified will only return logs for this dataset name
+        :param dataset_name: optional, if specified will only return logs for this dataset name (case insensitive)
         :param last_only: optional, if True will only return the last log for each dataset
 
         :returns: a list of SimpleNamespace() objects with attributes:
@@ -739,7 +739,7 @@ class NVCLReader:
         root = clean_xml_parse(response_str)
         log_list = []
         for ds_child in root.findall("./Dataset"):
-            if dataset_name is not None and ds_child.findtext("DatasetName", default="") != dataset_name:
+            if dataset_name is not None and ds_child.findtext("DatasetName", default="").lower() != dataset_name.lower():
                 continue
             if last_only:
                 log_list = []
@@ -952,7 +952,7 @@ class NVCLReader:
         '''
         return [bh.nvcl_id for bh in self.borehole_list]
 
-    def filter_feat_list(self, nvcl_ids_only=False, **kwargs):
+    def filter_feat_list(self, nvcl_ids_only=False, case_sensitive=True, **kwargs):
         ''' Returns a list of borehole features given a filter parameter
             Filter parameters can be one of those returned by 'get_feature_list' e.g.
 
@@ -960,6 +960,7 @@ class NVCLReader:
 
         :param kwargs: keyword arguments key is name searched for, val is a list of possible values or a single value
         :param nvcl_ids_only: if True will return a list of nvcl_id
+        :param case_sensitive: if True, the filter will be case-sensitive
 
         :returns: a list of borehole features or empty list if unsuccessful
         '''
@@ -967,7 +968,12 @@ class NVCLReader:
             val_list = val
             if not isinstance(val, list):
                 val_list = [val]
-            bh_list = [bh for bh in self.borehole_list if hasattr(bh, key) and getattr(bh, key) in val_list]
+            if case_sensitive:
+                val_list = [str(v) for v in val_list]
+                bh_list = [bh for bh in self.borehole_list if hasattr(bh, key) and str(getattr(bh, key)) in val_list]
+            else:
+                val_list = [str(v).lower() for v in val_list]
+                bh_list = [bh for bh in self.borehole_list if hasattr(bh, key) and str(getattr(bh, key)).lower() in val_list]
 
             if not nvcl_ids_only:
                 return bh_list

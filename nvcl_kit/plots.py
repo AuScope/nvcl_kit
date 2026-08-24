@@ -142,6 +142,8 @@ def draw_stacked_bar(
     if yticks:
         ax.axes.yaxis.set_major_locator(MultipleLocator(major_locator))
         ax.axes.yaxis.set_minor_locator(MultipleLocator(minor_locator))
+        ax.tick_params(axis="y", which="major", length=6, width=0.8)
+        ax.tick_params(axis="y", which="minor", length=4, width=0.2)
 
     handles = {col: Patch(facecolor=colours[col], label=col) for col in cols}
     return handles
@@ -179,7 +181,13 @@ def page_header(
 
     # Line 1 - name
     if name:
-        ax.text(0.1, 9.5, name, fontsize=18, fontweight="bold", ha="left", va="top")
+        if len(name) > 40:
+            name_size = 12
+        elif len(name) > 30:
+            name_size = 14
+        else:
+            name_size = 16
+        ax.text(0.1, 9.5, name, fontsize=name_size, fontweight="bold", ha="left", va="top", clip_on=True)
 
     # Line 2 - ID, year drilled, longitude
     ax.text(0.1, 7.5, f"Borehole ID: {boreholeid}", fontsize=9, ha="left", va="top")
@@ -193,12 +201,10 @@ def page_header(
         ax.text(9, 7.5, f"{long_str}: ", fontsize=9, ha="right", va="top")
         ax.text(9, 7.5, f"{longitude:.2f}", fontsize=9, ha="left", va="top")
 
-    # Line 3 - drill type, total depth, latitude
-    if drill_type:
-        ax.text(0.1, 6.5, f"Drill type: {drill_type}", fontsize=9, ha="left", va="top")
+    # Line 3 - total depth, latitude
     if total_depth:
-        ax.text(5.5, 6.5, "Total Depth (m): ", fontsize=9, ha="right", va="top")
-        ax.text(5.5, 6.5, total_depth, fontsize=9, ha="left", va="top")
+        ax.text(0.1, 6.5, f"Total Depth (m): {total_depth}", fontsize=9, ha="left", va="top")
+        # ax.text(5.5, 6.5, total_depth, fontsize=9, ha="left", va="top")
     if latitude is not None:
         lat_str = "Latitude"
         if crs:
@@ -206,13 +212,16 @@ def page_header(
         ax.text(9, 6.5, f"{lat_str}: ", fontsize=9, ha="right", va="top")
         ax.text(9, 6.5, f"{latitude:.2f}", fontsize=9, ha="left", va="top")
 
+    # Line 4 - drill type. This can be surprisingly long (GSSA).
+    if drill_type:
+        ax.text(0.1, 5.5, f"Drill type: {drill_type}", fontsize=9, ha="left", va="top")
     # Separator
-    ax.axhline(y=5.0, color="black", linewidth=1.0)
+    ax.axhline(y=4.0, color="black", linewidth=1.0)
 
     # Title
     ax.text(
         5,
-        3.5,
+        2.8,
         "HyLogger\u2122 Hyperspectral Data",
         fontsize=12,
         fontweight="bold",
@@ -271,10 +280,15 @@ def plot_spectral_summary(
     else:
         ax.set(ylabel="Depth (m)", xlim=(0, 100))
 
+    ax.tick_params(axis="y", which="major", length=8, width=0.8)
+    ax.tick_params(axis="y", which="minor", length=4, width=0.2)
+    ax.tick_params(axis="x", which="major", length=6, width=0.8)
+    ax.tick_params(axis="x", which="minor", length=4, width=0.2)
+
     if ylim is not None:
         ax.set_ylim(ylim)
 
-    xlabel_prefix = f"{xlabel}\n" if xlabel else ""
+    xlabel_prefix = f"{xlabel} " if xlabel else ""
     ax.set_xlabel(f"{xlabel_prefix}Spectral Contrib.", fontsize=8)
     ax.invert_yaxis()
 
@@ -310,12 +324,16 @@ def plot_spectral_summary(
             )
             ax2_twin.set_xlabel("SNR", fontsize=8)
             ax2_twin.tick_params(
-                axis="x", which="major", labelsize=6, labelrotation=90
+                axis="x", which="major", labelsize=6, labelrotation=90, length=6, width=0.8
+            )
+            ax2_twin.tick_params(
+                axis="x", which="minor", length=4, width=0.2
             )
             ax2_twin.get_yaxis().set_visible(False)
 
         ax2.set_xlabel("Error", fontsize=8)
-        ax2.tick_params(axis="x", which="major", labelsize=6, labelrotation=90)
+        ax2.tick_params(axis="x", which="major", labelsize=6, labelrotation=90, length=6, width=0.8)
+        ax2.tick_params(axis="x", which="minor", length=4, width=0.2)
         ax2.get_yaxis().set_visible(False)
 
     return handles
@@ -449,7 +467,10 @@ def create_summary_page(
 
     # Calculate how many depth labels to show on the y-axis based on the section depth
     section_depth = section_end - section_start
-    if section_depth <= 100:
+    if section_depth <= 50:
+        major_locator = 1
+        minor_locator = 0.2
+    elif section_depth <= 100:
         major_locator = 10
         minor_locator = 2
     elif section_depth <= 500:
@@ -504,14 +525,21 @@ def create_summary_page(
     # We put the legend in an empty axes at the bottom of the page but don't need the tick marks..
     ax["F"].axis("off")
 
+    # Display the algorithm version of each spectral group
+    ax["F"].text(-0.035, 0.80, "SWIR Algorithm:", fontsize="small", ha="left", va="top")
+    ax["F"].text(0.12, 0.80, swir_scalar_set, fontsize="small", ha="left", va="top")
+    ax["F"].text(-0.035, 0.65, "TIR Algorithm:", fontsize="small", ha="left", va="top")
+    ax["F"].text(0.12, 0.65, tir_scalar_set, fontsize="small", ha="left", va="top")
+
     # SNR legend entry (bottom left of page)
-    snr_line = mlines.Line2D([], [], color="gray", label="Signal to Noise Ratio (SNR)")
+    snr_line = mlines.Line2D([], [], color="gray", label="Signal to Noise Ratio (SNR):")
     snr_legend = ax["F"].legend(
         handles=[snr_line],
         frameon=False,
         loc="upper left",
-        bbox_to_anchor=(-0.05, 0.80),
+        bbox_to_anchor=(-0.05, 0.55),
         fontsize="small",
+        markerfirst=False,
     )
     ax["F"].add_artist(snr_legend)
 
@@ -523,7 +551,7 @@ def create_summary_page(
     )
     sm = plt.cm.ScalarMappable(cmap=error_cmap, norm=error_norm)
     sm.set_array([])
-    cbar_ax = fig.add_axes([0.1, 0.16, 0.15, 0.012])
+    cbar_ax = fig.add_axes([0.1, 0.13, 0.15, 0.012])
     cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal")
     cbar.set_label("Error", fontsize=9)
     cbar.ax.tick_params(labelsize=7)
@@ -644,6 +672,14 @@ def create_summary_report(
         swir_df["EndDepth"].max(),
         tir_df["EndDepth"].max(),
     )
+
+    # If total_depth can be parsed as float, format to 2dp
+    if total_depth is not None:
+        try:
+            total_depth_float = float(total_depth)
+            total_depth = f"{total_depth_float:.2f}"
+        except ValueError:
+            pass
 
     # Build default PDF metadata
     if pdf_metadata is None:

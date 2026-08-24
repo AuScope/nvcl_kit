@@ -538,6 +538,24 @@ class TestNVCLReader(unittest.TestCase):
         bh_data_list = patch_requests_get('get_logs_data', {'nvcl_id':"dummy-id"}, 'dataset_coll_empty.txt')
         self.assertEqual(len(bh_data_list), 0)
 
+    def test_get_logs_dataset_filter(self):
+        ''' Test the generic get_logs_data() with a dataset name filter
+        '''
+        bh_data_list = patch_requests_get('get_logs_data', {'nvcl_id':"dummy-id", "dataset_name": "6315_HP4_Mt_Block"}, 'dataset_coll.txt')
+        self.assertEqual(len(bh_data_list), 70)
+
+    def test_get_logs_dataset_filter_different_case(self):
+        ''' Test the generic get_logs_data() with a different case in the dataset name
+        '''
+        bh_data_list = patch_requests_get('get_logs_data', {'nvcl_id':"dummy-id", "dataset_name": "6315_hp4_mt_block"}, 'dataset_coll.txt')
+        self.assertEqual(len(bh_data_list), 70)
+
+    def test_get_logs_dataset_filter_no_match(self):
+        ''' Test the generic get_logs_data() with a dataset name filter that does not match any dataset
+        '''
+        bh_data_list = patch_requests_get('get_logs_data', {'nvcl_id':"dummy-id", "dataset_name": "no-such-dataset"}, 'dataset_coll.txt')
+        self.assertEqual(len(bh_data_list), 0)
+
     def test_get_logs_exception(self):
         ''' Tests exception handling in get_logs_data()
         '''
@@ -991,6 +1009,47 @@ class TestNVCLReader(unittest.TestCase):
         f_list = rdr.filter_feat_list(name='Mundarlo: MURC004')
         assert(len(f_list) == 1)
         assert(f_list[0].name == 'Mundarlo: MURC004')
+
+    def test_filter_feat_list_case(self):
+        ''' Tests 'filter_feat_list' API with case-insensitive matching
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(name='mundarlo: murc004', case_sensitive=False)
+        assert(len(f_list) == 1)
+        assert(f_list[0].name == 'Mundarlo: MURC004')
+
+    def test_filter_feat_list_case_sensitive_no_match(self):
+        ''' Tests 'filter_feat_list' API with case-sensitive matching
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(name='mundarlo: murc004', case_sensitive=True)
+        assert(len(f_list) == 0)
+
+    def test_filter_feat_list_case_sensitive(self):
+        ''' Tests 'filter_feat_list' API with case-sensitive matching
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(name='Mundarlo: MURC004', case_sensitive=True)
+        assert(len(f_list) == 1)
+        assert(f_list[0].name == 'Mundarlo: MURC004')
+
+    def test_filter_feat_list_case_insensitive_non_str(self):
+        ''' Tests 'filter_feat_list' API with case-insensitive matching
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(boreholeLength_m=519.6, case_sensitive=False)
+        assert(len(f_list) == 1)
+        assert(f_list[0].name == 'Mundarlo: MURC004')
+        assert(f_list[0].boreholeLength_m == "519.6")
+
+    def test_filter_feat_list_numeric(self):
+        ''' Tests 'filter_feat_list' API with numeric filtering
+        '''
+        rdr = setup_reader()
+        f_list = rdr.filter_feat_list(boreholeLength_m=519.6)
+        assert(len(f_list) == 1)
+        assert(f_list[0].name == 'Mundarlo: MURC004')
+        assert(f_list[0].boreholeLength_m == "519.6")
 
     def test_filter_feat_list_ids_only(self):
         ''' Tests 'filter_feat_list' API, with 'nvcl_ids_only' keyword

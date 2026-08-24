@@ -233,6 +233,11 @@ def gen_summary_dataframe(
             # Convert the CSV string to a DataFrame
             df = pd.read_csv(StringIO(bh_data))
             LOGGER.debug(f"NVCL ID: {n_id}, downloaded scalar data with the coloumns: {df}")
+
+            # Sometimes the column names end in a version (e.g. "Grp1_sTSAS_v705") so use regex to
+            # find those columns and remove the version suffix.
+            df.columns = df.columns.str.replace(r'_v\d+$', '', regex=True)
+
             # Convert the scalar data into a summary view
             df = to_summary(
                 df,
