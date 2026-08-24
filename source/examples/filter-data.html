@@ -98,7 +98,7 @@ should contain a polygon geometry that will be used to filter the boreholes.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 
 <span class="c1"># Load the shapefile. This could also be a geojson file or any other format supported by Geopandas</span>
-<span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">&quot;polygon.shp&quot;</span><span class="p">)</span>
+<span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">"polygon.shp"</span><span class="p">)</span>
 
 <span class="c1"># Check the coordinate reference system (CRS) of the shapefile</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
@@ -115,29 +115,29 @@ both <a class="reference external" href="https://shapely.readthedocs.io/en/stabl
 <span class="kn">from</span><span class="w"> </span><span class="nn">nvcl_kit.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">NVCLReader</span>
 
 <span class="c1"># Initialise NVCL reader and filter using the first geometry in the GeoDataFrame</span>
-<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">&quot;NSW&quot;</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">"NSW"</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">reader</span> <span class="o">=</span> <span class="n">NVCLReader</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">reader</span><span class="o">.</span><span class="n">wfs</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Cannot contact service&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Error: Cannot contact service"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>By default the reader will assume that a polygon is provided in <a class="reference external" href="https://epsg.io/4326">EPSG:4326</a>. If your polygon uses a different
 Coordinate Reference System (CRS), make sure to specify the correct SRID using <code class="docutils literal notranslate"><span class="pre">polygon_srid</span></code> when building the parameters.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialise NVCL reader with polygon in a different CRS (e.g., EPSG:3857)</span>
-<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">&quot;NSW&quot;</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_srid</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">"NSW"</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_srid</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
 <span class="n">reader</span> <span class="o">=</span> <span class="n">NVCLReader</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">reader</span><span class="o">.</span><span class="n">wfs</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Cannot contact service&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Error: Cannot contact service"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If your polygon contains interior rings (holes), you can ask nvcl-kit to remove them by setting the <code class="docutils literal notranslate"><span class="pre">remove_rings</span></code>
 parameter to <code class="docutils literal notranslate"><span class="pre">True</span></code> when building the parameters. This will ensure that the filter only considers the exterior boundary
 of the polygon(s).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialise NVCL reader with option to remove interior rings from the polygon</span>
-<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">&quot;NSW&quot;</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_srid</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">(),</span> <span class="n">remove_rings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s2">"NSW"</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_srid</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">(),</span> <span class="n">remove_rings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">reader</span> <span class="o">=</span> <span class="n">NVCLReader</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">reader</span><span class="o">.</span><span class="n">wfs</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Cannot contact service&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Error: Cannot contact service"</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-right" id="id1" style="width: 49%">

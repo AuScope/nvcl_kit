@@ -100,21 +100,21 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">nvcl_kit.generators</span><span class="w"> </span><span class="kn">import</span> <span class="n">gen_scalar_by_depth</span>
 
 <span class="c1"># Assemble parameters</span>
-<span class="c1">#     First parameter is state or territory name, one of: &#39;nsw&#39;, &#39;tas&#39;, &#39;vic&#39;, &#39;qld&#39;, &#39;nt&#39;, &#39;sa&#39;, &#39;wa&#39;</span>
+<span class="c1">#     First parameter is state or territory name, one of: 'nsw', 'tas', 'vic', 'qld', 'nt', 'sa', 'wa'</span>
 <span class="c1">#     Other parameters are optional:</span>
 <span class="c1">#               bbox: 2D bounding box in EPSG:4326, only boreholes within box are retrieved</span>
-<span class="c1">#                     default {&quot;west&quot;: -180.0,&quot;south&quot;: -90.0,&quot;east&quot;: 180.0,&quot;north&quot;: 0.0})</span>
-<span class="c1">#               polygon: 2D &#39;shapely.geometry.LinearRing&#39; object, only boreholes within this ring are retrieved</span>
-<span class="c1">#               borehole_crs: CRS string, default &quot;EPSG:4326&quot;</span>
-<span class="c1">#               wfs_version: WFS version string, default &quot;1.1.0&quot;</span>
+<span class="c1">#                     default {"west": -180.0,"south": -90.0,"east": 180.0,"north": 0.0})</span>
+<span class="c1">#               polygon: 2D 'shapely.geometry.LinearRing' object, only boreholes within this ring are retrieved</span>
+<span class="c1">#               borehole_crs: CRS string, default "EPSG:4326"</span>
+<span class="c1">#               wfs_version: WFS version string, default "1.1.0"</span>
 <span class="c1">#               depths: Tuple of range of depths (min,max) [metres]</span>
 <span class="c1">#               wfs_url: URL of WFS service, GeoSciML V4.1 BoreholeView</span>
 <span class="c1">#               nvcl_url: URL of NVCL service</span>
 <span class="c1">#               max_boreholes: Maximum number of boreholes to retrieve. If &lt; 1 then all boreholes are loaded</span>
 <span class="c1">#                              default 0</span>
-<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">&#39;nsw&#39;</span><span class="p">,</span> <span class="n">max_boreholes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">'nsw'</span><span class="p">,</span> <span class="n">max_boreholes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">param</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot build parameters: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot build parameters: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>2. Create ‘NVCLReader’ class, check if ‘wfs’ is not ‘None’ to see if this instance initialised correctly
@@ -122,18 +122,18 @@ properly</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate class and search for boreholes</span>
 <span class="n">reader</span> <span class="o">=</span> <span class="n">NVCLReader</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">reader</span><span class="o">.</span><span class="n">wfs</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR!"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>3. Call get_feature_list() to get list of WFS borehole data for
 NVCL boreholes or use ‘filter_feat_list() to narrow down the list</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Returns a list of python &#39;SimpleNamespace&#39; objects (from &#39;types&#39; module)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Returns a list of python 'SimpleNamespace' objects (from 'types' module)</span>
 <span class="c1"># Each object has fields from GeoSciML v4.1 BoreholeView</span>
-<span class="c1"># accessed using &#39;.&#39; notation e.g. &#39;bh_list[0].name&#39;</span>
+<span class="c1"># accessed using '.' notation e.g. 'bh_list[0].name'</span>
 <span class="n">bh_list</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_feature_list</span><span class="p">()</span>
 
 <span class="c1"># Feature lists can be filtered by name and other attributes</span>
-<span class="n">feat_list</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">filter_feat_list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;BRD005&#39;</span><span class="p">)</span>
+<span class="n">feat_list</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">filter_feat_list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'BRD005'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">feat_list</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -166,15 +166,15 @@ get_imagelog_data() to get the NVCL log ids</strong></p>
 <span class="c1">#  2. uTSA = user, dTSA = domaining, sTSA = system</span>
 <span class="c1">#  3. V = visible light, S = shortwave IR, T = thermal IR</span>
 <span class="c1">#</span>
-<span class="c1"># These combine to give us a class name such as &#39;Grp1 uTSAS&#39;</span>
+<span class="c1"># These combine to give us a class name such as 'Grp1 uTSAS'</span>
 <span class="c1">#</span>
-<span class="c1"># Here we extract data for &#39;Grp1 uTSAS&#39; using &#39;Scalar&#39; class</span>
+<span class="c1"># Here we extract data for 'Grp1 uTSAS' using 'Scalar' class</span>
 <span class="c1">#</span>
 <span class="c1"># GEN_SCALAR_BY_DEPTH</span>
-<span class="k">for</span> <span class="n">nvcl_id</span><span class="p">,</span> <span class="n">log_id</span><span class="p">,</span> <span class="n">sca_list</span> <span class="ow">in</span> <span class="n">gen_scalar_by_depth</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">scalar_class</span><span class="o">=</span><span class="n">Scalar</span><span class="o">.</span><span class="n">Grp1_uTSAS</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">nvcl_id</span><span class="p">,</span> <span class="n">log_id</span><span class="p">,</span> <span class="n">sca_list</span> <span class="ow">in</span> <span class="n">gen_scalar_by_depth</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">scalar_class</span><span class="o">=</span><span class="n">Scalar</span><span class="o">.</span><span class="n">Grp1_uTSAS</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s1">'1'</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="n">sca_list</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">meas</span> <span class="ow">in</span> <span class="n">sca_list</span><span class="p">[</span><span class="n">depth</span><span class="p">]:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nvcl_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">log_id</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2"> metres: class=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">className</span><span class="si">}</span><span class="s2">, abundance=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">classCount</span><span class="si">}</span><span class="s2">, mineral=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">classText</span><span class="si">}</span><span class="s2">, colour=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">colour</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nvcl_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">log_id</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2"> metres: class=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">className</span><span class="si">}</span><span class="s2">, abundance=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">classCount</span><span class="si">}</span><span class="s2">, mineral=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">classText</span><span class="si">}</span><span class="s2">, colour=</span><span class="si">{</span><span class="n">meas</span><span class="o">.</span><span class="n">colour</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -248,7 +248,7 @@ data</strong></p>
 
 <span class="c1"># Sampled scalar data in JSON (or CSV) format</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_sampled_scalar_data</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">log_id</span><span class="p">,</span>
-                                         <span class="n">outputformat</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span>
+                                         <span class="n">outputformat</span><span class="o">=</span><span class="s1">'json'</span><span class="p">,</span>
                                          <span class="n">startdepth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                                          <span class="n">enddepth</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
                                          <span class="n">interval</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
@@ -271,7 +271,7 @@ data</strong></p>
     <span class="n">img</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_tray_thumb_html</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">ilog</span><span class="o">.</span><span class="n">log_id</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_tray_thumb_jpg</span><span class="p">(</span><span class="n">ilog</span><span class="o">.</span><span class="n">log_id</span><span class="p">)</span>
 
-<span class="c1"># Use either &#39;get_tray_thumb_imglogs()&#39; or &#39;get_tray_imglogs()&#39;</span>
+<span class="c1"># Use either 'get_tray_thumb_imglogs()' or 'get_tray_imglogs()'</span>
 <span class="n">ilog_list</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_tray_thumb_imglogs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">)</span>
 <span class="n">ilog_list</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_tray_imglogs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">ilog</span> <span class="ow">in</span> <span class="n">ilog_list</span><span class="p">:</span>

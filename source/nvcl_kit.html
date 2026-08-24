@@ -362,7 +362,7 @@ will be ignored</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_obj</strong> – <p>SimpleNamespace() object with parameters.
 It is recommended to utilise the ‘param_builder’ function to create it.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">param_obj</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">&#39;sa&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">param_obj</span> <span class="o">=</span> <span class="n">param_builder</span><span class="p">(</span><span class="s1">'sa'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>But if you want to create your own then here are the details:</p>
@@ -382,14 +382,14 @@ It is recommended to utilise the ‘param_builder’ function to create it.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
 <span class="n">param_obj</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">()</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">BBOX</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;west&quot;</span><span class="p">:</span> <span class="mf">132.76</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">:</span> <span class="mf">134.39</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">26.87</span> <span class="p">}</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">BBOX</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"west"</span><span class="p">:</span> <span class="mf">132.76</span><span class="p">,</span> <span class="s2">"south"</span><span class="p">:</span> <span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="s2">"east"</span><span class="p">:</span> <span class="mf">134.39</span><span class="p">,</span> <span class="s2">"north"</span><span class="p">:</span> <span class="o">-</span><span class="mf">26.87</span> <span class="p">}</span>
 <span class="c1"># Or use a POLYGON instead of a BBOX - Note the y/x axis ordering</span>
 <span class="n">param_obj</span><span class="o">.</span><span class="n">POLYGON</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span> <span class="p">((</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">26.87</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">134.39</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">28.44</span><span class="p">,</span> <span class="mf">132.76</span><span class="p">))</span> <span class="p">)</span>
 <span class="n">param_obj</span><span class="o">.</span><span class="n">DEPTHS</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">900.0</span><span class="p">)</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">WFS_URL</span> <span class="o">=</span> <span class="s2">&quot;http://blah.blah.blah/geoserver/wfs&quot;</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">NVCL_URL</span> <span class="o">=</span> <span class="s2">&quot;https://blah.blah.blah/nvcl/NVCLDataServices&quot;</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">WFS_URL</span> <span class="o">=</span> <span class="s2">"http://blah.blah.blah/geoserver/wfs"</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">NVCL_URL</span> <span class="o">=</span> <span class="s2">"https://blah.blah.blah/nvcl/NVCLDataServices"</span>
 <span class="n">param_obj</span><span class="o">.</span><span class="n">MAX_BOREHOLES</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">param_obj</span><span class="o">.</span><span class="n">PROV</span> <span class="o">=</span> <span class="s1">&#39;blah&#39;</span>
+<span class="n">param_obj</span><span class="o">.</span><span class="n">PROV</span> <span class="o">=</span> <span class="s1">'blah'</span>
 </pre></div>
 </div>
 </p></li>
@@ -412,7 +412,7 @@ default is logging.INFO</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="nvcl_kit.reader.NVCLReader.filter_feat_list">
-<span class="sig-name descname"><span class="pre">filter_feat_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_ids_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.filter_feat_list" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">filter_feat_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nvcl_ids_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvcl_kit.reader.NVCLReader.filter_feat_list" title="Link to this definition"></a></dt>
 <dd><dl>
 <dt>Returns a list of borehole features given a filter parameter</dt><dd><p>Filter parameters can be one of those returned by ‘get_feature_list’ e.g.</p>
 <p>new_list = filter_feat_list(name=’ML006’)</p>
@@ -423,6 +423,7 @@ default is logging.INFO</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kwargs</strong> – keyword arguments key is name searched for, val is a list of possible values or a single value</p></li>
 <li><p><strong>nvcl_ids_only</strong> – if True will return a list of nvcl_id</p></li>
+<li><p><strong>case_sensitive</strong> – if True, the filter will be case-sensitive</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -632,7 +633,7 @@ log_id, log_name, sample_count, modified_date (optional)</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nvcl_id</strong> – NVCL ‘holeidentifier’ parameter,
 the ‘nvcl_id’ from each item retrieved from ‘get_feature_list()’ or ‘get_nvcl_id_list()’</p></li>
-<li><p><strong>dataset_name</strong> – optional, if specified will only return logs for this dataset name</p></li>
+<li><p><strong>dataset_name</strong> – optional, if specified will only return logs for this dataset name (case insensitive)</p></li>
 <li><p><strong>last_only</strong> – optional, if True will only return the last log for each dataset</p></li>
 </ul>
 </dd>
