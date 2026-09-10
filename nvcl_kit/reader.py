@@ -313,7 +313,7 @@ class NVCLReader:
         try:
             meas_list = json.loads(json_data)
         except json.decoder.JSONDecodeError as jde:
-            LOGGER.warning(f"Cannot parse response from server {jde}")
+            LOGGER.debug(f"Cannot parse response from server {jde}")
         else:
             # Sometimes meas_list is None
             if isinstance(meas_list, list):
